@@ -243,23 +243,38 @@ from
 		1 as p
 	 from group_distinct_member_map m
 	 where	m.group_id = [im_employee_group_id]
-	) employees
+	) employees,
+	-- get the members and admins of object_id
+	(       select  1 as member_p,
+			decode (m.object_role_id,
+				1301, 1,
+				1302, 1,
+				1303, 1,
+				0
+			) as admin_p,
+			r.object_id_two as user_id
+		from    acs_rels r,
+			im_biz_object_members m
+		where   r.object_id_one = :object_id
+			and r.rel_id = m.rel_id
+	) o_mem
 where
-	r.object_id_one = 3273
+	r.object_id_one = :object_id
 	and r.object_id_two = p.party_id
 	and p.party_id = customers.user_id(+)
 	and p.party_id = employees.user_id(+)
-        and 1 = im_forum_permission(
-                p.party_id,
-                :user_id,
-                :asignee_id,
-                :object_id,
-                :scope,
-		1,
-		0,
-                employees.p,
+	and o_mem.user_id = p.party_id
+	and 1 = im_forum_permission(
+		p.party_id,
+		:user_id,
+		:asignee_id,
+		:object_id,
+		:scope,
+		o_mem.member_p,
+		o_mem.admin_p,
+		employees.p,
 		customers.p
-        )"
+	)"
 
 	db_foreach subscribe_object_members $object_member_sql {
 
@@ -435,8 +450,10 @@ while {"" != $parent_id && 0 != $parent_id && $ctr < 10} {
 # 0=none, 1=non-important, 2=important
 #
 
+set action_type_found 0
 switch $action_type {
     "new_message" { 
+	set action_type_found 1
 	set importance 2
 	set subject "New $topic_type: $subject"
 	set message "
@@ -445,6 +462,7 @@ Please visit the link above for details.\n"
     }
 
     "edit_message" { 
+	set action_type_found 1
 	set importance 1
 	set subject "Changed $topic_type: $subject"
 	set message "
@@ -453,6 +471,7 @@ Please visit the link above for details.\n"
     }
 
     "reply_message" { 
+	set action_type_found 1
 	set importance 1
 	set subject "Reply to $topic_type: $subject"
 	set message "
@@ -462,55 +481,57 @@ Please visit the link above for details.\n"
 }
 
 
+if {!$action_type_found} {
 
-switch $actions {
-    "accept" { 
-	set importance 1
-	set subject "Accepted $topic_type: $subject"
-	set message "
+    switch $actions {
+	"accept" { 
+	    set importance 1
+	    set subject "Accepted $topic_type: $subject"
+	    set message "
 The $topic_type has been accepted by the asignee.
 Please visit the link above for details.
 "
-    }
-    "reject" { 
-	set importance 2
-	set subject "Rejected $topic_type: $subject"
-	set message "
+	}
+	"reject" { 
+	    set importance 2
+	    set subject "Rejected $topic_type: $subject"
+	    set message "
 The $topic_type has been rejected by the asignee.
 Please visit the link above for details.
 "
-    }
-    "clarify" { 
-	set importance 2
-	set subject "$topic_type needs clarification: $subject"
-	set message "
+	}
+	"clarify" { 
+	    set importance 2
+	    set subject "$topic_type needs clarification: $subject"
+	    set message "
 The asignee of the $topic_type needs clarification.
 Please visit the link above for details.
 "
-    }
-    "save" { 
-	set importance 1
-	set subject "Modified $topic_type: $subject"
-	set message "
+	}
+	"save" { 
+	    set importance 1
+	    set subject "Modified $topic_type: $subject"
+	    set message "
 The $topic_type has been modified or replied to.
 Please visit the link above for details.
 "
-    }
-    "close" { 
-	set importance 2
-	set subject "Closed $topic_type: $subject"
-	set message "
+	}
+	"close" { 
+	    set importance 2
+	    set subject "Closed $topic_type: $subject"
+	    set message "
 The $topic_type has been closed.
 Please visit the link above for details.
 "
-    }
-    "assign" { 
-	set importance 1
-	set subject "Assigned $topic_type: $subject"
-	set message "
+	}
+	"assign" { 
+	    set importance 1
+	    set subject "Assigned $topic_type: $subject"
+	    set message "
 The $topic_type has been assigned to a new asignee.
 Please visit the link above for details.
 "
+	}
     }
 }
 
