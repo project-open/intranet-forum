@@ -297,13 +297,11 @@ incr ctr
 # don't have a group (project) assigned. So we have to do
 # that here:
 
-set project_status_open [im_project_status_open]
-
 if {$object_id == 0} {
     append table_body "
 	<tr $bgcolor([expr $ctr % 2])>
 	  <td>In Project</td><td>
-[im_project_select object_id $project_status_open "" "" "" $user_id]
+[im_project_select object_id $object_id "Open" "" "" "" $user_id]
 	  </td>
 	</tr>\n"
     incr ctr
