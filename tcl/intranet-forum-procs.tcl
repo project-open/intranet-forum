@@ -969,7 +969,7 @@ $order_by_clause"
                 append table_body_html "
                 <tr><td colspan=$colspan>&nbsp;</td></tr>
                 <tr><td class=rowtitle colspan=$colspan>
-                  <A href=/intranet/projects/view?group_id=$object_id>
+                  <A href=/intranet/projects/view?project_id=$object_id>
                     $object_name
                   </A>
                 </td></tr>\n"
@@ -1003,7 +1003,8 @@ $order_by_clause"
 	# This means that there are rows that we decided not to return
 	# Include a link to go to the next page
 	set next_start_idx [expr $end_idx + 1]
-	set next_page_html "($remaining_items more) <A href=$current_page_url?$pass_through_vars_html&start_idx=$next_start_idx>&gt;&gt;</a>"
+	set forum_max_entries_per_page [expr 10*$max_entries_per_page]
+	set next_page_html "($remaining_items more) <A href=\"/intranet-forum/index?forum_object_id=$object_id&forum_max_entries_per_page=$forum_max_entries_per_page\">&gt;&gt;</a>"
     } else {
 	set next_page_html ""
     }

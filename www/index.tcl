@@ -23,6 +23,7 @@ ad_page_contract {
 
     @author frank.bergmann@project-open.com
 } {
+    { forum_object_id 0 }
     { forum_order_by "Project" }
     { forum_view_name "forum_list_forum" }
     { forum_mine_p "f" }
@@ -32,6 +33,7 @@ ad_page_contract {
     { forum_start_idx:integer "1" }
     { forum_how_many 0 }
     { forum_folder 0 }
+    { forum_max_entries_per_page 0 }
 }
 
 # ---------------------------------------------------------------
@@ -139,7 +141,7 @@ set restrict_to_new_topics 0
 
 set forum_content [im_forum_component \
 	-user_id		$user_id \
-	-object_id		0 \
+	-object_id		$forum_object_id \
 	-forum_type		home \
 	-current_page_url	$current_url \
 	-return_url		$return_url \
@@ -149,6 +151,7 @@ set forum_content [im_forum_component \
 	-restrict_to_mine_p	$forum_mine_p \
 	-restrict_to_folder	$forum_folder \
 	-restrict_to_new_topics 0 \
+	-max_entries_per_page	$forum_max_entries_per_page \
 ]
 
 # ---------------------------------------------------------------
