@@ -301,7 +301,7 @@ if {$object_id == 0} {
     append table_body "
 	<tr $bgcolor([expr $ctr % 2])>
 	  <td>In Project</td><td>
-[im_project_select object_id $object_id "Open" "" "" "" $user_id]
+[im_project_select object_id $object_id "Open" "" "" $user_id]
 	  </td>
 	</tr>\n"
     incr ctr
