@@ -17,9 +17,12 @@
 
         <callbacks>
         </callbacks>
+
+
         <parameters>
-        <!-- No version parameters -->
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1" name="SubscribeAllMembersToNewItemsP" default="0" description="Inform all project members about forum updates by subscribing them to items by default?"/>
         </parameters>
+
 
     </version>
 </package>
