@@ -581,7 +581,8 @@ begin
 			-view_name [im_opt_val forum_view_name] \
 			-forum_order_by [im_opt_val forum_order_by] \
 			-restrict_to_mine_p "f" \
-			-restrict_to_new_topics 1
+			-restrict_to_new_topics 1 \
+			-restrict_to_employees 1 \
 		]'
     );
 end;
@@ -623,7 +624,8 @@ begin
 			-view_name [im_opt_val forum_view_name] \
 			-forum_order_by [im_opt_val forum_order_by] \
 			-restrict_to_mine_p "f" \
-			-restrict_to_new_topics 0
+			-restrict_to_new_topics 0 \
+			-restrict_to_employees 1 \
 		]'
     );
 end;

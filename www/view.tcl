@@ -112,7 +112,7 @@ ns_log Notice "view: object_admin=$object_admin"
 # However, the choice of receipients of the topics depend
 # on the relatioinship between the user and the object.
 if {!$object_read} {
-    ad_return_complaint 1 "You have no rights to add members to this object."
+    ad_return_complaint 1 "You have insufficient privileges to see this item."
     return
 }
 

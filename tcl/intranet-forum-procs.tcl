@@ -640,6 +640,7 @@ ad_proc -public im_forum_component {
     {-start_idx 1} 
     {-restrict_to_new_topics 0} 
     {-restrict_to_folder 0}
+    {-restrict_to_employees 0}
     -user_id 
     -object_id 
     -current_page_url 
@@ -668,13 +669,19 @@ ad_proc -public im_forum_component {
     ns_log Notice "im_forum_component: restrict_to_topic_type_id=$restrict_to_topic_type_id"
     ns_log Notice "im_forum_component: restrict_to_new_topics=$restrict_to_new_topics"
     ns_log Notice "im_forum_component: restrict_to_folder=$restrict_to_folder"
-
+    ns_log Notice "im_forum_component: restrict_to_employees=$restrict_to_employees"
 
     set bgcolor(0) " class=roweven"
     set bgcolor(1) " class=rowodd"
 
     if {!$max_entries_per_page} { set max_entries_per_page 10 }
     set end_idx [expr $start_idx + $max_entries_per_page - 1]
+
+    set user_is_employee_p [im_user_is_employee_p $user_id]
+    set user_is_customer_p [im_user_is_customer_p $user_id]
+
+    if {$restrict_to_employees && !$user_is_employee_p} { return "" }
+
 
     # ---------------------- Get the right view ---------------------------
     # If empty, try with "forum_list_<type>".
@@ -849,9 +856,6 @@ ad_proc -public im_forum_component {
     if {"" != $restriction_clause} { 
 	set restriction_clause "and $restriction_clause" 
     }
-
-    set user_is_employee_p [im_user_is_employee_p $user_id]
-    set user_is_customer_p [im_user_is_customer_p $user_id]
 
     # Forum items have a complicated "scoped" permission 
     # system where you can say who should be able to read
