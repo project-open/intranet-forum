@@ -135,7 +135,7 @@ set page_body "
 
 <table cellspacing=1 border=0 cellpadding=1>
 
-[im_forum_render_tind $topic_id $parent_id $topic_type_id $topic_type $topic_status_id $topic_status $owner_id $asignee_id $owner_name $asignee_name $user_id $object_id $object_name $object_admin $subject $message $posting_date $due_date $priority $scope $return_url]
+[im_forum_render_tind $topic_id $parent_id $topic_type_id $topic_type $topic_status_id $topic_status $owner_id $asignee_id $owner_name $asignee_name $user_id $object_id $object_name $object_admin $subject $message $posting_date $due_date $priority $scope $receive_updates $return_url]
 
 <tr><td colspan=2>&nbsp;</td></tr>
 $table_body

@@ -8,21 +8,18 @@
     <singleton-p>t</singleton-p>
     <auto-mount>intranet-forum</auto-mount>
 
-    <version name="2.0.0" url="http://openacs.org/repository/download/apm/intranet-forum-2.0.0.apm">
+    <version name="1.0" url="http://openacs.org/repository/download/apm/intranet-forum-1.0.apm">
         <owner url="mailto:fraber@fraber.de">Frank Bergmann</owner>
         <vendor url="http://www.project-open.com/">Project/Open</vendor>
 
-        <provides url="intranet-forum" version="2.0.0"/>
-        <requires url="intranet-core" version="2.0.0"/>
+        <provides url="intranet-forum" version="1.0"/>
+        <requires url="intranet-core" version="1.0"/>
 
         <callbacks>
         </callbacks>
-
-
         <parameters>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1" name="SubscribeAllMembersToNewItemsP" default="0" description="Inform all project members about forum updates by subscribing them to items by default?"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="SubscribeAllMembersToNewItemsP"  default="1" description="SubscribeAllMembersToNewItemsP"/>
         </parameters>
-
 
     </version>
 </package>

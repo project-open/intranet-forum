@@ -140,21 +140,25 @@ if {[string equal $actions "save"]} {
     if {!$exists_p} {
 	# Create an empty entry - 
 	# Details are added at the insert below
+
 	db_transaction {
-	    db_dml topic_insert "
-insert into im_forum_topics (
-	topic_id, object_id, topic_type_id, topic_status_id, owner_id, subject
-) values (
-	:topic_id, :object_id, :topic_type_id, :topic_status_id, :owner_id, :subject
-)"
-        } on_error {
+	    db_dml topic_insert {
+		insert into im_forum_topics (
+			topic_id, object_id, topic_type_id, 
+			topic_status_id, owner_id, subject
+		) values (
+			:topic_id, :object_id, :topic_type_id, 
+			:topic_status_id, :owner_id, :subject
+		)
+	    }
+
+	} on_error {
             ad_return_error "Error adding a new topic" "
 	The database rejected the addition of discussion topic 
 	\"$subject\". Here the error message: <pre>$errmsg\n</pre>\n"
             return
-        }
+	}
     }
-
 
     # update the information
     db_transaction {
@@ -180,7 +184,6 @@ where topic_id=:topic_id"
         return
     }
 
-
     # im_forum_topics_user_map may or may not exist for every user.
     # So we create a record just in case, even if the SQL fails.
     db_transaction {
@@ -191,6 +194,7 @@ where topic_id=:topic_id"
     } on_error {
         # nothing - may already exist...
     }
+
 
     # Now let's update the existing entry
     db_transaction {
@@ -207,6 +211,72 @@ where
 	The database rejected the modification of a of discussion topic 
 	\"$subject\". Here the error message: <pre>$errmsg\n</pre>\n"
         return
+    }
+}
+
+
+# ---------------------------------------------------------------------
+# New Message: Subscribe all current project members
+# ---------------------------------------------------------------------
+
+# Only if we are creating a new message...
+if {[string equal $action_type "new_message"]} {
+
+    # .. and only if the parameter is enabled...
+    if {[ad_parameter -package_id [im_package_forum_id] SubscribeAllMembersToNewItemsP "" "0"]} {
+
+	# Select the list of all project members allowed to see
+	# see the new TIND.
+	#
+	set object_member_sql "
+select
+	p.party_id as user_id
+from
+	acs_rels r,
+	parties p,
+	(select	m.member_id as user_id,
+		1 as p
+	 from group_distinct_member_map m
+	 where	m.group_id = [im_customer_group_id]
+	) customers,
+	(select	m.member_id as user_id,
+		1 as p
+	 from group_distinct_member_map m
+	 where	m.group_id = [im_employee_group_id]
+	) employees
+where
+	r.object_id_one = 3273
+	and r.object_id_two = p.party_id
+	and p.party_id = customers.user_id(+)
+	and p.party_id = employees.user_id(+)
+        and 1 = im_forum_permission(
+                p.party_id,
+                :user_id,
+                :asignee_id,
+                :object_id,
+                :scope,
+		1,
+		0,
+                employees.p,
+		customers.p
+        )"
+
+	db_foreach subscribe_object_members $object_member_sql {
+
+	    ns_log Notice "intranet-forum/new-2: subscribe user\#$user_id to message\#$topic_id in object\#$object_id"
+
+	    # im_forum_topics_user_map may or may not exist for every user.
+	    # So we create a record just in case, even if the SQL fails.
+	    db_transaction {
+		db_dml im_forum_topic_user_map_insert "
+	            insert into im_forum_topic_user_map
+	            (topic_id, user_id, read_p, folder_id, receive_updates) values
+	            (:topic_id, :user_id, :read_p, :folder_id, 'all')
+	    "
+	    } on_error {
+		# nothing - may already exist...
+	    }
+	}
     }
 }
 
@@ -324,13 +394,14 @@ where topic_id=:topic_id"
 # Alert about changes
 # ---------------------------------------------------------------------
 
-set msg_url "[ad_parameter -package_id [ad_acs_kernel_id] SystemURL "" ""]/intranet-forum/view?topic_id=$topic_id"
+set msg_url "[ad_parameter -package_id [ad_acs_kernel_id] SystemURL "" ""]intranet-forum/view?topic_id=$topic_id"
 set importance 0
 
 db_1row subject_message "
 select
 	t.subject,
 	t.message,
+	t.parent_id,
 	im_category_from_id(t.topic_type_id) as topic_type
 from 
 	im_forum_topics t
@@ -338,10 +409,59 @@ where
 	t.topic_id = :topic_id
 "
 
+# Check for the root-parent message in order to determine
+# whethter the user has subscribed to it or not.
+set ctr 0
+while {"" != $parent_id && 0 != $parent_id && $ctr < 10} {
+    ns_log Notice "intranet-forum/new-2: looking up parent $parent_id of topic $topic_id"
+
+    # avoid infinite loops...
+    incr ctr
+
+    set lookup_parent_sql "
+	select
+		t.topic_id,
+		t.parent_id
+	from
+		im_forum_topics t
+	where
+		t.topic_id = :parent_id
+    "
+    db_0or1row lookup_parent $lookup_parent_sql
+}
+
 
 # Determine whether the update was "important" or not
 # 0=none, 1=non-important, 2=important
 #
+
+switch $action_type {
+    "new_message" { 
+	set importance 2
+	set subject "New $topic_type: $subject"
+	set message "
+A new $topic_type has been created.
+Please visit the link above for details.\n"
+    }
+
+    "edit_message" { 
+	set importance 1
+	set subject "Changed $topic_type: $subject"
+	set message "
+A $topic_type has been modified.
+Please visit the link above for details.\n"
+    }
+
+    "reply_message" { 
+	set importance 1
+	set subject "Reply to $topic_type: $subject"
+	set message "
+A $topic_type reply has been created.
+Please visit the link above for details.\n"
+    }
+}
+
+
 
 switch $actions {
     "accept" { 

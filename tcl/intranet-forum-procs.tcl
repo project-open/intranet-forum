@@ -29,6 +29,21 @@ ad_proc -public im_topic_type_id_incident { } { return 1104 }
 ad_proc -public im_topic_type_id_reply { } { return 1190 }
 
 
+
+ad_proc -public im_package_forum_id {} {
+    Returns the package id of the intranet-forum module
+} {
+    return [util_memoize "im_package_forum_id_helper"]
+}
+
+ad_proc -private im_package_forum_id_helper {} {
+    return [db_string im_package_core_id {
+        select package_id from apm_packages
+        where package_key = 'intranet-forum'
+    } -default 0]
+}
+
+
 ad_proc -public im_forum_is_task_or_incident { topic_type_id } {
     Returns 1 if it's a "Task" or "Incident"
 } {
@@ -346,6 +361,7 @@ ad_proc -public im_forum_render_tind {
 	subject message
 	posting_date due_date
 	priority scope
+        receive_updates
         return_url
 } {
     Render the rows of a single TIND
@@ -489,6 +505,15 @@ ad_proc -public im_forum_render_tind {
                   </td>
                 </tr>"
 	incr ctr
+
+	# Show whether the user has subscribed to updates
+	append tind_html "
+                <tr $bgcolor([expr $ctr % 2])>
+                  <td>Receive updates</td>
+                  <td>$receive_updates
+                  </td>
+                </tr>"
+	incr ctr
     }
 
     # Only allow plain text messages
@@ -584,7 +609,11 @@ where
 	    append thread_html "
 		  <td colspan=$colspan_level>
 		     <table border=0 cellpadding=0 bgcolor=#E0E0E0>"
-	    append thread_html " [im_forum_render_tind $topic_id 0 $topic_type_id $topic_type $topic_status_id $topic_status $owner_id $asignee_id $owner_name $asignee_name $user_id $object_id $object_name $object_admin $subject $message $posting_date $due_date $priority $scope $return_url]
+
+	    # don't show received updates for everything but the main message
+	    set receive_updates ""
+
+	    append thread_html " [im_forum_render_tind $topic_id 0 $topic_type_id $topic_type $topic_status_id $topic_status $owner_id $asignee_id $owner_name $asignee_name $user_id $object_id $object_name $object_admin $subject $message $posting_date $due_date $priority $scope $receive_updates $return_url]
 
 		    </table>
 		  </td>
