@@ -156,7 +156,7 @@ if {$task_or_incident_p && $user_id == $asignee_id} {
     }
 
     # Allow to mark task as "closed" 
-    if {($object_admin || $user_id == $owner_id) && ![string equal $topic_status_id [im_topic_status_id_closed]]} {
+    if {($object_admin || $user_id == $owner_id || $user_id == $asignee_id) && ![string equal $topic_status_id [im_topic_status_id_closed]]} {
 	append actions "<option value=close>Close $topic_type</option>\n"
     }
 
