@@ -533,6 +533,7 @@ begin
 				forum_how_many \
 				forum_view_name \
 			] \
+			-how_many 10 \
 			-forum_type project \
 			-view_name [im_opt_val forum_view_name] \
 			-forum_order_by [im_opt_val forum_order_by] \
@@ -577,6 +578,7 @@ begin
 				forum_how_many \
 				forum_view_name \
 			] \
+			-how_many 10 \
 			-forum_type customer \
 			-view_name [im_opt_val forum_view_name] \
 			-forum_order_by [im_opt_val forum_order_by] \
@@ -620,6 +622,7 @@ begin
 				forum_how_many \
 				forum_view_name \
 			] \
+			-how_many 10 \
 			-forum_type user \
 			-view_name [im_opt_val forum_view_name] \
 			-forum_order_by [im_opt_val forum_order_by] \
@@ -662,6 +665,7 @@ begin
 				forum_how_many \
 				forum_view_name \
 			] \
+			-how_many 10 \
 			-forum_type home \
 			-view_name [im_opt_val forum_view_name] \
 			-forum_order_by [im_opt_val forum_order_by] \

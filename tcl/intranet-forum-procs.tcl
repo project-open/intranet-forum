@@ -636,8 +636,8 @@ ad_proc -public im_forum_component {
     {-restrict_to_topic_type_id 0} 
     {-restrict_to_topic_status_id 0} 
     {-restrict_to_asignee_id 0} 
-    {-max_entries_per_page 0} 
     {-start_idx 1} 
+    {-how_many 0}
     {-restrict_to_new_topics 0} 
     {-restrict_to_folder 0}
     {-restrict_to_employees 0}
@@ -674,8 +674,8 @@ ad_proc -public im_forum_component {
     set bgcolor(0) " class=roweven"
     set bgcolor(1) " class=rowodd"
 
-    if {!$max_entries_per_page} { set max_entries_per_page 10 }
-    set end_idx [expr $start_idx + $max_entries_per_page - 1]
+    if {!$how_many} { set how_many 10 }
+    set end_idx [expr $start_idx + $how_many - 1]
 
     set user_is_employee_p [im_user_is_employee_p $user_id]
     set user_is_customer_p [im_user_is_customer_p $user_id]
@@ -752,6 +752,9 @@ ad_proc -public im_forum_component {
         }
     }
 
+    # Remove start_idx in order to start from the beginning again
+    ns_set delkey $bind_vars "forum_start_idx"
+    # Remove the variable that is set by the column header
     ns_set delkey $bind_vars "forum_order_by"
     set params [list]
     set len [ns_set size $bind_vars]
@@ -798,10 +801,15 @@ ad_proc -public im_forum_component {
     set order_by_clause "order by priority"
     switch $forum_order_by {
 	"P" { set order_by_clause "order by priority" }
+	"Object" { set order_by_clause "order by upper(acs_object.name(t.object_id))" }
 	"Subject" { set order_by_clause "order by upper(subject)" }
 	"Type" { set order_by_clause "order by topic_type_id" }
+	"Status" { set order_by_clause "order by topic_status_id" }
+	"Folder" { set order_by_clause "order by f.folder_name" }
+	"Read" { set order_by_clause "order by m.read_p" }
 	"Due" { set order_by_clause "order by due_date" }
-	"Who" { set order_by_clause "order by upper(owner_initials)" }
+	"Ass" { set order_by_clause "order by upper(asignee_initials)" }
+	"Own" { set order_by_clause "order by upper(owner_initials)" }
     }
 
 
@@ -832,8 +840,10 @@ ad_proc -public im_forum_component {
 	}
 	2 {
 	    # Unresolved topics
-	    lappend restrictions "(t.topic_status_id != [im_topic_status_id_closed] and
-            t.topic_type_id in ([im_topic_type_id_task],[im_topic_type_id_incident]))"
+	    lappend restrictions "t.topic_status_id != [im_topic_status_id_closed]"
+	    lappend restrictions "
+		t.topic_type_id in ([im_topic_type_id_task],[im_topic_type_id_incident])"
+	    lappend restrictions "f.folder_id != 1"
 	}
 	default {
 	    lappend restrictions "m.folder_id=:restrict_to_folder" 
@@ -868,7 +878,7 @@ ad_proc -public im_forum_component {
     # Finally we can have "read" and "unread" items and
     # Items that have been filed in a specific "folder".
     # So we are getting close here to a kind of MS-Outlook...
-    set forum_sql "
+    set forum_inner_sql "
 select
 	t.*,
 	acs_object.name(t.object_id) as object_name,
@@ -903,7 +913,7 @@ from
 where
         (t.parent_id is null or t.parent_id=0)
         and t.object_id != 1
-	and t.topic_id=m.topic_id(+)
+	and t.topic_id = m.topic_id(+)
 	and m.folder_id=f.folder_id(+)
 	and t.object_id = member_objects.object_id(+)
 	and t.object_id = admin_objects.object_id(+)
@@ -921,9 +931,13 @@ where
 		:user_is_customer_p
 	)
 	$restriction_clause
-$order_by_clause"
+"
 
 
+    set forum_sql "
+	$forum_inner_sql
+	$order_by_clause
+    "
 
     # ---------------------- Limit query to MAX rows -------------------------
     
@@ -932,26 +946,17 @@ $order_by_clause"
     # results
     
     set limited_query [im_select_row_range $forum_sql $start_idx $end_idx]
-    set total_in_limited_sql "
-	select count(*)
-	from 
-		im_forum_topics t,
-		im_forum_topic_user_map m,
-		im_forum_folders f
-	where 
-		object_id != 1
-		and (t.parent_id is null or t.parent_id=0)
-		and t.topic_id=m.topic_id(+)
-		and m.folder_id=f.folder_id(+)
-		$restriction_clause
-    "
+    ns_log Notice "limited_query = $limited_query"
 
+    set total_in_limited_sql "select count(*) from ($forum_inner_sql) f"
     set total_in_limited [db_string projects_total_in_limited $total_in_limited_sql]
     ns_log Notice "im_forum_component: total_in_limited=$total_in_limited"
-    set selection "select z.* from ($limited_query) z $order_by_clause"
+
+    set selection "select z.* from ($limited_query) z"
+    ns_log Notice "selection = $selection"
 
     # How many items remain unseen?
-    set remaining_items [expr $total_in_limited - $start_idx - $max_entries_per_page + 1]
+    set remaining_items [expr $total_in_limited - $start_idx - $how_many + 1]
 
 
     # ---------------------- Format the body -------------------------------
@@ -963,7 +968,7 @@ $order_by_clause"
 
     set limited_query $forum_sql
 
-    db_foreach forum_query $limited_query {
+    db_foreach forum_query $selection {
         if {$read_p == "t"} {set read "read"} else {set read "unread"}
         if {$folder_id == ""} {set folder_name "Inbox"}
 
@@ -991,10 +996,11 @@ $order_by_clause"
         append table_body_html "</tr>\n"
 
         incr ctr
-        if { $max_entries_per_page > 0 && $ctr >= $max_entries_per_page } {
+        if { $how_many > 0 && $ctr >= $how_many } {
             break
 	}
     }
+
     # Show a reasonable message when there are no result rows:
     if { [empty_string_p $table_body_html] } {
 	set table_body_html "
@@ -1003,12 +1009,39 @@ $order_by_clause"
 	</b></td></tr>"
     }
 
-    if { $ctr == $max_entries_per_page && $end_idx < $total_in_limited } {
+    #
+    # Calculate the variables to pass-through
+    #
+    set bind_vars [ns_set create]
+    foreach var $export_var_list {
+        upvar 1 $var value
+	if { [info exists value] } {
+            ns_set put $bind_vars $var $value
+            ns_log Notice "im_forum_component: $var <- $value"
+	}
+    }
+
+    ns_set delkey $bind_vars "forum_start_idx"
+    set params [list]
+    set len [ns_set size $bind_vars]
+    for {set i 0} {$i < $len} {incr i} {
+	set key [ns_set key $bind_vars $i]
+	set value [ns_set value $bind_vars $i]
+	if {![string equal $value ""]} {
+	    lappend params "$key=[ns_urlencode $value]"
+	}
+    }
+    set pass_through_vars_html [join $params "&"]
+
+
+
+    if { $ctr == $how_many && $end_idx < $total_in_limited } {
 	# This means that there are rows that we decided not to return
 	# Include a link to go to the next page
-	set next_start_idx [expr $end_idx + 1]
-	set forum_max_entries_per_page [expr 10*$max_entries_per_page]
-	set next_page_html "($remaining_items more) <A href=\"/intranet-forum/index?forum_object_id=$object_id&forum_max_entries_per_page=$forum_max_entries_per_page\">&gt;&gt;</a>"
+	set forum_start_idx [expr $end_idx + 1]
+	set forum_how_many $how_many
+
+	set next_page_html "($remaining_items more) <A href=\"$current_page_url?forum_start_idx=$forum_start_idx&$pass_through_vars_html\">&gt;&gt;</a>"
     } else {
 	set next_page_html ""
     }
@@ -1016,11 +1049,11 @@ $order_by_clause"
     if { $start_idx > 1 } {
 	# This means we didn't start with the first row - there is
 	# at least 1 previous row. add a previous page link
-	set previous_start_idx [expr $start_idx - $max_entries_per_page]
+	set previous_start_idx [expr $start_idx - $how_many]
 	if { $previous_start_idx < 1 } {
 	set previous_start_idx 1
 	}
-	set previous_page_html "<A href=$current_page_url?$pass_through_vars_html&start_idx=$previous_start_idx>&lt;&lt;</a>"
+	set previous_page_html "<A href=$current_page_url?$pass_through_vars_html&start_idx=$previous_start_idx>&lt;&lt;</a> (previous [expr $start_idx -1])"
     } else {
 	set previous_page_html ""
     }

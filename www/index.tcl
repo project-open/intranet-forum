@@ -33,7 +33,6 @@ ad_page_contract {
     { forum_start_idx:integer "1" }
     { forum_how_many 0 }
     { forum_folder 0 }
-    { forum_max_entries_per_page 0 }
 }
 
 # ---------------------------------------------------------------
@@ -55,6 +54,9 @@ set current_url [ns_conn url]
 if { [empty_string_p $forum_how_many] || $forum_how_many < 1 } {
     set forum_how_many [ad_parameter -package_id [im_package_core_id] NumberResultsPerPage "" 50]
 } 
+
+# Testing
+set forum_how_many 10
 
 set end_idx [expr $forum_start_idx + $forum_how_many - 1]
 
@@ -127,6 +129,22 @@ append filter_html "
 append filter_html "</table>"
 
 
+
+set admin_html "
+<table border=0 cellpadding=0 cellspacing=0>
+<tr>
+  <td colspan='2' class=rowtitle align=center>New Topics</td>
+</tr>
+<tr>
+  <td colspan=2>
+    [im_forum_create_bar "" 0]
+  </td>
+</tr>
+</table>
+"
+
+
+
 # ---------------------------------------------------------------
 # Prepare parameters for the Forum Component
 # ---------------------------------------------------------------
@@ -134,7 +152,7 @@ append filter_html "</table>"
 # Variables of this page to pass through im_forum_component to maintain the
 # current selection and view of the current project
 
-set export_var_list [list forum_group_id forum_start_idx forum_order_by forum_how_many forum_view_name forum_mine_p]
+set export_var_list [list forum_group_id forum_start_idx forum_order_by forum_how_many forum_view_name forum_mine_p forum_folder]
 
 set restrict_to_asignee_id 0
 set restrict_to_new_topics 0
@@ -145,13 +163,14 @@ set forum_content [im_forum_component \
 	-forum_type		home \
 	-current_page_url	$current_url \
 	-return_url		$return_url \
-	-export_var_list	[list forum_start_idx forum_order_by forum_how_many forum_view_name] \
+	-export_var_list	$export_var_list \
 	-view_name 		[im_opt_val forum_view_name] \
-	-forum_order_by		[im_opt_val forum_order_by] \
+	-forum_order_by		$forum_order_by \
 	-restrict_to_mine_p	$forum_mine_p \
 	-restrict_to_folder	$forum_folder \
 	-restrict_to_new_topics 0 \
-	-max_entries_per_page	$forum_max_entries_per_page \
+	-how_many		$forum_how_many \
+	-start_idx		$forum_start_idx \
 ]
 
 # ---------------------------------------------------------------
@@ -161,10 +180,19 @@ set forum_content [im_forum_component \
 set page_body "
   <form method=get action='index'>
   [export_form_vars forum_group_id forum_start_idx forum_order_by forum_how_many forum_view_name]
-    $filter_html
+
+    <table border=0>
+    <tr>
+      <td>
+	$filter_html
+      </td>
+      <td>
+	$admin_html
+      </td>
+    </tr>
   </form>
 
-[im_forum_navbar "/intranet-forum/index" [list forum_group_id forum_start_idx forum_order_byforum_how_many forum_mine_p forum_view_name] $forum_folder]
+[im_forum_navbar "/intranet-forum/index" [list forum_group_id forum_start_idx forum_order_by forum_how_many forum_mine_p forum_view_name] $forum_folder]
 
 $forum_content
 
