@@ -8,12 +8,12 @@
     <singleton-p>t</singleton-p>
     <auto-mount>intranet-forum</auto-mount>
 
-    <version name="2.1.1" url="http://openacs.org/repository/download/apm/intranet-forum-2.1.1.apm">
+    <version name="2.1.3" url="http://openacs.org/repository/download/apm/intranet-forum-2.1.3.apm">
 
         <owner url="mailto:fraber@fraber.de">Frank Bergmann</owner>
         <vendor url="http://www.project-open.com/">Project/Open</vendor>
 
-        <provides url="intranet-forum" version="2.1.1"/>
+        <provides url="intranet-forum" version="2.1.3"/>
         <requires url="intranet-core" version="2.1.0"/>
 
         <callbacks>
