@@ -220,10 +220,12 @@ where
 # ---------------------------------------------------------------------
 
 # Only if we are creating a new message...
+ns_log Notice "/intranet-forum/new-2: action_type=$action_type"
 if {[string equal $action_type "new_message"]} {
 
     # .. and only if the parameter is enabled...
     if {[ad_parameter -package_id [im_package_forum_id] SubscribeAllMembersToNewItemsP "" "0"]} {
+	ns_log Notice "/intranet-forum/new-2: subscribing all project members to the new message"
 
 	# Select the list of all project members allowed to see
 	# see the new TIND.
