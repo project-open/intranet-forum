@@ -21,6 +21,17 @@ delete from im_view_columns where column_id >= 4200 and column_id < 4299;
 delete from im_views where view_id >= 40 and view_id < 50;
 
 
+
+
+-----------------------------------------------------------
+-- Delete Business Object View URLs
+--
+
+delete from im_biz_object_urls
+where object_type = 'im_forum_topic';
+
+
+
 -- before remove priviliges remove granted permissions
 create or replace function inline_revoke_permission (varchar)
 returns integer as '
