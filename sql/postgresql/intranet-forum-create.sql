@@ -160,7 +160,6 @@ execute procedure im_forum_topics_update_tr ();
 create or replace function im_forum_permission (integer,integer,integer,integer,varchar,integer,integer,integer,integer)
 returns integer as '
 DECLARE
-
 	p_user_id		alias for $1;
 	p_owner_id		alias for $2;
 	p_asignee_id		alias for $3;
@@ -169,20 +168,37 @@ DECLARE
 	p_user_is_object_member	alias for $6;
 	p_user_is_object_admin	alias for $7;
 	p_user_is_employee	alias for $8;
-	p_user_is_company	alias for $9;
+	p_user_is_customer	alias for $9;
 	
 	v_permission_p          integer;
 BEGIN
-	IF p_user_id = p_owner_id THEN		RETURN 1;	END IF;
-	IF p_asignee_id = p_user_id THEN	RETURN 1;	END IF;
-	IF p_scope = ''public'' THEN		RETURN 1;	END IF;
-	IF p_scope = ''group'' THEN		RETURN p_user_is_object_member;	END IF;
-	IF p_scope = ''pm'' THEN		RETURN p_user_is_object_admin;	END IF;
+	-- The owner should always be able to see his or her item
+	IF p_user_id = p_owner_id THEN RETURN 1; END IF;
 
-	IF p_scope = ''client'' AND p_user_is_company = 1 THEN	
+	-- The asignee should always see his tasks.
+	IF p_asignee_id = p_user_id THEN RETURN 1; END IF;
+
+	-- If public then Yes.
+	IF p_scope = ''public'' THEN RETURN 1; END IF;
+
+	-- All group
+	IF p_scope = ''group'' THEN RETURN p_user_is_object_member; END IF;
+
+	-- Only PMs (=object admins)
+	IF p_scope = ''pm'' THEN RETURN p_user_is_object_admin; END IF;
+
+	-- Customers and the PM only
+	IF p_scope = ''client'' AND p_user_is_customer = 1 THEN
 		RETURN p_user_is_object_member;
 	END IF;
+
+	-- Staff only members
 	IF p_scope = ''staff'' AND p_user_is_employee = 1 THEN	
+		RETURN p_user_is_object_member;	
+	END IF;
+
+	-- Staff and Provider member - no customers
+	IF p_scope = ''not_client'' AND NOT p_user_is_customer = 1 THEN	
 		RETURN p_user_is_object_member;	
 	END IF;
 	RETURN 0;
