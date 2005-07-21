@@ -54,56 +54,49 @@ append topic_in_clause [join $topic_list ", "]
 append topic_in_clause ")\n"
 ns_log Notice "forum-action: topic_in_clause=$topic_in_clause"
 
-switch $submit {
+switch $action {
 
-    "Apply" {
-	switch $action {
-
-	    move_to_deleted {
-		set sql "
+    move_to_deleted {
+	set sql "
 			update im_forum_topic_user_map
 			set folder_id = 1
 			where
 				user_id=:user_id
 				$topic_in_clause"
-		db_dml mark_topics $sql
-	    }
+	db_dml mark_topics $sql
+    }
 
-	    move_to_inbox {
-		set sql "
+    move_to_inbox {
+	set sql "
 			update im_forum_topic_user_map
 			set folder_id = 0
 			where	user_id=:user_id
 				$topic_in_clause"
-		db_dml mark_topics $sql
-	    }
+	db_dml mark_topics $sql
+    }
 
-	    mark_as_read {
-		set sql "
+    mark_as_read {
+	set sql "
 			update im_forum_topic_user_map
 			set read_p = 't'
 			where	user_id=:user_id
 				$topic_in_clause"
-		db_dml mark_topics $sql
-	    }
+	db_dml mark_topics $sql
+    }
 
-	    mark_as_unread {
-		set sql "
+    mark_as_unread {
+	set sql "
 			update im_forum_topic_user_map
 			set read_p = 'f'
 			where	user_id=:user_id
 				$topic_in_clause"
-		db_dml mark_topics $sql
-	    }
-
-	    default {
-		ad_return_complaint 1 "<li>[_ intranet-forum.lt_Unknown_value_for_act]: '$action'"
-	    }
-	}
-	ad_returnredirect $return_url
+	db_dml mark_topics $sql
     }
+
     default {
-	ad_return_complaint 1 "<li>[_ intranet-forum.lt_Unknown_value_for_sub]: '$submit'"
+	ad_return_complaint 1 "<li>[_ intranet-forum.lt_Unknown_value_for_act]: '$action'"
     }
 }
+
+ad_returnredirect $return_url
 
