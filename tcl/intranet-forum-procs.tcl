@@ -1025,6 +1025,7 @@ ad_proc -public im_forum_component {
 	    	set asignee_id "" 
 	    	set asignee_initials "" 
 	    }
+
 	
     	    # insert intermediate headers for every project
     	    if {[string equal "Project" $forum_order_by]} {

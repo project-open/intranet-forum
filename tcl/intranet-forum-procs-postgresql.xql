@@ -30,6 +30,10 @@ select
 	t.message,
 	t.priority,
 	to_char(t.due_date, :date_format) as due_date,
+	CASE 	WHEN due_date < now() and t.topic_type_id in (1102, 1104)
+		THEN 1 
+		ELSE 0 
+	END as overdue,
 	t.asignee_id,
 	acs_object__name(t.object_id) as object_name,
 	m.read_p,
