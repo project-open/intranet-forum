@@ -73,17 +73,7 @@ where
         (t.parent_id is null or t.parent_id=0)
         and t.object_id != 1
 	and t.object_id = o.object_id
-	and 1 =	im_forum_permission(
-		:user_id,
-		t.owner_id,
-		t.asignee_id,
-		t.object_id,
-		t.scope,
-		member_objects.p,
-		admin_objects.p,
-		:user_is_employee_p,
-		:user_is_customer_p
-	)
+	$permission_clause
 	$restriction_clause
 $order_by_clause
 

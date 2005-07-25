@@ -303,38 +303,40 @@ select acs_privilege__create_privilege('add_topic_pm','Message to the project ma
 select acs_privilege__add_child('admin', 'add_topic_pm');
 
 
+select acs_privilege__create_privilege('view_topics_all','View all topics','');
+select acs_privilege__add_child('admin', 'view_topics_all');
+
+
+
+------------------------------------------------------
+-- See All Topics
+---
+select im_priv_create('view_topics_all',        'Employees');
+select im_priv_create('view_topics_all',        'P/O Admins');
+select im_priv_create('view_topics_all',        'Project Managers');
+select im_priv_create('view_topics_all',        'Senior Managers');
+
+
 
 ------------------------------------------------------
 -- Add Topic PM
 ---
 select im_priv_create('add_topic_pm',        'Accounting');
-
 select im_priv_create('add_topic_pm',        'Customers');
-
 select im_priv_create('add_topic_pm',        'Employees');
-
 select im_priv_create('add_topic_pm',        'Freelancers');
-
 select im_priv_create('add_topic_pm',        'P/O Admins');
-
 select im_priv_create('add_topic_pm',        'Project Managers');
-
 select im_priv_create('add_topic_pm',        'Sales');
-
 select im_priv_create('add_topic_pm',        'Senior Managers');
-
-
 
 
 ------------------------------------------------------
 -- Add Topic Client
 ---
 select im_priv_create('add_topic_client',        'Accounting');
-
 select im_priv_create('add_topic_client',        'P/O Admins');
-
 select im_priv_create('add_topic_client',        'Sales');
-
 select im_priv_create('add_topic_client',        'Senior Managers');
 
 
@@ -343,9 +345,7 @@ select im_priv_create('add_topic_client',        'Senior Managers');
 -- Add Topic Public
 ---
 select im_priv_create('add_topic_public',        'P/O Admins');
-
 select im_priv_create('add_topic_public',        'Senior Managers');
-
 
 
 
@@ -353,30 +353,20 @@ select im_priv_create('add_topic_public',        'Senior Managers');
 -- Add Topic Non-Clients
 ---
 select im_priv_create('add_topic_noncli',        'Accounting');
-
 select im_priv_create('add_topic_noncli',        'Employees');
-
 select im_priv_create('add_topic_noncli',        'Freelancers');
-
 select im_priv_create('add_topic_noncli',        'P/O Admins');
-
 select im_priv_create('add_topic_noncli',        'Project Managers');
-
 select im_priv_create('add_topic_noncli',        'Sales');
-
 select im_priv_create('add_topic_noncli',        'Senior Managers');
-
 
 
 ------------------------------------------------------
 -- Add Topic Groups
 ---
 select im_priv_create('add_topic_group',        'Accounting');
-
 select im_priv_create('add_topic_group',        'P/O Admins');
-
 select im_priv_create('add_topic_group',        'Sales');
-
 select im_priv_create('add_topic_group',        'Senior Managers');
 
 
@@ -386,31 +376,19 @@ select im_priv_create('add_topic_group',        'Senior Managers');
 -- Add Topic Public
 ---
 select im_priv_create('add_topic_client',        'P/O Admins');
-
 select im_priv_create('add_topic_client',        'Senior Managers');
-
-
 
 
 ------------------------------------------------------
 -- Add Topic Staff
 ---
 select im_priv_create('add_topic_staff',        'Accounting');
-
 select im_priv_create('add_topic_staff',        'Employees');
-
 select im_priv_create('add_topic_staff',        'Freelancers');
-
 select im_priv_create('add_topic_staff',        'P/O Admins');
-
 select im_priv_create('add_topic_staff',        'Project Managers');
-
 select im_priv_create('add_topic_staff',        'Sales');
-
 select im_priv_create('add_topic_staff',        'Senior Managers');
-
-
-
 
 
 ---------------------------------------------------------

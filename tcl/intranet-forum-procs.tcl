@@ -976,7 +976,27 @@ ad_proc -public im_forum_component {
 		set restriction_clause "and $restriction_clause" 
     	}
     	ns_log Notice "im_forum_component: restriction_clause=$restriction_clause"
+
 	
+	# Permissions - who should see what
+	set permission_clause "
+	and 1 =	im_forum_permission(
+		:user_id,
+		t.owner_id,
+		t.asignee_id,
+		t.object_id,
+		t.scope,
+		member_objects.p,
+		admin_objects.p,
+		:user_is_employee_p,
+		:user_is_customer_p
+	)"
+	# We only want to remove the permission clause if the
+	# user is allowed to see all items
+	if {[im_permission $user_id view_topics_all]} {
+	    set permission_clause ""
+	}
+
 
     	# Get the forum_sql statement
     	# Forum items have a complicated "scoped" permission 
