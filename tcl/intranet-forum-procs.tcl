@@ -400,7 +400,7 @@ ad_proc -public im_forum_render_tind {
     set bgcolor(0) " class=roweven"
     set bgcolor(1) " class=rowodd"
 
-    set user_is_group_member_p [ad_user_group_member $object_id $user_id]
+    set user_is_group_member_p [im_biz_object_member_p $user_id $object_id]
     set task_or_incident_p [im_forum_is_task_or_incident $topic_type_id]
 
     set ctr 1
