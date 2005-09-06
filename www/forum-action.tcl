@@ -50,6 +50,7 @@ foreach topic_insert_id $topic_list {
 # "topic_id in (1,2,3,4...)" clause
 #
 set topic_in_clause "and topic_id in ("
+lappend topic_list 0
 append topic_in_clause [join $topic_list ", "]
 append topic_in_clause ")\n"
 ns_log Notice "forum-action: topic_in_clause=$topic_in_clause"
