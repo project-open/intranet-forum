@@ -130,7 +130,6 @@ set topic_id [db_nextval "im_forum_topics_seq"]
 set parent_id ""
 set owner_id $error_user_id
 set scope "group"
-set subject $error_url
 set message "
 Error URL: $error_url
 System URL: $system_url
@@ -141,6 +140,11 @@ Package Version(s): $core_version
 Package Versions: $package_versions
 Error Info: 
 $error_info"
+
+# Limit Subject and message to their field sizes
+set subject [string_truncate -len 200 $error_url]
+set message [string_truncate -len 4000 $message]
+
 
 set priority 3
 set due [db_string tomorrow "select to_date(to_char(now(), 'J'), 'J') + 1 from dual"]
