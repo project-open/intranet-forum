@@ -1,5 +1,5 @@
 <master src="../../intranet-core/www/master">
-<property name="title"><#Home Home#</property>
+<property name="title">@title@</property>
 
 <H1>#intranet-forum.Incident_Received#</H1>
 
@@ -39,7 +39,7 @@
 </tr>
 <tr>
   <td>#intranet-forum.Error_URL#</td>
-  <td>@error_url@</td>
+  <td>@error_url_50@</td>
 </tr>
 </table>
 

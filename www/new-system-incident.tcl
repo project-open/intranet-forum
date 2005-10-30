@@ -46,6 +46,8 @@ set return_url "/intranet/"
 set authority_id ""
 set username ""
 
+set title "New System Incident"
+
 set system_owner_email [ad_parameter -package_id [ad_acs_kernel_id] SystemOwner]
 set system_owner_id [db_string user_id "select party_id from parties where lower(email) = lower(:system_owner_email)" -default 0]
 
@@ -144,6 +146,7 @@ $error_info"
 # Limit Subject and message to their field sizes
 set subject [string_truncate -len 200 $error_url]
 set message [string_truncate -len 4000 $message]
+set error_url_50 [string_truncate -len 40 $error_url]
 
 
 set priority 3
