@@ -39,7 +39,7 @@
 </tr>
 <tr>
   <td>#intranet-forum.Error_URL#</td>
-  <td>@error_url@</td>
+  <td>@error_url_50@</td>
 </tr>
 </table>
 
