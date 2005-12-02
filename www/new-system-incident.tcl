@@ -142,6 +142,13 @@ Package Versions: $package_versions
 Error Info: 
 $error_info"
 
+
+# Limit Subject and message to their field sizes
+set subject [string_truncate -len 200 $error_url]
+set message [string_truncate -len 4000 $message]
+set error_url_50 [string_truncate -len 40 $error_url]
+
+
 set priority 3
 set due [db_string tomorrow "select to_date(to_char(now(), 'J'), 'J') + 1 from dual"]
 
