@@ -54,70 +54,30 @@ set system_owner_id [db_string user_id "select party_id from parties where lower
 # Get more debug information
 # -----------------------------------------------------------------
 
-set more_info ""
+set more_info "Generic Vars:\n"
 
 # Extract variables from form and HTTP header
-set form_vars [ns_conn form]
 set header_vars [ns_conn headers]
 set url [ns_conn url]
 
-# Convert the form vars into a list
-
-append more_info "Form Vars:\n"
-if {"" != $form_vars} {
-    foreach var [ad_ns_set_keys $form_vars] {
-	set value [ns_set get $form_vars $var]
-	ns_log Notice "new-system-incident: $var=$value"
-	append more_info "$var: $value\n"
-    }
-}
-
 # UserId probably 0, except for returning users
 set user_id [ad_get_user_id]
+append more_info "user_id: $user_id\n"
+
 
 set client_ip [ns_set get $header_vars "Client-ip"]
 set referer_url [ns_set get $header_vars "Referer"]
 set peer_ip [ns_conn peeraddr]
-
-set ip $peer_ip
-if {"" != $client_ip} { set ip $client_ip }
-
-# Extract cookies
-set cookie_string [ns_set get $header_vars "Cookie"]
-set cookies [split $cookie_string ";"]
-set cookie_vars [ns_set create]
-foreach cookie $cookies {
-    set cookie [string trim $cookie]
-    set cookie_parts [split $cookie "="]
-    set cookie_name [lindex $cookie_parts 0]
-    set cookie_value [ns_urldecode [lindex $cookie_parts 1]]
-        ns_set put $cookie_vars $cookie_name $cookie_value
-}
-
-ns_log Notice "var:     url     =       $url\n"
-ns_log Notice "var:     user_id =       $user_id\n"
-ns_log Notice "var:     client_ip       =       $client_ip\n"
-ns_log Notice "var:     peer_ip =       $peer_ip\n"
-ns_log Notice "var:     ip      =       $ip\n"
+append more_info "client_ip: $client_ip\n"
+append more_info "referer_url: $referer_url\n"
+append more_info "peer_ip: $peer_ip\n"
 
 
-append more_info "Header Vars:\n"
+append more_info "\nHeader Vars:\n"
 foreach var [ad_ns_set_keys $header_vars] {
     set value [ns_set get $header_vars $var]
-    append more_info ns_log Notice "$var: $value\n"
+    append more_info "$var: $value\n"
 }
-
-#foreach var [ad_ns_set_keys $cookie_vars] {
-#    set value [ns_set get $cookie_vars $var]
-#    ns_log Notice "cookie:      $var    =       $value\n"
-#}
-
-# Are we behind a firewall or behind a reverse proxy?
-# set x_forwarded_for [ns_set get $header_vars "X-Forwarded-For"]
-# if {"" != $x_forwarded_for} {
-#         set ip $x_forwarded_for
-# }
-
 
 
 # -----------------------------------------------------------------
@@ -197,6 +157,9 @@ System URL: $system_url
 User Name: $error_first_names $error_last_name
 User Email: $error_user_email
 Publisher Name: $publisher_name
+
+$more_info
+
 Package Version(s): $core_version
 Package Versions: $package_versions
 Error Info: 
