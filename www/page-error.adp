@@ -14,7 +14,8 @@
 <% set system_url [ad_parameter -package_id [ad_acs_kernel_id] SystemURL "" ""] %>
 <% db_1row user_info "select * from cc_users where user_id=[ad_get_user_id]" %>
 <% set publisher_name [ad_parameter -package_id [ad_acs_kernel_id] PublisherName "" ""] %>
-<% set package_versions [db_list package_versions "select package_key||':'||version_name from apm_package_versions"] %>
+<% set package_versions [db_list package_versions "select v.package_key||':'||v.version_name from (select max(version_id) as version_id, package_key from apm_package_versions group by package_key) m, apm_package_versions v where m.version_id = v.version_id"] %>
+
 
 <form action="@report_url;noquote@" method=POST>
 <input type=hidden name=error_url value=@error_url@>
