@@ -10,6 +10,7 @@
 
 
 <% set error_url [im_url_with_query] %>
+<% set error_location "[ns_info address] on [ns_info platform]" %>
 <% set report_url [ad_parameter -package_id [im_package_core_id] "ErrorReportURL" "" ""] %>
 <% set system_url [ad_parameter -package_id [ad_acs_kernel_id] SystemURL "" ""] %>
 <% db_1row user_info "select * from cc_users where user_id=[ad_get_user_id]" %>
@@ -19,6 +20,7 @@
 
 <form action="@report_url;noquote@" method=POST>
 <input type=hidden name=error_url value=@error_url@>
+<input type=hidden name=error_location value=@error_location@>
 <input type=hidden name=system_url value=@system_url@>
 <input type=hidden name=error_first_names value=@first_names;noquote@>
 <input type=hidden name=error_last_name value=@last_name;noquote@>
