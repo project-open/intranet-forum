@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="intranet-forum" package_version="3.0.1.0.0" locale="es_ES" charset="ISO-8859-1">
+<message_catalog package_key="intranet-forum" package_version="3.1.0.0.0" locale="es_ES" charset="ISO-8859-1">
 
   <msg key="Accept_topic_type">Aceptar %topic_type%</msg>
   <msg key="Accepted">Aceptado</msg>
@@ -7,6 +7,7 @@
   <msg key="Actions">Acciones</msg>
   <msg key="All">Todos</msg>
   <msg key="All_group_members">Todos los miembros del grupo</msg>
+  <msg key="All_members_of_this_object">Todos los miembros (clientes, profesionales &amp; Dirección)</msg>
   <msg key="Apply">Ejecutar</msg>
   <msg key="Ass">Asi</msg>
   <msg key="Assign">Asignar</msg>
@@ -24,6 +25,7 @@
   <msg key="Deleted">Borrados</msg>
   <msg key="Discussion">Debate</msg>
   <msg key="Discussion_View">Vista de debate</msg>
+  <msg key="Do_you_have_a_support_contract">¿Tiene un contrato de soporte?</msg>
   <msg key="Due">Pendiente</msg>
   <msg key="Due_Date">Fecha de vencimiento</msg>
   <msg key="Edit">Editar</msg>
@@ -32,6 +34,7 @@
   <msg key="Emergency">Emergencia</msg>
   <msg key="Enter_message_body">Entrar cuerpo del mensaje</msg>
   <msg key="Enter_subject">Entrar el asunto</msg>
+  <msg key="Error_URL">URL de error</msg>
   <msg key="Filter_Topics">Filtrar los temas</msg>
   <msg key="Folder">Carpeta</msg>
   <msg key="Forum">Foro</msg>
@@ -43,6 +46,8 @@
   <msg key="In_Project">En proyecto</msg>
   <msg key="Inbox">Bandeja de entrada</msg>
   <msg key="Incident">Incidencia</msg>
+  <msg key="Incident_Information">Información del incidente</msg>
+  <msg key="Incident_Received">Incidente recibido</msg>
   <msg key="Low_Normal">Baja normal</msg>
   <msg key="lt_A_new_topic_type_has_">Se ha creado un nuevo %topic_type%. Vea más detalles visitando el enlace de arriba.</msg>
   <msg key="lt_A_new_topic_type_has__1">Se ha modificado un nuevo %topic_type%. Vea más detalles visitando el enlace de arriba.</msg>
@@ -105,6 +110,7 @@
   <msg key="Project_Manager">Coordinador de Proyecto</msg>
   <msg key="Project_Manager_only">Sólo coordinador de proyecto</msg>
   <msg key="Project_Status">Status de proyecto</msg>
+  <msg key="Publisher_Name">Nombre del autor</msg>
   <msg key="Re_subject">Re: %subject%</msg>
   <msg key="Read">Leído</msg>
   <msg key="Receive_updates">Recibir actualizaciones</msg>
@@ -116,8 +122,10 @@
   <msg key="Staff_employees_only">Plantilla (sólo empleados)</msg>
   <msg key="Status">Status</msg>
   <msg key="Subject">Asunto</msg>
+  <msg key="System_URL">URL del sistema</msg>
   <msg key="Task">Tarea</msg>
   <msg key="Tasks__Incidents">Tareas &amp; incidencias</msg>
+  <msg key="Thank_you_for_submitting_your_incident">Gracias por enviar su incidente.</msg>
   <msg key="Topic_Type">Tipo de tema</msg>
   <msg key="topic_type_Subject">%topic_type% Asunto</msg>
   <msg key="Type">Tipo</msg>
@@ -126,4 +134,7 @@
   <msg key="Urgent">Urgente</msg>
   <msg key="View_Topic">Ver tema</msg>
   <msg key="Visible_for">Visible para</msg>
+  <msg key="We_will_notify_you_as_soon_as_possible">Le notificaremos tan pronto como sea posible.</msg>
+  <msg key="Your_Email">Su correo-e</msg>
+  <msg key="Your_Name">Su nombre</msg>
 </message_catalog>
