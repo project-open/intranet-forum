@@ -1130,6 +1130,9 @@ ad_proc -public im_forum_component {
 	<option value=mark_as_unread>[_ intranet-forum.Mark_as_unread]</option>
 	<option value=move_to_deleted>[_ intranet-forum.Move_to_Deleted]</option>
 	<option value=move_to_inbox>[_ intranet-forum.Move_to_Active]</option>
+	<option value=task_accept>[lang::message::lookup "" intranet-forum.Accept_Tasks "Accept Tasks"]</option>
+	<option value=task_reject>[lang::message::lookup "" intranet-forum.Reject_Tasks "Reject Tasks"]</option>
+	<option value=task_close>[lang::message::lookup "" intranet-forum.Close_Tasks "Close Tasks"]</option>
     </select>
     <input type=submit name=submit value='[_ intranet-forum.Apply]'>
   </td>
