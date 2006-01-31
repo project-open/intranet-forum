@@ -708,6 +708,7 @@ ad_proc -public im_forum_component {
     ns_log Notice "im_forum_component: restrict_to_new_topics=$restrict_to_new_topics"
     ns_log Notice "im_forum_component: restrict_to_folder=$restrict_to_folder"
     ns_log Notice "im_forum_component: restrict_to_employees=$restrict_to_employees"
+    ns_log Notice "im_forum_component: start_idx=$start_idx"
 
     set bgcolor(0) " class=roweven"
     set bgcolor(1) " class=rowodd"
