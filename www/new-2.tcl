@@ -430,7 +430,7 @@ where
 "
 
 # Check for the root-parent message in order to determine
-# whethter the user has subscribed to it or not.
+# whether the user has subscribed to it or not.
 set ctr 0
 while {"" != $parent_id && 0 != $parent_id && $ctr < 10} {
     ns_log Notice "intranet-forum/new-2: looking up parent $parent_id of topic $topic_id"
@@ -535,10 +535,13 @@ where	m.topic_id=:topic_id
 
 db_foreach update_stakeholders $stakeholder_sql {
 
+    ns_log Notice "intranet-forum/new-2: Sending alerts: user_id=$stakeholder_id, importance=$importance, receive_updates=$receive_updates"
+
     if {$importance == 0} { continue }
     if {[string compare $receive_updates "none"]} { continue }
     if {$importance < 2 && [string compare $receive_updates "major"]} { continue }
 
+    ns_log Notice "intranet-forum/new-2: Sending out alert: '$subject'"
     im_send_alert $stakeholder_id "hourly" $subject "$msg_url\n\n$message"
 }
 
