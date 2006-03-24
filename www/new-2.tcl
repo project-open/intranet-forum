@@ -546,9 +546,17 @@ db_foreach update_stakeholders $stakeholder_sql {
 
     ns_log Notice "intranet-forum/new-2: Sending alerts: user_id=$stakeholder_id, importance=$importance, receive_updates=$receive_updates"
 
-    if {$importance == 0} { continue }
-    if {[string compare $receive_updates "none"]} { continue }
-    if {$importance < 2 && [string compare $receive_updates "major"]} { continue }
+    switch $receive_updates {
+	none {
+	    continue
+	}
+	major {
+	    if {$importance < 2} { continue }
+	}
+	all {
+	    # Nothing - receive the message
+	}
+    }
 
     ns_log Notice "intranet-forum/new-2: Sending out alert: '$subject'"
     im_send_alert $stakeholder_id "hourly" $subject "$msg_url\n\n$message"
