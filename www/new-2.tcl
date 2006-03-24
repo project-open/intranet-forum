@@ -188,14 +188,23 @@ where topic_id=:topic_id"
     }
 
     # im_forum_topics_user_map may or may not exist for every user.
-    # So we create a record just in case, even if the SQL fails.
-    db_transaction {
-        db_dml im_forum_topic_user_map_insert "
-	insert into im_forum_topic_user_map 
-	(topic_id, user_id, read_p, folder_id, receive_updates) values 
-	(:topic_id, :user_id, :read_p, :folder_id, :receive_updates)"
-    } on_error {
-        # nothing - may already exist...
+    # So we create a record just in case.
+    set exists_p [db_string topic_map_exists "
+	select	count(*)
+	from	im_forum_topic_user_map
+	where	topic_id = :topic_id
+		and user_id = :user_id
+    "]
+    if {!$exists_p} {
+	db_transaction {
+	    db_dml im_forum_topic_user_map_insert "
+		insert into im_forum_topic_user_map 
+		(topic_id, user_id, read_p, folder_id, receive_updates) values 
+		(:topic_id, :user_id, :read_p, :folder_id, :receive_updates)
+	    "
+	} on_error {
+	    # nothing - may already exist...
+	}
     }
 
 
@@ -299,7 +308,6 @@ where
 	}
     }
 }
-
 
 # ---------------------------------------------------------------------
 # Assign the ticket to a new user
@@ -524,6 +532,7 @@ if {!$action_type_found} {
 	}
     }
 }
+
 
 # Send a mail to all subscribed users
 #
