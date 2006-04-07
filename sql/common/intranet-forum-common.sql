@@ -28,6 +28,19 @@ insert into im_forum_folders values (8, null, null, 'Sys8');
 insert into im_forum_folders values (9, null, null, 'Sys9');
 
 
+
+-----------------------------------------------------------
+-- Where to show forum topic objects
+--
+
+insert into im_biz_object_urls (object_type, url_type, url) values (
+'im_forum_topic','view','/intranet-forum/view?topic_id=');
+insert into im_biz_object_urls (object_type, url_type, url) values (
+'im_forum_topic','edit','/intranet-forum/new?topic_id=');
+
+
+
+
 -- Forum Topic Types
 delete from im_categories where category_type = 'Intranet Topic Type';
 
@@ -152,7 +165,11 @@ extra_select, extra_where, sort_order, visible_for) values (4004,40,NULL,'Subjec
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4006,40,NULL,'Due',
-'$due_date','','',8,'');
+'[if {$overdue > 0} {
+        set t "<font color=red>$due_date</font>"
+} else {
+        set t "$due_date"
+}]','','',8,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4010,40,NULL,
@@ -184,7 +201,11 @@ extra_select, extra_where, sort_order, visible_for) values (4104,41,NULL,'Subjec
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4106,41,NULL,'Due',
-'$due_date','','',8,'');
+'[if {$overdue > 0} {
+        set t "<font color=red>$due_date</font>"
+} else {
+        set t "$due_date"
+}]','','',8,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4107,41,NULL,'Own',
@@ -195,6 +216,10 @@ insert into im_view_columns (column_id, view_id, group_id, column_name, column_r
 extra_select, extra_where, sort_order, visible_for) values (4108,41,NULL,'Ass',
 '"<a href=/intranet/users/view?user_id=$asignee_id>$asignee_initials</a>"',
 '','',10,'');
+
+insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
+extra_select, extra_where, sort_order, visible_for) values (4109,41,NULL,'Status',
+'$topic_status','','',11,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4110,41,NULL,
@@ -231,7 +256,12 @@ extra_select, extra_where, sort_order, visible_for) values (4204,42,NULL,'Subjec
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4206,42,NULL,'Due',
-'$due_date','','',8,'');
+'[if {$overdue > 0} {
+        set t "<font color=red>$due_date</font>"
+} else {
+        set t "$due_date"
+}]','','',8,'');
+
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4207,42,NULL,'Own',
@@ -284,7 +314,11 @@ extra_select, extra_where, sort_order, visible_for) values (4404,44,NULL,'Subjec
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4406,44,NULL,'Due',
-'$due_date','','',8,'');
+'[if {$overdue > 0} {
+        set t "<font color=red>$due_date</font>"
+} else {
+        set t "$due_date"
+}]','','',8,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4407,44,NULL,'Own',
@@ -325,7 +359,11 @@ extra_select, extra_where, sort_order, visible_for) values (4504,45,NULL,'Subjec
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4506,45,NULL,'Due',
-'$due_date','','',8,'');
+'[if {$overdue > 0} {
+        set t "<font color=red>$due_date</font>"
+} else {
+        set t "$due_date"
+}]','','',8,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4507,45,NULL,'Own',
@@ -366,7 +404,11 @@ extra_select, extra_where, sort_order, visible_for) values (4604,46,NULL,'Subjec
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4606,46,NULL,'Due',
-'$due_date','','',8,'');
+'[if {$overdue > 0} {
+        set t "<font color=red>$due_date</font>"
+} else {
+        set t "$due_date"
+}]','','',8,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4607,46,NULL,'Own',

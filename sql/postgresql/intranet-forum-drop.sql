@@ -18,7 +18,19 @@ select im_component_plugin__del_module('intranet-forum');
 delete from im_view_columns where column_id >= 4000 and column_id < 4099;
 delete from im_view_columns where column_id >= 4100 and column_id < 4199;
 delete from im_view_columns where column_id >= 4200 and column_id < 4299;
+delete from im_view_columns where view_id >= 40 and view_id < 50;
 delete from im_views where view_id >= 40 and view_id < 50;
+
+
+
+
+-----------------------------------------------------------
+-- Delete Business Object View URLs
+--
+
+delete from im_biz_object_urls
+where object_type = 'im_forum_topic';
+
 
 
 -- before remove priviliges remove granted permissions
@@ -31,6 +43,9 @@ BEGIN
 
      delete from acs_permissions
      where privilege = p_priv_name;
+     
+     delete from acs_privilege_hierarchy
+     where child_privilege = p_priv_name;
 
      return 0;
 

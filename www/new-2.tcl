@@ -188,14 +188,23 @@ where topic_id=:topic_id"
     }
 
     # im_forum_topics_user_map may or may not exist for every user.
-    # So we create a record just in case, even if the SQL fails.
-    db_transaction {
-        db_dml im_forum_topic_user_map_insert "
-	insert into im_forum_topic_user_map 
-	(topic_id, user_id, read_p, folder_id, receive_updates) values 
-	(:topic_id, :user_id, :read_p, :folder_id, :receive_updates)"
-    } on_error {
-        # nothing - may already exist...
+    # So we create a record just in case.
+    set exists_p [db_string topic_map_exists "
+	select	count(*)
+	from	im_forum_topic_user_map
+	where	topic_id = :topic_id
+		and user_id = :user_id
+    "]
+    if {!$exists_p} {
+	db_transaction {
+	    db_dml im_forum_topic_user_map_insert "
+		insert into im_forum_topic_user_map 
+		(topic_id, user_id, read_p, folder_id, receive_updates) values 
+		(:topic_id, :user_id, :read_p, :folder_id, :receive_updates)
+	    "
+	} on_error {
+	    # nothing - may already exist...
+	}
     }
 
 
@@ -299,7 +308,6 @@ where
 	}
     }
 }
-
 
 # ---------------------------------------------------------------------
 # Assign the ticket to a new user
@@ -430,7 +438,7 @@ where
 "
 
 # Check for the root-parent message in order to determine
-# whethter the user has subscribed to it or not.
+# whether the user has subscribed to it or not.
 set ctr 0
 while {"" != $parent_id && 0 != $parent_id && $ctr < 10} {
     ns_log Notice "intranet-forum/new-2: looking up parent $parent_id of topic $topic_id"
@@ -525,6 +533,7 @@ if {!$action_type_found} {
     }
 }
 
+
 # Send a mail to all subscribed users
 #
 set stakeholder_sql "
@@ -535,10 +544,21 @@ where	m.topic_id=:topic_id
 
 db_foreach update_stakeholders $stakeholder_sql {
 
-    if {$importance == 0} { continue }
-    if {[string compare $receive_updates "none"]} { continue }
-    if {$importance < 2 && [string compare $receive_updates "major"]} { continue }
+    ns_log Notice "intranet-forum/new-2: Sending alerts: user_id=$stakeholder_id, importance=$importance, receive_updates=$receive_updates"
 
+    switch $receive_updates {
+	none {
+	    continue
+	}
+	major {
+	    if {$importance < 2} { continue }
+	}
+	all {
+	    # Nothing - receive the message
+	}
+    }
+
+    ns_log Notice "intranet-forum/new-2: Sending out alert: '$subject'"
     im_send_alert $stakeholder_id "hourly" $subject "$msg_url\n\n$message"
 }
 

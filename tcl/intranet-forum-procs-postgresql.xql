@@ -30,6 +30,10 @@ select
 	t.message,
 	t.priority,
 	to_char(t.due_date, :date_format) as due_date,
+	CASE 	WHEN due_date < now() and t.topic_type_id in (1102, 1104)
+		THEN 1 
+		ELSE 0 
+	END as overdue,
 	t.asignee_id,
 	acs_object__name(t.object_id) as object_name,
 	m.read_p,
@@ -69,17 +73,7 @@ where
         (t.parent_id is null or t.parent_id=0)
         and t.object_id != 1
 	and t.object_id = o.object_id
-	and 1 =	im_forum_permission(
-		:user_id,
-		t.owner_id,
-		t.asignee_id,
-		t.object_id,
-		t.scope,
-		member_objects.p,
-		admin_objects.p,
-		:user_is_employee_p,
-		:user_is_customer_p
-	)
+	$permission_clause
 	$restriction_clause
 $order_by_clause
 

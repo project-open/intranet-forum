@@ -329,7 +329,7 @@ if {$task_or_incident_p} {
 	  <td>
 		<select name=priority>
 		<option value=1>1 - [_ intranet-forum.Emergency]</option>
-		<option value=2>2 - Very Urgent#></option>
+		<option value=2>2 - [lang::message::lookup "" intranet-forum.Very_Urgent "Very Urgent"]</option>
 		<option value=3>3 - [_ intranet-forum.Urgent]</option>
 		<option value=4>4 - [_ intranet-forum.High_Normal]</option>
 		<option value=5 selected>5 - [_ intranet-forum.Normal]</option>
@@ -428,6 +428,9 @@ incr ctr
 
 
 # -------------- Scope -----------------------------
+
+# Default is "group", if the user can do it...
+if {[im_permission $user_id add_topic_group]} {set scope "group"}
 
 if {$topic_type_id != [im_topic_type_id_reply]} {
 

@@ -50,60 +50,84 @@ foreach topic_insert_id $topic_list {
 # "topic_id in (1,2,3,4...)" clause
 #
 set topic_in_clause "and topic_id in ("
+lappend topic_list 0
 append topic_in_clause [join $topic_list ", "]
 append topic_in_clause ")\n"
 ns_log Notice "forum-action: topic_in_clause=$topic_in_clause"
 
-switch $submit {
+switch $action {
 
-    "Apply" {
-	switch $action {
-
-	    move_to_deleted {
-		set sql "
-			update im_forum_topic_user_map
-			set folder_id = 1
-			where
-				user_id=:user_id
-				$topic_in_clause"
-		db_dml mark_topics $sql
-	    }
-
-	    move_to_inbox {
-		set sql "
-			update im_forum_topic_user_map
-			set folder_id = 0
-			where	user_id=:user_id
-				$topic_in_clause"
-		db_dml mark_topics $sql
-	    }
-
-	    mark_as_read {
-		set sql "
-			update im_forum_topic_user_map
-			set read_p = 't'
-			where	user_id=:user_id
-				$topic_in_clause"
-		db_dml mark_topics $sql
-	    }
-
-	    mark_as_unread {
-		set sql "
-			update im_forum_topic_user_map
-			set read_p = 'f'
-			where	user_id=:user_id
-				$topic_in_clause"
-		db_dml mark_topics $sql
-	    }
-
-	    default {
-		ad_return_complaint 1 "<li>[_ intranet-forum.lt_Unknown_value_for_act]: '$action'"
-	    }
-	}
-	ad_returnredirect $return_url
+    move_to_deleted {
+	set sql "
+		update im_forum_topic_user_map
+		set folder_id = 1
+		where
+			user_id=:user_id
+			$topic_in_clause"
+	db_dml mark_topics $sql
     }
+
+    move_to_inbox {
+	set sql "
+		update im_forum_topic_user_map
+		set folder_id = 0
+		where	user_id=:user_id
+			$topic_in_clause"
+	db_dml mark_topics $sql
+    }
+
+    mark_as_read {
+	set sql "
+		update im_forum_topic_user_map
+		set read_p = 't'
+		where	user_id=:user_id
+			$topic_in_clause"
+	db_dml mark_topics $sql
+    }
+
+    mark_as_unread {
+	set sql "
+		update im_forum_topic_user_map
+		set read_p = 'f'
+		where	user_id=:user_id
+			$topic_in_clause"
+	db_dml mark_topics $sql
+    }
+
+    task_accept {
+	set sql "
+		update im_forum_topics
+		set topic_status_id = [im_topic_status_id_accepted]
+		where	(owner_id = :user_id OR asignee_id = :user_id)
+			and topic_type_id in ([im_topic_type_id_task], [im_topic_type_id_incident])
+			$topic_in_clause"
+	db_dml accept_tasks $sql
+    }
+
+    task_reject {
+	set sql "
+		update im_forum_topics
+		set topic_status_id = [im_topic_status_id_rejected]
+		where	(owner_id = :user_id OR asignee_id = :user_id)
+			and topic_type_id in ([im_topic_type_id_task], [im_topic_type_id_incident])
+			$topic_in_clause"
+	db_dml reject_tasks $sql
+    }
+
+    task_close {
+	set sql "
+		update im_forum_topics
+		set topic_status_id = [im_topic_status_id_closed]
+		where	(owner_id = :user_id OR asignee_id = :user_id)
+			and topic_type_id in ([im_topic_type_id_task], [im_topic_type_id_incident])
+			$topic_in_clause"
+	db_dml close_tasks $sql
+    }
+
     default {
-	ad_return_complaint 1 "<li>[_ intranet-forum.lt_Unknown_value_for_sub]: '$submit'"
+	ad_return_complaint 1 "<li>[_ intranet-forum.lt_Unknown_value_for_act]: '$action'"
     }
 }
+
+ad_returnredirect $return_url
 

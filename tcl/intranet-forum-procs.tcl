@@ -277,16 +277,19 @@ select distinct
 	im_name_from_user_id(u.user_id) as user_name
 from
 	acs_rels r,
-	group_member_map m,
-	membership_rels mr,
 	users u
 where
 	r.object_id_one = :object_id
 	and r.object_id_two = u.user_id
-	and m.rel_id = mr.rel_id
-	and mr.member_state = 'approved'
-	and m.member_id = u.user_id
-	and not(m.group_id = :customer_group_id)
+	and u.user_id not in (
+		select distinct
+			m.member_id
+		from	group_member_map m,
+			membership_rels mr
+		where	m.rel_id = mr.rel_id
+			and mr.member_state = 'approved'
+			and m.group_id = :customer_group_id
+	)
 )"
 
     set object_staff_sql "(
@@ -400,7 +403,7 @@ ad_proc -public im_forum_render_tind {
     set bgcolor(0) " class=roweven"
     set bgcolor(1) " class=rowodd"
 
-    set user_is_group_member_p [ad_user_group_member $object_id $user_id]
+    set user_is_group_member_p [im_biz_object_member_p $user_id $object_id]
     set task_or_incident_p [im_forum_is_task_or_incident $topic_type_id]
 
     set ctr 1
@@ -708,6 +711,7 @@ ad_proc -public im_forum_component {
     ns_log Notice "im_forum_component: restrict_to_new_topics=$restrict_to_new_topics"
     ns_log Notice "im_forum_component: restrict_to_folder=$restrict_to_folder"
     ns_log Notice "im_forum_component: restrict_to_employees=$restrict_to_employees"
+    ns_log Notice "im_forum_component: start_idx=$start_idx"
 
     set bgcolor(0) " class=roweven"
     set bgcolor(1) " class=rowodd"
@@ -976,7 +980,27 @@ ad_proc -public im_forum_component {
 		set restriction_clause "and $restriction_clause" 
     	}
     	ns_log Notice "im_forum_component: restriction_clause=$restriction_clause"
+
 	
+	# Permissions - who should see what
+	set permission_clause "
+	and 1 =	im_forum_permission(
+		:user_id,
+		t.owner_id,
+		t.asignee_id,
+		t.object_id,
+		t.scope,
+		member_objects.p,
+		admin_objects.p,
+		:user_is_employee_p,
+		:user_is_customer_p
+	)"
+	# We only want to remove the permission clause if the
+	# user is allowed to see all items
+	if {[im_permission $user_id view_topics_all]} {
+	    set permission_clause ""
+	}
+
 
     	# Get the forum_sql statement
     	# Forum items have a complicated "scoped" permission 
@@ -1025,6 +1049,7 @@ ad_proc -public im_forum_component {
 	    	set asignee_id "" 
 	    	set asignee_initials "" 
 	    }
+
 	
     	    # insert intermediate headers for every project
     	    if {[string equal "Project" $forum_order_by]} {
@@ -1108,6 +1133,9 @@ ad_proc -public im_forum_component {
 	<option value=mark_as_unread>[_ intranet-forum.Mark_as_unread]</option>
 	<option value=move_to_deleted>[_ intranet-forum.Move_to_Deleted]</option>
 	<option value=move_to_inbox>[_ intranet-forum.Move_to_Active]</option>
+	<option value=task_accept>[lang::message::lookup "" intranet-forum.Accept_Tasks "Accept Tasks"]</option>
+	<option value=task_reject>[lang::message::lookup "" intranet-forum.Reject_Tasks "Reject Tasks"]</option>
+	<option value=task_close>[lang::message::lookup "" intranet-forum.Close_Tasks "Close Tasks"]</option>
     </select>
     <input type=submit name=submit value='[_ intranet-forum.Apply]'>
   </td>

@@ -19,7 +19,8 @@ ad_page_contract {
 
     @author frank.bergmann@project-open.com
 } {
-    { error_url:trim}
+    { error_url:trim ""}
+    { error_location:trim ""}
     { error_info:trim,html ""}
     { error_first_names:trim ""}
     { error_last_name:trim ""}
@@ -55,13 +56,31 @@ set system_owner_id [db_string user_id "select party_id from parties where lower
 # Get more debug information
 # -----------------------------------------------------------------
 
-set form_vars [ns_conn form]
-if {"" != $form_vars} {
-    foreach var [ad_ns_set_keys $form_vars] {
-	set value [ns_set get $form_vars $var]
-	ns_log Notice "new-system-incident: $var=$value"
-    }
+set more_info "Generic Vars:\n"
+
+# Extract variables from form and HTTP header
+set header_vars [ns_conn headers]
+set url [ns_conn url]
+
+# UserId probably 0, except for returning users
+set user_id [ad_get_user_id]
+append more_info "user_id: $user_id\n"
+
+
+set client_ip [ns_set get $header_vars "Client-ip"]
+set referer_url [ns_set get $header_vars "Referer"]
+set peer_ip [ns_conn peeraddr]
+append more_info "client_ip: $client_ip\n"
+append more_info "referer_url: $referer_url\n"
+append more_info "peer_ip: $peer_ip\n"
+
+
+append more_info "\nHeader Vars:\n"
+foreach var [ad_ns_set_keys $header_vars] {
+    set value [ns_set get $header_vars $var]
+    append more_info "$var: $value\n"
 }
+
 
 # -----------------------------------------------------------------
 # Lookup user_id or create entry
@@ -134,14 +153,19 @@ set owner_id $error_user_id
 set scope "group"
 set message "
 Error URL: $error_url
+Error Location: $error_location
 System URL: $system_url
 User Name: $error_first_names $error_last_name
 User Email: $error_user_email
 Publisher Name: $publisher_name
+
+$more_info
+
 Package Version(s): $core_version
 Package Versions: $package_versions
 Error Info: 
 $error_info"
+
 
 # Limit Subject and message to their field sizes
 set subject [string_truncate -len 200 $error_url]

@@ -160,7 +160,6 @@ execute procedure im_forum_topics_update_tr ();
 create or replace function im_forum_permission (integer,integer,integer,integer,varchar,integer,integer,integer,integer)
 returns integer as '
 DECLARE
-
 	p_user_id		alias for $1;
 	p_owner_id		alias for $2;
 	p_asignee_id		alias for $3;
@@ -169,20 +168,37 @@ DECLARE
 	p_user_is_object_member	alias for $6;
 	p_user_is_object_admin	alias for $7;
 	p_user_is_employee	alias for $8;
-	p_user_is_company	alias for $9;
+	p_user_is_customer	alias for $9;
 	
 	v_permission_p          integer;
 BEGIN
-	IF p_user_id = p_owner_id THEN		RETURN 1;	END IF;
-	IF p_asignee_id = p_user_id THEN	RETURN 1;	END IF;
-	IF p_scope = ''public'' THEN		RETURN 1;	END IF;
-	IF p_scope = ''group'' THEN		RETURN p_user_is_object_member;	END IF;
-	IF p_scope = ''pm'' THEN		RETURN p_user_is_object_admin;	END IF;
+	-- The owner should always be able to see his or her item
+	IF p_user_id = p_owner_id THEN RETURN 1; END IF;
 
-	IF p_scope = ''client'' AND p_user_is_company = 1 THEN	
+	-- The asignee should always see his tasks.
+	IF p_asignee_id = p_user_id THEN RETURN 1; END IF;
+
+	-- If public then Yes.
+	IF p_scope = ''public'' THEN RETURN 1; END IF;
+
+	-- All group
+	IF p_scope = ''group'' THEN RETURN p_user_is_object_member; END IF;
+
+	-- Only PMs (=object admins)
+	IF p_scope = ''pm'' THEN RETURN p_user_is_object_admin; END IF;
+
+	-- Customers and the PM only
+	IF p_scope = ''client'' AND p_user_is_customer = 1 THEN
 		RETURN p_user_is_object_member;
 	END IF;
+
+	-- Staff only members
 	IF p_scope = ''staff'' AND p_user_is_employee = 1 THEN	
+		RETURN p_user_is_object_member;	
+	END IF;
+
+	-- Staff and Provider member - no customers
+	IF p_scope = ''not_client'' AND NOT p_user_is_customer = 1 THEN	
 		RETURN p_user_is_object_member;	
 	END IF;
 	RETURN 0;
@@ -287,38 +303,40 @@ select acs_privilege__create_privilege('add_topic_pm','Message to the project ma
 select acs_privilege__add_child('admin', 'add_topic_pm');
 
 
+select acs_privilege__create_privilege('view_topics_all','View all topics','');
+select acs_privilege__add_child('admin', 'view_topics_all');
+
+
+
+------------------------------------------------------
+-- See All Topics
+---
+select im_priv_create('view_topics_all',        'Employees');
+select im_priv_create('view_topics_all',        'P/O Admins');
+select im_priv_create('view_topics_all',        'Project Managers');
+select im_priv_create('view_topics_all',        'Senior Managers');
+
+
 
 ------------------------------------------------------
 -- Add Topic PM
 ---
 select im_priv_create('add_topic_pm',        'Accounting');
-
 select im_priv_create('add_topic_pm',        'Customers');
-
 select im_priv_create('add_topic_pm',        'Employees');
-
 select im_priv_create('add_topic_pm',        'Freelancers');
-
 select im_priv_create('add_topic_pm',        'P/O Admins');
-
 select im_priv_create('add_topic_pm',        'Project Managers');
-
 select im_priv_create('add_topic_pm',        'Sales');
-
 select im_priv_create('add_topic_pm',        'Senior Managers');
-
-
 
 
 ------------------------------------------------------
 -- Add Topic Client
 ---
 select im_priv_create('add_topic_client',        'Accounting');
-
 select im_priv_create('add_topic_client',        'P/O Admins');
-
 select im_priv_create('add_topic_client',        'Sales');
-
 select im_priv_create('add_topic_client',        'Senior Managers');
 
 
@@ -327,9 +345,7 @@ select im_priv_create('add_topic_client',        'Senior Managers');
 -- Add Topic Public
 ---
 select im_priv_create('add_topic_public',        'P/O Admins');
-
 select im_priv_create('add_topic_public',        'Senior Managers');
-
 
 
 
@@ -337,30 +353,20 @@ select im_priv_create('add_topic_public',        'Senior Managers');
 -- Add Topic Non-Clients
 ---
 select im_priv_create('add_topic_noncli',        'Accounting');
-
 select im_priv_create('add_topic_noncli',        'Employees');
-
 select im_priv_create('add_topic_noncli',        'Freelancers');
-
 select im_priv_create('add_topic_noncli',        'P/O Admins');
-
 select im_priv_create('add_topic_noncli',        'Project Managers');
-
 select im_priv_create('add_topic_noncli',        'Sales');
-
 select im_priv_create('add_topic_noncli',        'Senior Managers');
-
 
 
 ------------------------------------------------------
 -- Add Topic Groups
 ---
 select im_priv_create('add_topic_group',        'Accounting');
-
 select im_priv_create('add_topic_group',        'P/O Admins');
-
 select im_priv_create('add_topic_group',        'Sales');
-
 select im_priv_create('add_topic_group',        'Senior Managers');
 
 
@@ -370,31 +376,19 @@ select im_priv_create('add_topic_group',        'Senior Managers');
 -- Add Topic Public
 ---
 select im_priv_create('add_topic_client',        'P/O Admins');
-
 select im_priv_create('add_topic_client',        'Senior Managers');
-
-
 
 
 ------------------------------------------------------
 -- Add Topic Staff
 ---
 select im_priv_create('add_topic_staff',        'Accounting');
-
 select im_priv_create('add_topic_staff',        'Employees');
-
 select im_priv_create('add_topic_staff',        'Freelancers');
-
 select im_priv_create('add_topic_staff',        'P/O Admins');
-
 select im_priv_create('add_topic_staff',        'Project Managers');
-
 select im_priv_create('add_topic_staff',        'Sales');
-
 select im_priv_create('add_topic_staff',        'Senior Managers');
-
-
-
 
 
 ---------------------------------------------------------
@@ -503,7 +497,7 @@ SELECT im_component_plugin__new (
         '/intranet/projects/view',      -- page_url
         null,                           -- view_name
         10,                             -- sort_order
-	'im_table_with_title [im_forum_create_bar "<B>[_ intranet-forum.Forum_Items]<B>" $project_id $return_url] [im_forum_component -user_id $user_id -forum_object_id $project_id -current_page_url $current_url -return_url $return_url -forum_type "project" -export_var_list [list project_id forum_start_idx forum_order_by forum_how_many forum_view_name] -view_name [im_opt_val forum_view_name] -forum_order_by [im_opt_val forum_order_by] -start_idx [im_opt_val forum_start_idx] -restrict_to_mine_p "f" -restrict_to_new_topics 1]');
+	'im_table_with_title [im_forum_create_bar "<B>[_ intranet-forum.Forum_Items]<B>" $project_id $return_url] [im_forum_component -user_id $user_id -forum_object_id $project_id -current_page_url $current_url -return_url $return_url -forum_type "project" -export_var_list [list project_id forum_start_idx forum_order_by forum_how_many forum_view_name] -view_name [im_opt_val forum_view_name] -forum_order_by [im_opt_val forum_order_by] -start_idx [im_opt_val forum_start_idx] -restrict_to_mine_p "f" -restrict_to_new_topics 0]');
 
 
 -- Show the forum component in company page
@@ -521,7 +515,7 @@ SELECT im_component_plugin__new (
         '/intranet/companies/view',     -- page_url
         null,                           -- view_name
         10,                             -- sort_order
-	'im_table_with_title [im_forum_create_bar "<B>[_ intranet-forum.Forum_Items]<B>" $company_id $return_url ] [im_forum_component -user_id $user_id -forum_object_id $company_id -current_page_url $current_url -return_url $return_url -export_var_list [list company_id forum_start_idx forum_order_by forum_how_many forum_view_name ] -forum_type company -view_name [im_opt_val forum_view_name] -forum_order_by [im_opt_val forum_order_by] -restrict_to_mine_p "f" -restrict_to_new_topics 1 ]'
+	'im_table_with_title [im_forum_create_bar "<B>[_ intranet-forum.Forum_Items]<B>" $company_id $return_url ] [im_forum_component -user_id $user_id -forum_object_id $company_id -current_page_url $current_url -return_url $return_url -export_var_list [list company_id forum_start_idx forum_order_by forum_how_many forum_view_name ] -forum_type company -view_name [im_opt_val forum_view_name] -forum_order_by [im_opt_val forum_order_by] -restrict_to_mine_p "f" -restrict_to_new_topics 0]'
     );
 
 
