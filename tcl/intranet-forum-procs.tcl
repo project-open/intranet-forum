@@ -1142,7 +1142,6 @@ ad_proc -public im_forum_component {
 </tr>"
 
     # ---------------------- Join all parts together ------------------------
-#<form action=/intranet-forum/forum-action method=POST>
     set component_html "
 
 <form action=/intranet-forum/forum-action method=POST>
