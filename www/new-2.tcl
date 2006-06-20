@@ -47,6 +47,12 @@ ad_page_contract {
 
 set user_id [ad_maybe_redirect_for_registration]
 
+
+set topic_type [db_string topic_type "select im_category_from_id(:topic_type_id)" -default ""]
+set page_title "[_ intranet-forum.New_topic_type]"
+set context_bar [im_context_bar [list /intranet-forum/ "[_ intranet-forum.Forum]"] $page_title]
+
+
 set exception_text ""
 set exception_count 0
 
@@ -534,34 +540,33 @@ if {!$action_type_found} {
 }
 
 
-# Send a mail to all subscribed users
-#
+
+
+# ---------------------------------------------------------------------
+# Allow the user to select to whom to send info mails
+# ---------------------------------------------------------------------
+
 set stakeholder_sql "
-select	user_id as stakeholder_id
-from	im_forum_topic_user_map m
-where	m.topic_id=:topic_id
-	and receive_updates <> 'none'"
+	select
+		u.user_id,
+		u.email,
+		im_name_from_user_id(u.user_id) as name
+	from
+		im_forum_topic_user_map m,
+		cc_users u
+	where
+		m.user_id = u.user_id
+		and m.topic_id = :topic_id
+"
 
-db_foreach update_stakeholders $stakeholder_sql {
-
-    ns_log Notice "intranet-forum/new-2: Sending alerts: user_id=$stakeholder_id, importance=$importance, receive_updates=$receive_updates"
-
+db_multirow -extend {checked} stakeholders stekeholder_query $stakeholder_sql {
     switch $receive_updates {
-	none {
-	    continue
-	}
+	none { set checked "" }
 	major {
-	    if {$importance < 2} { continue }
+	    if {$importance < 2} { set checked "" } else { set checked "checked" }
 	}
-	all {
-	    # Nothing - receive the message
-	}
+	all { set checked "checked" }
+	default { set checked "" }
     }
-
-    ns_log Notice "intranet-forum/new-2: Sending out alert: '$subject'"
-    im_send_alert $stakeholder_id "hourly" $subject "$msg_url\n\n$message"
 }
-
-db_release_unused_handles 
-ad_returnredirect $return_url
 
