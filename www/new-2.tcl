@@ -172,20 +172,21 @@ if {[string equal $actions "save"]} {
     # update the information
     db_transaction {
 	db_dml topic_update "
-update im_forum_topics set 
-	object_id=:object_id, 
-	parent_id=:parent_id,
-	topic_type_id=:topic_type_id,
-	topic_status_id=:topic_status_id,
-	posting_date=:today,
-	owner_id=:owner_id,
-	scope=:scope, 
-	subject=:subject,
-	message=:message,
-	priority=:priority, 
-	asignee_id=:asignee_id, 
-	due_date=:due
-where topic_id=:topic_id"
+	update im_forum_topics set 
+		object_id=:object_id, 
+		parent_id=:parent_id,
+		topic_type_id=:topic_type_id,
+		topic_status_id=:topic_status_id,
+		posting_date=:today,
+		owner_id=:owner_id,
+		scope=:scope, 
+		subject=:subject,
+		message=:message,
+		priority=:priority, 
+		asignee_id=:asignee_id, 
+		due_date=:due
+	where topic_id=:topic_id
+	"
     } on_error {
         ad_return_error "[_ intranet-forum.lt_Error_modifying_a_top]" "
 	[_ intranet-forum.lt_The_database_rejected_1] 
@@ -217,13 +218,14 @@ where topic_id=:topic_id"
     # Now let's update the existing entry
     db_transaction {
 	db_dml im_forum_topic_user_map_update "
-update im_forum_topic_user_map set 
-	read_p=:read_p,
-	folder_id=:folder_id, 
-	receive_updates=:receive_updates
-where 
-	topic_id=:topic_id
-	and user_id=:user_id"
+	update im_forum_topic_user_map set 
+		read_p=:read_p,
+		folder_id=:folder_id, 
+		receive_updates=:receive_updates
+	where 
+		topic_id=:topic_id
+		and user_id=:user_id
+	"
     } on_error {
         ad_return_error "[_ intranet-forum.lt_Error_modifying_a_im_]" "
 	[_ intranet-forum.lt_The_database_rejected_2] 
@@ -249,51 +251,51 @@ if {[string equal $action_type "new_message"]} {
 	# see the new TIND.
 	#
 	set object_member_sql "
-select
-	p.party_id as user_id
-from
-	acs_rels r,
-	parties p,
-	(select	m.member_id as user_id,
-		1 as p
-	 from group_distinct_member_map m
-	 where	m.group_id = [im_customer_group_id]
-	) customers,
-	(select	m.member_id as user_id,
-		1 as p
-	 from group_distinct_member_map m
-	 where	m.group_id = [im_employee_group_id]
-	) employees,
-	-- get the members and admins of object_id
-	(       select  1 as member_p,
-			decode (m.object_role_id,
-				1301, 1,
-				1302, 1,
-				1303, 1,
-				0
-			) as admin_p,
-			r.object_id_two as user_id
-		from    acs_rels r,
-			im_biz_object_members m
-		where   r.object_id_one = :object_id
-			and r.rel_id = m.rel_id
-	) o_mem
-where
-	r.object_id_one = :object_id
-	and r.object_id_two = p.party_id
-	and p.party_id = customers.user_id(+)
-	and p.party_id = employees.user_id(+)
-	and o_mem.user_id = p.party_id
-	and 1 = im_forum_permission(
-		p.party_id,
-		:user_id,
-		:asignee_id,
-		:object_id,
-		:scope,
-		o_mem.member_p,
-		o_mem.admin_p,
-		employees.p,
-		customers.p
+	select
+		p.party_id as user_id
+	from
+		acs_rels r,
+		parties p,
+		(select	m.member_id as user_id,
+			1 as p
+		 from group_distinct_member_map m
+		 where	m.group_id = [im_customer_group_id]
+		) customers,
+		(select	m.member_id as user_id,
+			1 as p
+		 from group_distinct_member_map m
+		 where	m.group_id = [im_employee_group_id]
+		) employees,
+		-- get the members and admins of object_id
+		(       select  1 as member_p,
+				decode (m.object_role_id,
+					1301, 1,
+					1302, 1,
+					1303, 1,
+					0
+				) as admin_p,
+				r.object_id_two as user_id
+			from    acs_rels r,
+				im_biz_object_members m
+			where   r.object_id_one = :object_id
+				and r.rel_id = m.rel_id
+		) o_mem
+	where
+		r.object_id_one = :object_id
+		and r.object_id_two = p.party_id
+		and p.party_id = customers.user_id(+)
+		and p.party_id = employees.user_id(+)
+		and o_mem.user_id = p.party_id
+		and 1 = im_forum_permission(
+			p.party_id,
+			:user_id,
+			:asignee_id,
+			:object_id,
+			:scope,
+			o_mem.member_p,
+			o_mem.admin_p,
+			employees.p,
+			customers.p
 	)"
 
 	db_foreach subscribe_object_members $object_member_sql {
@@ -302,15 +304,25 @@ where
 
 	    # im_forum_topics_user_map may or may not exist for every user.
 	    # So we create a record just in case, even if the SQL fails.
-	    db_transaction {
+	    set map_exists_p [db_string map_exists "
+	        select  count(*)
+	        from    im_forum_topic_user_map
+	        where   topic_id = :topic_id
+	                and user_id = :user_id
+	    "]
+
+	    if {!$map_exists_p} {
+		db_transaction {
 		db_dml im_forum_topic_user_map_insert "
 	            insert into im_forum_topic_user_map
 	            (topic_id, user_id, read_p, folder_id, receive_updates) values
 	            (:topic_id, :user_id, :read_p, :folder_id, 'all')
-	    "
-	    } on_error {
-		# nothing - may already exist...
+	        "
+		} on_error {
+		    # nothing - may already exist...
+		}
 	    }
+
 	}
     }
 }
@@ -559,7 +571,7 @@ set stakeholder_sql "
 		and m.topic_id = :topic_id
 "
 
-db_multirow -extend {checked} stakeholders stekeholder_query $stakeholder_sql {
+db_multirow -extend {checked} stakeholders stakeholder_query $stakeholder_sql {
     switch $receive_updates {
 	none { set checked "" }
 	major {
