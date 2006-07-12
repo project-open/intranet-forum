@@ -16,7 +16,6 @@ ad_page_contract {
         new_message, edit_message, undefined, reply_message
 
     @author frank.bergmann@project-open.com
-    @author juanjoruizx@yahoo.es
 } {
     topic_id:integer
     return_url
@@ -50,14 +49,17 @@ select
 from
 	im_forum_topic_user_map m
 where
-	m.topic_id=:topic_id
+	m.topic_id = :topic_id
 "
+
+ns_log Notice "forum/new-3: notifyee_id=$notifyee_id"
 
 db_foreach update_stakeholders $stakeholder_sql {
 
-    if {[lindex $notifyee_id $user_id] > 0} {
+    ns_log Notice "forum/new-3: stakeholder_id=$stakeholder_id"
+    if {[lsearch $notifyee_id $stakeholder_id] > -1} {
 
-	ns_log Notice "intranet-forum/new-2: Sending out alert: '$subject'"
+	ns_log Notice "intranet-forum/new-3: Sending out alert: '$subject'"
 	im_send_alert $stakeholder_id "hourly" $subject "$msg_url\n\n$message"
 
     }
