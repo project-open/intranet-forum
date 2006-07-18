@@ -572,13 +572,10 @@ set stakeholder_sql "
 "
 
 db_multirow -extend {checked} stakeholders stakeholder_query $stakeholder_sql {
-    switch $receive_updates {
-	none { set checked "" }
-	major {
-	    if {$importance < 2} { set checked "" } else { set checked "checked" }
-	}
-	all { set checked "checked" }
-	default { set checked "" }
-    }
+
+    set checked ""
+    if {$user_id == $asignee_id} { set checked "checked" }
+    if {$user_id == $owner_id} { set checked "checked" }
+
 }
 
