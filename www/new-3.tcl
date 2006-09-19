@@ -19,7 +19,6 @@ ad_page_contract {
 } {
     topic_id:integer
     return_url
-    { object_id:integer 0 }
     object_type
     subject:html
     msg_url
@@ -32,34 +31,58 @@ ad_page_contract {
 # ------------------------------------------------------------------
 
 set user_id [ad_maybe_redirect_for_registration]
+set user_is_employee_p [im_user_is_employee_p $user_id]
+set user_is_customer_p [im_user_is_customer_p $user_id]
 
-set topics_object_id [db_string topics_oid "select object_id from im_forum_topics where topic_id = :topic_id" -default 0]
 
-if {$object_id != $topics_object_id} {
-    # Bad, bad guys: Somebody is trying to tinker with security...
-    ad_return_complaint 1 "You have no rights to communicate with members of this object."
-    ad_script_abort
+# Permissions - who should see what
+set permission_clause "
+        and 1 = im_forum_permission(
+                :user_id,
+                t.owner_id,
+                t.asignee_id,
+                t.object_id,
+                t.scope,
+                member_objects.p,
+                admin_objects.p,
+                :user_is_employee_p,
+                :user_is_customer_p
+        )
+"
+
+# We only want to remove the permission clause if the
+# user is allowed to see all items
+if {[im_permission $user_id view_topics_all]} {
+            set permission_clause ""
 }
 
-# expect commands such as: "im_project_permissions" ...
-#
-set object_view 0
-set object_read 0
-set object_write 0
-set object_admin 0
-set object_type [db_string acs_object_type "
-	select object_type 
-	from acs_objects 
-	where object_id = :object_id
-" -default ""]
+set perm_sql "
+	select	t.topic_id as allowd_topics
+	from
+		im_forum_topics t
+	        LEFT JOIN
+	        (       select 1 as p,
+	                        object_id_one as object_id
+	                from    acs_rels
+	                where   object_id_two = :user_id
+	        ) member_objects using (object_id)
+	        LEFT JOIN
+	        (       select 1 as p,
+	                        r.object_id_one as object_id
+	                from    acs_rels r,
+	                        im_biz_object_members m
+	                where   r.object_id_two = :user_id
+	                        and r.rel_id = m.rel_id
+	                        and m.object_role_id in (1301, 1302, 1303)
+	        ) admin_objects using (object_id)
+	where
+		t.topic_id = :topic_id
+		$permission_clause
+"
 
-if {"" != $object_type} {
-    set perm_cmd "${object_type}_permissions \$user_id \$object_id object_view object_read object_write object_admin"
-    eval $perm_cmd
-}
-
-if {!$object_read} {
-    ad_return_complaint 1 "You have no rights to communicate with members of this object."
+set perm_topics [db_list perms $perm_sql]
+if {0 == [llength $perm_topics]} {
+    ad_return_complaint 1 "You don't have the right to access this topic"
     ad_script_abort
 }
 
