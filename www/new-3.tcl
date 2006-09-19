@@ -19,11 +19,12 @@ ad_page_contract {
 } {
     topic_id:integer
     return_url
+    { object_id:integer 0 }
     object_type
     subject:html
     msg_url
     message:html
-    notifyee_id:multiple
+    notifyee_id:multiple,optional
 }
 
 # ------------------------------------------------------------------
@@ -31,6 +32,40 @@ ad_page_contract {
 # ------------------------------------------------------------------
 
 set user_id [ad_maybe_redirect_for_registration]
+
+set topics_object_id [db_string topics_oid "select object_id from im_forum_topics where topic_id = :topic_id" -default 0]
+
+if {$object_id != $topics_object_id} {
+    # Bad, bad guys: Somebody is trying to tinker with security...
+    ad_return_complaint 1 "You have no rights to communicate with members of this object."
+    ad_script_abort
+}
+
+# expect commands such as: "im_project_permissions" ...
+#
+set object_view 0
+set object_read 0
+set object_write 0
+set object_admin 0
+set object_type [db_string acs_object_type "
+	select object_type 
+	from acs_objects 
+	where object_id = :object_id
+" -default ""]
+
+if {"" != $object_type} {
+    set perm_cmd "${object_type}_permissions \$user_id \$object_id object_view object_read object_write object_admin"
+    eval $perm_cmd
+}
+
+if {!$object_read} {
+    ad_return_complaint 1 "You have no rights to communicate with members of this object."
+    ad_script_abort
+}
+
+
+
+if {![info exists notifyee_id]} { set notifyee_id [list] }
 
 # Get the list of all subscribed users.
 # By going through this list (and determining whether the
@@ -51,6 +86,8 @@ from
 where
 	m.topic_id = :topic_id
 "
+
+
 
 ns_log Notice "forum/new-3: notifyee_id=$notifyee_id"
 
