@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="intranet-forum" package_version="3.1.0.0.0" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="intranet-forum" package_version="3.2.2.0.0" locale="en_US" charset="ISO-8859-1">
 
+  <msg key="Accept_Tasks">Accept Task</msg>
   <msg key="Accept_topic_type">Accept %topic_type%</msg>
   <msg key="Accepted">Accepted</msg>
   <msg key="Access_permissions">Access permissions</msg>
@@ -15,6 +16,7 @@
   <msg key="Assigned">Assigned</msg>
   <msg key="Assigned_to">Assigned to</msg>
   <msg key="Body">Body</msg>
+  <msg key="Close_Tasks">Close Task</msg>
   <msg key="Close_topic_type">Close %topic_type%</msg>
   <msg key="Closed">Closed</msg>
   <msg key="Create_new_Incident">Create new Incident</msg>
@@ -111,9 +113,11 @@
   <msg key="Project_Manager_only">Project Manager only</msg>
   <msg key="Project_Status">Project Status</msg>
   <msg key="Publisher_Name">Publisher Name</msg>
+  <msg key="Re_assign_topic">Reassign Topic</msg>
   <msg key="Re_subject">Re: %subject%</msg>
   <msg key="Read">Read</msg>
   <msg key="Receive_updates">Receive updates</msg>
+  <msg key="Reject_Tasks">Reject Task</msg>
   <msg key="Reject_topic_type">Reject %topic_type%</msg>
   <msg key="Rejected">Rejected</msg>
   <msg key="Related_Files">Related Files</msg>
