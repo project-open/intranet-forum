@@ -420,7 +420,7 @@ append table_body "
 	<tr $bgcolor([expr $ctr % 2])>
 	  <td>$topic_type [_ intranet-forum.Body]</td>
 	  <td>
-	    <textarea name=message rows=5 cols=50 wrap=soft>$message</textarea>
+	    <textarea name=message rows=5 cols=50 wrap=[im_html_textarea_wrap]>$message</textarea>
 	  </td>
 	</tr>\n"
 
