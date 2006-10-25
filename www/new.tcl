@@ -99,7 +99,6 @@ set done 0
 if {!$done && $parent_id != 0} {
     set action_type "reply_message"
 
-
     # Get some information about the parent topic:
     set org_parent_id $parent_id
     db_1row get_topic_for_reply "
@@ -511,8 +510,57 @@ $table_body
 
 
 
+# -------------- Render Parent Message -----------------------------
+# Render parent in case of a reply message
 
 
+if {$topic_type_id == [im_topic_type_id_reply]} {
 
+    set parent_topic_sql "
+	select
+	        t.topic_id as parents_topic_id,
+		t.topic_status_id as parents_topic_status_id,
+		t.topic_type_id as parents_topic_type_id,
+	        im_category_from_id(t.topic_status_id) as parents_topic_status,
+	        im_category_from_id(t.topic_type_id) as parents_topic_type,
+	        im_name_from_user_id(t.owner_id) as parents_owner_name,
+	        im_name_from_user_id(t.asignee_id) as parents_asignee_name,
+	        acs_object__name(t.object_id) as parents_object_name,
+		t.parent_id as parents_parent_id,
+		t.owner_id as parents_owner_id,
+		t.asignee_id as parents_asignee_id,
+		t.object_id as parents_object_id,
+		t.subject as parents_subject,
+		t.message as parents_message,
+		t.posting_date as parents_posting_date,
+		t.due_date as parents_due_date,
+		t.priority as parents_priority,
+		t.scope as parents_scope,
+		m.receive_updates as parents_receive_updates
+	from
+	        im_forum_topics t
+		LEFT OUTER JOIN (
+			select * 
+			from im_forum_topic_user_map 
+			where user_id = :user_id
+		) m ON t.topic_id = m.topic_id
+	where
+	        t.topic_id = :parent_id
+    "
+    db_1row get_parent_topic $parent_topic_sql
+
+    set parents_object_admin $object_admin
+
+    set rendered_parent [im_forum_render_tind $parent_id $parents_parent_id $parents_topic_type_id $parents_topic_type $parents_topic_status_id $parents_topic_status $parents_owner_id $parents_asignee_id $parents_owner_name $parents_asignee_name $user_id $parents_object_id $parents_object_name $parents_object_admin $parents_subject $parents_message $parents_posting_date $parents_due_date $parents_priority $parents_scope $parents_receive_updates $return_url]
+
+    append page_body "
+	<h2>[lang::message::lookup "" intranet-forum.Original_Message "Original Message"]</h2>
+	<blockquote>
+	<table>
+	$rendered_parent
+	</table>
+	</blockquote>
+    "
+}
 
 
