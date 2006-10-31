@@ -580,6 +580,7 @@ db_multirow -extend {checked} stakeholders stakeholder_query $stakeholder_sql {
     incr num_stakeholders
 }
 
+
 if {0 == $num_stakeholders} {
     ad_returnredirect $return_url
 }
