@@ -571,11 +571,15 @@ set stakeholder_sql "
 		and m.topic_id = :topic_id
 "
 
+set num_stakeholders 0
 db_multirow -extend {checked} stakeholders stakeholder_query $stakeholder_sql {
 
     set checked ""
     if {$user_id == $asignee_id} { set checked "checked" }
     if {$user_id == $owner_id} { set checked "checked" }
-
+    incr num_stakeholders
 }
 
+if {0 == $num_stakeholders} {
+    ad_returnredirect $return_url
+}
