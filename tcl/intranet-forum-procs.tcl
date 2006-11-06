@@ -852,7 +852,7 @@ ad_proc -public im_forum_component {
 	if { [regexp "im_gif" $col] } {
 	    set col_tr $cmd_eval
 	} else {
-	    set col_tr [_ intranet-forum.[lang::util::suggest_key $cmd_eval]]
+	    set col_tr [lang::message::lookup "" intranet-forum.[lang::util::suggest_key $cmd_eval] $cmd_eval]
 	}
 
 	if { [string compare $forum_order_by $cmd_eval] == 0 } {
@@ -898,6 +898,10 @@ ad_proc -public im_forum_component {
 		"Due" { 
 			set order_by_clause "order by t.due_date" 
 			set order_by_clause_ext "order by due_date" 
+		}
+		"Posting" { 
+			set order_by_clause "order by t.posting_date" 
+			set order_by_clause_ext "order by posting_date" 
 		}
 		"Own" { 
 			set order_by_clause "order by upper(im_initials_from_user_id(t.owner_id))" 
