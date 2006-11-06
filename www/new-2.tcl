@@ -47,8 +47,8 @@ ad_page_contract {
 
 set user_id [ad_maybe_redirect_for_registration]
 
-
 set topic_type [db_string topic_type "select im_category_from_id(:topic_type_id)" -default ""]
+set object_type [db_string acs_object_type "select object_type from acs_objects where object_id = :object_id" -default ""]
 set page_title "[_ intranet-forum.New_topic_type]"
 set context_bar [im_context_bar [list /intranet-forum/ "[_ intranet-forum.Forum]"] $page_title]
 
@@ -122,7 +122,6 @@ if {[string equal $actions "save"]} {
     set object_write 0
     set object_admin 0
     if {$object_id != 0} {
-	set object_type [db_string acs_object_type "select object_type from acs_objects where object_id=:object_id" -default ""]
 	if {"" != $object_type} {
 	    set perm_cmd "${object_type}_permissions \$user_id \$object_id object_view object_read object_write object_admin"
 	    eval $perm_cmd
