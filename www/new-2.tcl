@@ -447,11 +447,15 @@ select
 	t.subject,
 	t.message,
 	t.parent_id,
-	im_category_from_id(t.topic_type_id) as topic_type
+	im_category_from_id(t.topic_type_id) as topic_type,
+	o.object_type,
+	acs_object__name(t.object_id) as object_name
 from 
-	im_forum_topics t
+	im_forum_topics t,
+	acs_objects o
 where
 	t.topic_id = :topic_id
+	and t.object_id = o.object_id
 "
 
 # Check for the root-parent message in order to determine
@@ -485,7 +489,7 @@ switch $action_type {
     "new_message" { 
 	set action_type_found 1
 	set importance 2
-	set subject "New $topic_type: $subject"
+	set subject "New $topic_type in $object_name: $subject"
 	set message "
 [_ intranet-forum.lt_A_new_topic_type_has_]\n"
     }
@@ -493,7 +497,7 @@ switch $action_type {
     "edit_message" { 
 	set action_type_found 1
 	set importance 1
-	set subject "Changed $topic_type: $subject"
+	set subject "Changed $topic_type in $object_name: $subject"
 	set message "
 [_ intranet-forum.lt_A_new_topic_type_has__1]\n"
     }
@@ -501,7 +505,7 @@ switch $action_type {
     "reply_message" { 
 	set action_type_found 1
 	set importance 1
-	set subject "Reply to $topic_type: $subject"
+	set subject "Reply to $topic_type in $object_name: $subject"
 	set message "
 [_ intranet-forum.lt_A_new_topic_type_has_]\n"
     }
@@ -513,37 +517,37 @@ if {!$action_type_found} {
     switch $actions {
 	"accept" { 
 	    set importance 1
-	    set subject "[_ intranet-forum.Accepted] $topic_type: $subject"
+	    set subject "[_ intranet-forum.Accepted] $topic_type in $object_name: $subject"
 	    set message "
 [_ intranet-forum.lt_A_new_topic_type_has__2]\n"
 	}
 	"reject" { 
 	    set importance 2
-	    set subject "[_ intranet-forum.Rejected] $topic_type: $subject"
+	    set subject "[_ intranet-forum.Rejected] $topic_type in $object_name: $subject"
 	    set message "
 [_ intranet-forum.lt_A_new_topic_type_has__3]\n"
 	}
 	"clarify" { 
 	    set importance 2
-	    set subject "$topic_type [_ intranet-forum.needs_clarification]: $subject"
+	    set subject "$topic_type [_ intranet-forum.needs_clarification] in $object_name: $subject"
 	    set message "
 [_ intranet-forum.lt_The_asignee_of_the_to]\n"
 	}
 	"save" { 
 	    set importance 1
-	    set subject "[_ intranet-forum.Modified] $topic_type: $subject"
+	    set subject "[_ intranet-forum.Modified] $topic_type in $object_name: $subject"
 	    set message "
 [_ intranet-forum.lt_The_topic_type_has_be]"
 	}
 	"close" { 
 	    set importance 2
-	    set subject "[_ intranet-forum.Closed] $topic_type: $subject"
+	    set subject "[_ intranet-forum.Closed] $topic_type in $object_name: $subject"
 	    set message "
 [_ intranet-forum.lt_The_topic_type_has_be_1]"
 	}
 	"assign" { 
 	    set importance 1
-	    set subject "[_ intranet-forum.Assigned] $topic_type: $subject"
+	    set subject "[_ intranet-forum.Assigned] $topic_type in $object_name: $subject"
 	    set message "
 [_ intranet-forum.lt_The_topic_type_has_be_2]"
 	}
