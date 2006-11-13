@@ -945,7 +945,7 @@ ad_proc -public im_forum_component {
     	}
     	if {$restrict_to_new_topics} {
 	    lappend restrictions "(m.read_p is null or m.read_p='f')" 
-	    lappend restrictions "topic_status_id = [im_topic_status_id_open]"
+	    lappend restrictions "topic_status_id not in ([im_topic_status_id_closed],[im_topic_status_id_rejected])"
 	    lappend restrictions "topic_type_id != [im_topic_type_id_reply]"
     	}
     	switch $restrict_to_folder {
