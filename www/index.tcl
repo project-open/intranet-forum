@@ -26,7 +26,7 @@ ad_page_contract {
     { forum_object_id 0 }
     { forum_order_by "Project" }
     { forum_view_name "forum_list_forum" }
-    { forum_mine_p "f" }
+    { forum_mine_p "t" }
     { forum_topic_type_id:integer 0 }
     { forum_status_id 0 }
     { forum_group_id:integer 0 }
@@ -88,44 +88,36 @@ set project_types [linsert $project_types 0 0 All]
 # Format the Filter
 # ---------------------------------------------------------------
 
-# Note that we use a nested table because im_slider might
-# return a table with a form in it (if there are too many
-# options
 set filter_html "
-<table border=0 cellpadding=0 cellspacing=0>
-<tr>
-  <td colspan='2' class=rowtitle align=center>[_ intranet-forum.Filter_Topics]</td>
-</tr>\n"
-
-if {[im_permission $current_user_id "view_forum_topics_all"]} {
-    append filter_html "
-<tr>
-  <td valign=top>View:</td>
-  <td valign=top>[im_select forum_mine_p $view_types ""]</td>
-</tr>"
-}
-if {[im_permission $current_user_id "view_forum_topics_all"]} {
-    append filter_html "
-<!--
-<tr>
-  <td valign=top>[_ intranet-forum.Project_Status]:</td>
-  <td valign=top>[im_select status_id $forum_topic_types ""]</td>
-</tr>
--->
+	<table border=0 cellpadding=0 cellspacing=1>
+	<tr>
+	  <td colspan='2' class=rowtitle align=center>
+		[_ intranet-forum.Filter_Topics]
+	  </td>
+	</tr>
 "
+
+if {[im_permission $current_user_id "view_topics_all"]} {
+    append filter_html "
+	<tr>
+	  <td class=form-label>View:</td>
+	  <td class=form-widget>[im_select forum_mine_p $view_types $forum_mine_p]</td>
+	</tr>
+    "
+} else {
+    append filter_html "<input type=hidden name=forum_mine_p value='t'>\n"
 }
+
 
 append filter_html "
-<tr>
-  <td valign=top>[_ intranet-forum.Topic_Type]:</td>
-  <td valign=top>
-    [im_select forum_topic_type_id $forum_topic_types $forum_topic_type_id]
-          <input type=submit value=Go name=submit>
-  </td>
-</tr>\n"
-
-append filter_html "</table>"
-
+	<tr>
+	  <td class=form-label>[_ intranet-forum.Topic_Type]:</td>
+	  <td class=form-widget>
+	    [im_select forum_topic_type_id $forum_topic_types $forum_topic_type_id] 
+	    <input type=submit value=Go name=submit>
+	  </td>
+	</tr>
+"
 
 # ---------------------------------------------------------------
 # Prepare parameters for the Forum Component
@@ -159,18 +151,6 @@ set forum_content [im_forum_component \
 # ---------------------------------------------------------------
 # Join all parts together
 # ---------------------------------------------------------------
-
-set page_body "
-  <form method=get action='index'>
-  [export_form_vars forum_group_id forum_start_idx forum_order_by forum_how_many forum_view_name]
-    $filter_html
-  </form>
-
-[im_forum_navbar "/intranet-forum/index" [list forum_group_id forum_start_idx forum_order_byforum_how_many forum_mine_p forum_view_name] $forum_folder]
-
-$forum_content
-
-"
 
 db_release_unused_handles
 
