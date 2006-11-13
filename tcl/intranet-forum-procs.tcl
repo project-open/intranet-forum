@@ -932,19 +932,21 @@ ad_proc -public im_forum_component {
 	
     	set restrictions []
     	if {0 != $forum_object_id} {
-		lappend restrictions "t.object_id=:forum_object_id" 
+	    lappend restrictions "t.object_id=:forum_object_id" 
     	}
     	if {[string equal "t" $restrict_to_mine_p]} {
-		lappend restrictions "(owner_id=:user_id or asignee_id=:user_id)" 
+	    lappend restrictions "(owner_id=:user_id or asignee_id=:user_id)" 
     	}
     	if {$restrict_to_topic_status_id} {
-		lappend restrictions "topic_status_id=:restrict_to_topic_status_id" 
+	    lappend restrictions "topic_status_id=:restrict_to_topic_status_id" 
     	}
     	if {$restrict_to_asignee_id} {
-		lappend restrictions "asignee_id=:restrict_to_asignee_id" 
+	    lappend restrictions "asignee_id=:restrict_to_asignee_id" 
     	}
     	if {$restrict_to_new_topics} {
-		lappend restrictions "(m.read_p is null or m.read_p='f')" 
+	    lappend restrictions "(m.read_p is null or m.read_p='f')" 
+	    lappend restrictions "topic_status_id = [im_topic_status_id_open]"
+	    lappend restrictions "topic_type_id != [im_topic_type_id_reply]"
     	}
     	switch $restrict_to_folder {
 		0 {
