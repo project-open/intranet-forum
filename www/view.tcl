@@ -161,7 +161,8 @@ if {$task_or_incident_p && $user_id == $asignee_id} {
     }
 
     # Allow to mark task as "closed" only after accepted
-    if {$topic_status_id == [im_topic_status_id_accepted]  && ![string equal $topic_status_id [im_topic_status_id_closed]]} {
+    # 061114 fraber: Not anymore - really a hassle
+    if {![string equal $topic_status_id [im_topic_status_id_closed]]} {
 	append actions "<option value=close>[_ intranet-forum.Close_topic_type]</option>\n"
     }
 
