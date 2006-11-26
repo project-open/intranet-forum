@@ -408,8 +408,8 @@ select im_priv_create('add_topic_staff',        'Senior Managers');
 -- delete potentially existing menus and plugins if this 
 -- file is sourced multiple times during development...
 
-select im_component_plugin__del_module('intranet-forum');
-select im_menu__del_module('intranet-forum');
+-- select im_component_plugin__del_module('intranet-forum');
+-- select im_menu__del_module('intranet-forum');
 
 
 -- Setup the "Forum" main menu entry
