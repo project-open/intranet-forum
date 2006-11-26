@@ -42,7 +42,7 @@ insert into im_biz_object_urls (object_type, url_type, url) values (
 
 
 -- Forum Topic Types
-delete from im_categories where category_type = 'Intranet Topic Type';
+-- delete from im_categories where category_type = 'Intranet Topic Type';
 
 INSERT INTO im_categories VALUES (1100,'News',
 'News item that may or may not be commented.',
@@ -84,7 +84,7 @@ where category_type = 'Intranet Topic Type';
 
 
 -- Intranet Topic Status
-delete from im_categories where category_type = 'Intranet Topic Status';
+-- delete from im_categories where category_type = 'Intranet Topic Status';
 
 INSERT INTO im_categories VALUES (1200,'Open',
 'A topic has been generated, but is not assigned to anybody (discussion, ...)',
@@ -142,7 +142,7 @@ insert into im_views (view_id, view_name, visible_for) values (46, 'forum_list_u
 
 -- ForumList for home page
 --
-delete from im_view_columns where column_id >= 4000 and column_id < 4099;
+-- delete from im_view_columns where column_id >= 4000 and column_id < 4099;
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4000,40,NULL,'P',
 '$priority','','',2,'');
@@ -183,7 +183,7 @@ extra_select, extra_where, sort_order, visible_for) values (4010,40,NULL,
 
 -- ForumList for ProjectViewPage or CompanyViewPage
 --
-delete from im_view_columns where column_id >= 4100 and column_id < 4199;
+-- delete from im_view_columns where column_id >= 4100 and column_id < 4199;
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4100,41,NULL,'P',
 '$priority','','',2,'');
@@ -233,7 +233,7 @@ extra_select, extra_where, sort_order, visible_for) values (4110,41,NULL,
 
 -- ForumList for the forum index page (all projects with a lot of space)
 --
-delete from im_view_columns where column_id >= 4200 and column_id < 4299;
+-- delete from im_view_columns where column_id >= 4200 and column_id < 4299;
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4200,42,NULL,'P',
 '$priority','','',2,'');
@@ -296,7 +296,7 @@ extra_select, extra_where, sort_order, visible_for) values (4212,42,NULL,'Folder
 
 -- ForumList Short as a default when no other LIST is found
 --
-delete from im_view_columns where column_id >= 4400 and column_id < 4499;
+-- delete from im_view_columns where column_id >= 4400 and column_id < 4499;
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4400,44,NULL,'P',
 '$priority','','',2,'');
@@ -341,7 +341,7 @@ extra_select, extra_where, sort_order, visible_for) values (4410,44,NULL,
 
 -- ForumList Short as a default when no other LIST is found
 --
-delete from im_view_columns where column_id >= 4500 and column_id < 4599;
+-- delete from im_view_columns where column_id >= 4500 and column_id < 4599;
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4500,45,NULL,'P',
 '$priority','','',2,'');
@@ -386,7 +386,7 @@ extra_select, extra_where, sort_order, visible_for) values (4510,45,NULL,
 
 -- ForumList Short as a default when no other LIST is found
 --
-delete from im_view_columns where column_id >= 4600 and column_id < 4699;
+-- delete from im_view_columns where column_id >= 4600 and column_id < 4699;
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4600,46,NULL,'P',
 '$priority','','',2,'');
