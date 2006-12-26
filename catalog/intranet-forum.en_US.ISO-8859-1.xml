@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="intranet-forum" package_version="3.2.3.0.0" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="intranet-forum" package_version="3.2.4.0.0" locale="en_US" charset="ISO-8859-1">
 
   <msg key="Accept_Tasks">Accept Task</msg>
   <msg key="Accept_topic_type">Accept %topic_type%</msg>
@@ -33,7 +33,6 @@
   <msg key="Edit">Edit</msg>
   <msg key="Edit_Topic">Edit Topic</msg>
   <msg key="Edit_topic_type">Edit %topic_type%</msg>
-  <msg key="Email">Email</msg>
   <msg key="Emergency">Emergency</msg>
   <msg key="Enter_message_body">Enter message body</msg>
   <msg key="Enter_subject">Enter subject</msg>
