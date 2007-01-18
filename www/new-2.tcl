@@ -489,23 +489,15 @@ switch $action_type {
     "new_message" { 
 	set action_type_found 1
 	set importance 2
-	set subject "New $topic_type in $object_name: $subject"
+	set subject [lang::message::lookup "" intranet-forum.New_topic_in_object "New $topic_type in $object_name: $subject"]
 	set message "
 [_ intranet-forum.lt_A_new_topic_type_has_]\n"
-    }
-
-    "edit_message" { 
-	set action_type_found 1
-	set importance 1
-	set subject "Changed $topic_type in $object_name: $subject"
-	set message "
-[_ intranet-forum.lt_A_new_topic_type_has__1]\n"
     }
 
     "reply_message" { 
 	set action_type_found 1
 	set importance 1
-	set subject "Reply to $topic_type in $object_name: $subject"
+	set subject [lang::message::lookup "" intranet-forum.Reply_to_topic "Reply to $topic_type in $object_name: $subject"]
 	set message "
 [_ intranet-forum.lt_A_new_topic_type_has_]\n"
     }
@@ -519,13 +511,13 @@ if {!$action_type_found} {
 	    set importance 1
 	    set subject "[_ intranet-forum.Accepted] $topic_type in $object_name: $subject"
 	    set message "
-[_ intranet-forum.lt_A_new_topic_type_has__2]\n"
+[_ intranet-forum.lt_A_new_topic_type_has_]\n"
 	}
 	"reject" { 
 	    set importance 2
 	    set subject "[_ intranet-forum.Rejected] $topic_type in $object_name: $subject"
 	    set message "
-[_ intranet-forum.lt_A_new_topic_type_has__3]\n"
+[_ intranet-forum.lt_A_new_topic_type_has_]\n"
 	}
 	"clarify" { 
 	    set importance 2
@@ -551,9 +543,14 @@ if {!$action_type_found} {
 	    set message "
 [_ intranet-forum.lt_The_topic_type_has_be_2]"
 	}
+        default {
+	    #  probably mistake with a unknown action type in "edit_message"
+	    set importance 1
+	    set subject [lang::message::lookup "" intranet-forum.Changed_topic_in_object "Changed $topic_type in $object_name: $subject"]
+	    set message "[_ intranet-forum.lt_A_new_topic_type_has_]\n"
+        }
     }
 }
-
 
 
 
