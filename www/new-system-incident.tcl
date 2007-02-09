@@ -49,7 +49,7 @@ set username ""
 
 set title "New System Incident"
 
-set system_owner_email [ad_parameter -package_id [ad_acs_kernel_id] SystemOwner]
+set system_owner_email [ad_parameter -package_id [im_package_forum_id] ReportThisErrorEmail]
 set system_owner_id [db_string user_id "select party_id from parties where lower(email) = lower(:system_owner_email)" -default 0]
 
 # -----------------------------------------------------------------

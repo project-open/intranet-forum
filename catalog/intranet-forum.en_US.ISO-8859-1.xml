@@ -33,6 +33,7 @@
   <msg key="Edit">Edit</msg>
   <msg key="Edit_Topic">Edit Topic</msg>
   <msg key="Edit_topic_type">Edit %topic_type%</msg>
+  <msg key="Email">Email</msg>
   <msg key="Emergency">Emergency</msg>
   <msg key="Enter_message_body">Enter message body</msg>
   <msg key="Enter_subject">Enter subject</msg>
