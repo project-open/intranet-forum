@@ -277,6 +277,21 @@ create table im_forum_files (
 );
 
 
+
+
+
+-----------------------------------------------------------
+-- Business Object View URLs
+
+insert into im_biz_object_urls (object_type, url_type, url) values (
+'im_forum_topic','view','/intranet-forum/view?topic_id=');
+insert into im_biz_object_urls (object_type, url_type, url) values (
+'im_forum_topic','edit','/intranet-forum/new?topic_id=');
+
+
+
+
+
 -------------------------------------------------------------
 -- Privileges
 --
