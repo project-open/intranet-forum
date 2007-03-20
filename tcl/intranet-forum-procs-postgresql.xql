@@ -17,18 +17,8 @@
   <fullquery name="im_forum_component.forum_query">
     <querytext>
 select
-	t.topic_id,
-	t.owner_id,
-	t.object_id,
-	t.parent_id,
-	t.topic_type_id,
-	t.topic_status_id,
+	t.*,
 	to_char(t.posting_date, :date_format) as posting_date,
-	t.owner_id,
-	t.scope,
-	t.subject,
-	t.message,
-	t.priority,
 	to_char(t.due_date, :date_format) as due_date,
 	CASE 	WHEN due_date < now() and t.topic_type_id in (1102, 1104)
 		THEN 1 
