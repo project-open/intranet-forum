@@ -185,6 +185,7 @@ set topic_type_id 1102
 # 1202 is "Open"
 set topic_status_id 1202
 
+set ttt {
 
 db_transaction {
         db_dml topic_insert "
@@ -203,5 +204,111 @@ INSERT INTO im_forum_topics (
     Please send an email to <A href=\"mailto:[ad_parameter "SystemOwner" "" ""]\">
     our webmaster</a>, thanks."
 }
+
+}
+
+
+ad_return_template
+return
+
+# -----------------------------------------------------------------
+# Create a Bug-Tracker entry
+# -----------------------------------------------------------------
+
+# Identify the package with the error. intranet-core is only exception 
+set error_url_parts [split $error_url "/"]
+set error_package [lindex $error_url_parts 1]
+if {$error_package == "intranet"} { set error_package "intranet-core" }
+
+# Parse the package string and store into hash
+set package_list [split $package_versions " "]
+foreach package_str $package_list {
+    regexp {([a-z0-9\-]*)\:([0-9\.]*)} $package_str match package version
+    set pver_hash($package) $version
+}
+
+# extract the version of the package in question
+set error_package_version ""
+catch { set error_package_version "V$pver_hash($error_package)" } err
+if {"" == $error_package_version} { ad_return_complaint 1 "Internal Error:<br>Didn't find version for '$error_package'" }
+
+# Get the standard system bug-tracker instance
+set bt_package_id [apm_package_id_from_key [bug_tracker::package_key]]
+
+
+# Create component if not already there...
+set component_id [db_string comp_id "
+	select	component_id
+	from	bt_components 
+	where	component_name = :error_package
+		and project_id = :bt_package_id 
+" -default 0]
+if {0 == $component_id} {
+    # Create a new "component" for the package
+    set component_id [db_nextval "t_acs_object_id_seq"]
+    db_dml new_component "
+	insert into bt_components (component_id, project_id, component_name)
+    	values (:component_id, :bt_package_id, :error_package)
+    "
+
+    util_memoize_flush_regexp "bug.*"
+} 
+
+# Create the component version if it doesn't exist yet
+set version_id [db_string version_id "
+	select	version_id
+	from	bt_versions
+	where	project_id = :bt_package_id
+		and version_name = :error_package_version
+" -default 0]
+if {0 == $version_id} {
+    # Create a new "version" for the package
+    set version_id [db_nextval "t_acs_object_id_seq"]
+    db_dml inser_version "
+	insert into bt_versions (
+		version_id,
+		project_id,
+		version_name,
+		description
+	) values (
+		:version_id,
+		:bt_package_id,
+		:error_package_version,
+		:error_package_version
+	)
+    "
+    util_memoize_flush_regexp "bug.*"
+}
+
+
+# Define Bug classifications
+set keyword_ids [list]
+lappend keyword_ids [db_string "select keyword_id from cr_keywords where heading = '2 - Broken Function'" -default 0]
+lappend keyword_ids [db_string "select keyword_id from cr_keywords where heading = '2 - Broken Function'" -default 0]
+
+lappend keyword_ids [db_string "select keyword_id from cr_keywords where heading = '5 - Normal'" -default 0]
+lappend keyword_ids [db_string "select keyword_id from cr_keywords where heading = '3 - Normal'" -default 0]
+
+
+# foreach {category_id category_name} [bug_tracker::category_types] {
+#     # -singular not required here since it's a new bug
+#     lappend keyword_ids [element get_value bug $category_id]
+# }
+
+
+# Create a new bug
+set bug_id [db_nextval "t_acs_object_id_seq"]
+set bug_container_project_id ""
+bug_tracker::bug::new \
+        -bug_id $bug_id \
+        -package_id $bt_package_id \
+        -component_id $component_id \
+        -found_in_version $version_id \
+        -summary $subject \
+        -description $message \
+        -desc_format "text/plain" \
+        -keyword_ids $keyword_ids \
+        -fix_for_version $version_id \
+        -bug_container_project_id $bug_container_project_id
 
 
