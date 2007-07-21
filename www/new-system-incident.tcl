@@ -188,7 +188,7 @@ $error_info"
 
 
 # Limit Subject and message to their field sizes
-set message [string range $message 0 400]
+#set message [string range $message 0 400]
 set error_url_50 [string range $error_url 0 50]
 
 
