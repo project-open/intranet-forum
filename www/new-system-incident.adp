@@ -66,8 +66,32 @@
 
 
 
+<if @resolved_p@>
+	<table border=0 cellspacing=1 cellpadding=1>
+	<tr class=rowtitle>
+	  <td class=rowtitle align=center colspan=2>
+	    Bug Resolution
+	  </td>
+	</tr>
+	<tr>
+	  <td>
 
+	<p>
+	This bug has already been marked as "@bug_resolution;noquote@".
+	</p>
+	<p>
+	This means that there is probably already a newer version of 
+	<span class=brandsec>&\#93;</span><span class=brandfirst>project-open</span><span class=brandsec>&\#91;</span>
+	with this bug fixed.<br>
+	For details please see the "Open Discussion" form at our
+	<a href="http://www.sourceforge.net/projects/project-open/">
+	<span class=brandsec>&\#93;</span><span class=brandfirst>po</span><span class=brandsec>&\#91;</span>
+	SourceForge Community</a>.
+	</p>
 
-
-
+	  </td>
+	</tr>
+	</table>
+	<p>&nbsp;</p>
+</if>
 
