@@ -5,10 +5,13 @@
 
 <p>
 #intranet-forum.Thank_you_for_submitting_your_incident#
-</p><p>
-#intranet-forum.We_will_notify_you_as_soon_as_possible#
 </p>
 
+<!--
+<p>
+#intranet-forum.We_will_notify_you_as_soon_as_possible#
+</p>
+-->
 
 <table border=0 cellspacing=1 cellpadding=1>
 <tr valign=top>

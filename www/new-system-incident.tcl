@@ -144,6 +144,26 @@ if {"" == $report_object_id || !$report_object_id} {
 }
 
 # -----------------------------------------------------------------
+# Find out the title line for the error
+# -----------------------------------------------------------------
+
+set error_url [string range $error_url 0 50]
+set subject ""
+
+if {[regexp {ERROR\:([^\n]*)} $error_info match error_descr]} {
+    set subject "$error_url: $error_descr"
+}
+
+if {"" == $subject && [regexp {([^\n]*)} $error_info match error_descr]} {
+    set subject "$error_url: $error_descr"
+}
+
+# Default - didn't find any reasonable piece of error code
+if {"" == $subject} { set subject $error_url }
+
+
+
+# -----------------------------------------------------------------
 # Create an incident (without mail alert)
 # -----------------------------------------------------------------
 
@@ -168,9 +188,8 @@ $error_info"
 
 
 # Limit Subject and message to their field sizes
-set subject [string_truncate -len 200 $error_url]
-set message [string_truncate -len 4000 $message]
-set error_url_50 [string_truncate -len 40 $error_url]
+set message [string range $message 0 400]
+set error_url_50 [string range $error_url 0 50]
 
 
 set priority 3
@@ -208,9 +227,6 @@ INSERT INTO im_forum_topics (
 }
 
 
-ad_return_template
-return
-
 # -----------------------------------------------------------------
 # Create a Bug-Tracker entry
 # -----------------------------------------------------------------
@@ -235,7 +251,6 @@ if {"" == $error_package_version} { ad_return_complaint 1 "Internal Error:<br>Di
 # Get the standard system bug-tracker instance
 set bt_package_id [apm_package_id_from_key [bug_tracker::package_key]]
 
-
 # Create component if not already there...
 set component_id [db_string comp_id "
 	select	component_id
@@ -254,7 +269,7 @@ if {0 == $component_id} {
     util_memoize_flush_regexp "bug.*"
 } 
 
-# Create the component version if it doesn't exist yet
+# Create the version if it doesn't exist yet
 set version_id [db_string version_id "
 	select	version_id
 	from	bt_versions
@@ -264,7 +279,7 @@ set version_id [db_string version_id "
 if {0 == $version_id} {
     # Create a new "version" for the package
     set version_id [db_nextval "t_acs_object_id_seq"]
-    db_dml inser_version "
+    db_dml insert_version "
 	insert into bt_versions (
 		version_id,
 		project_id,
@@ -281,34 +296,62 @@ if {0 == $version_id} {
 }
 
 
-# Define Bug classifications
-set keyword_ids [list]
-lappend keyword_ids [db_string "select keyword_id from cr_keywords where heading = '2 - Broken Function'" -default 0]
-lappend keyword_ids [db_string "select keyword_id from cr_keywords where heading = '2 - Broken Function'" -default 0]
+# Check if the bug was there already
+set bug_id [db_string bug_id "
+	select	bug_id
+	from	bt_bugs
+	where	component_id = :component_id
+		and found_in_version = :version_id
+		and summary = :subject
+" -default 0]
 
-lappend keyword_ids [db_string "select keyword_id from cr_keywords where heading = '5 - Normal'" -default 0]
-lappend keyword_ids [db_string "select keyword_id from cr_keywords where heading = '3 - Normal'" -default 0]
+if {0 == $bug_id} {
 
+	# Define Bug classifications
+	set keyword_ids [list]
+	set kid [db_string kid "select keyword_id from cr_keywords where heading = '2 - Broken Function'" -default 0]
+	if {0 != $kid} { lappend keyword_ids $kid }
+	set kid [db_string kid "select keyword_id from cr_keywords where heading = '2 - Broken Function'" -default 0]
+	if {0 != $kid} { lappend keyword_ids $kid }
+	set kid [db_string kid "select keyword_id from cr_keywords where heading = '5 - Normal'" -default 0]
+	if {0 != $kid} { lappend keyword_ids $kid }
+	set kid [db_string kid "select keyword_id from cr_keywords where heading = '3 - Normal'" -default 0]
+	if {0 != $kid} { lappend keyword_ids $kid }
 
-# foreach {category_id category_name} [bug_tracker::category_types] {
-#     # -singular not required here since it's a new bug
-#     lappend keyword_ids [element get_value bug $category_id]
-# }
+	# Create a new bug
+	set bug_id [db_nextval "t_acs_object_id_seq"]
+	set bug_container_project_id [db_string cont "
+		select	min(project_id) 
+		from	im_projects 
+		where	project_nr like 'bug_tracker%'
+	" -default ""]
 
+	bug_tracker::bug::new \
+	        -bug_id $bug_id \
+	        -package_id $bt_package_id \
+	        -component_id $component_id \
+	        -found_in_version $version_id \
+	        -summary $subject \
+	        -description $message \
+	        -desc_format "text/plain" \
+	        -keyword_ids $keyword_ids \
+	        -fix_for_version $version_id \
+	        -bug_container_project_id $bug_container_project_id
 
-# Create a new bug
-set bug_id [db_nextval "t_acs_object_id_seq"]
-set bug_container_project_id ""
-bug_tracker::bug::new \
-        -bug_id $bug_id \
-        -package_id $bt_package_id \
-        -component_id $component_id \
-        -found_in_version $version_id \
-        -summary $subject \
-        -description $message \
-        -desc_format "text/plain" \
-        -keyword_ids $keyword_ids \
-        -fix_for_version $version_id \
-        -bug_container_project_id $bug_container_project_id
+    set resolved_p 0
+    set bug_resolution ""
 
+} else {
+
+    set bug_count [db_string bug_count "select bug_count from bt_bugs where bug_id = :bug_id" -default ""]
+    if {"" == $bug_count} { set bug_count 1 }
+    db_dml count "
+	update bt_bugs set
+	bug_count = :bug_count + 1
+	where bug_id = :bug_id
+    "
+
+    set resolved_p [db_string res "select count(*) from bt_bugs where bug_id = :bug_id and resolution is not null" -default 0]
+    set bug_resolution [db_string res "select resolution from bt_bugs where bug_id = :bug_id" -default ""]
+}
 
