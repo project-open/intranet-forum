@@ -328,6 +328,7 @@ if {0 == $bug_id} {
 
 	bug_tracker::bug::new \
 	        -bug_id $bug_id \
+	        -user_id $error_user_id \
 	        -package_id $bt_package_id \
 	        -component_id $component_id \
 	        -found_in_version $version_id \
