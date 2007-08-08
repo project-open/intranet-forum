@@ -31,6 +31,7 @@ ad_page_contract {
     { publisher_name ""}
 }
 
+
 ns_log Notice "new-system-incident: error_url=$error_url"
 ns_log Notice "new-system-incident: error_info=$error_info"
 ns_log Notice "new-system-incident: error_first_names=$error_first_names"
@@ -247,6 +248,10 @@ foreach package_str $package_list {
 set error_package_version ""
 catch { set error_package_version "V$pver_hash($error_package)" } err
 if {"" == $error_package_version} { ad_return_complaint 1 "Internal Error:<br>Didn't find version for '$error_package'" }
+
+# Skip trailing ".0" pieces of the version
+while {[regexp {^(.*)\.0$} $error_package_version match v]} { set error_package_version $v }
+
 
 # Get the standard system bug-tracker instance
 set bt_package_id [apm_package_id_from_key [bug_tracker::package_key]]
