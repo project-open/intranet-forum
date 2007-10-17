@@ -6,13 +6,25 @@
 <property name="title">@page_title@</property>
 <property name="context">@context_bar@</property>
 <property name="main_navbar_label">forum</property>
+<property name="sub_navbar">@sub_navbar;noquote@</property>
 
+<div class="filter-list">
+   <div class="filter">
+      <div class="filter-block">
+         <div class="filter-title">
+            #intranet-forum.Filter_Topics#
+         </div>
+         <form method=get action="index">
+            <%= [export_form_vars forum_group_id forum_start_idx forum_order_by forum_how_many forum_view_name] %>
+            @filter_html;noquote@
+         </form>
+      </div>
+   </div>
 
-<form method=get action='index'>
-<%= [export_form_vars forum_group_id forum_start_idx forum_order_by forum_how_many forum_view_name] %>
-@filter_html;noquote@
-</form>
+   <div class="fullwidth-list">
+      <%= [im_table_with_title "Forum" $forum_content] %>
+   </div>
 
-<%= [im_forum_navbar "/intranet-forum/index" [list forum_group_id forum_start_idx forum_order_byforum_how_many forum_mine_p forum_view_name] $forum_folder] %>
+   <div class="filter-list-footer"></div>
 
-@forum_content;noquote@
+</div>
