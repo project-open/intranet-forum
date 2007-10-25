@@ -1239,11 +1239,11 @@ ad_proc -public im_forum_navbar { base_url export_var_list {forum_folder 0} } {
 	}
     }
 
-    set active_topics [im_navbar_tab "index" [_ intranet-forum.Inbox] [expr {$section eq "Inbox"}]]
-    set deleted_topics [im_navbar_tab "index?forum_folder=1" [_ intranet-forum.Deleted] [expr {$section eq "Deleted"}]]
-    set unresolved_topics [im_navbar_tab "index?forum_folder=2" [_ intranet-forum.Unresolved] [expr {$section eq "Unresolved"}]]
-    set discussion_view [im_navbar_tab "index?forum_view_name=forum_list_discussion" [_ intranet-forum.Discussion_View] [expr {$section eq "Discussion View"}]]
-    set history [im_navbar_tab "index?forum_view_name=forum_list_history" [_ intranet-forum.History] [expr {$section eq "History"}]]
+    set active_topics [im_navbar_tab "index" [_ intranet-forum.Inbox] [string equal $section "Inbox"]]
+    set deleted_topics [im_navbar_tab "index?forum_folder=1" [_ intranet-forum.Deleted] [string equal $section "Deleted"]]
+    set unresolved_topics [im_navbar_tab "index?forum_folder=2" [_ intranet-forum.Unresolved] [string equal $section "Unresolved"]]
+    set discussion_view [im_navbar_tab "index?forum_view_name=forum_list_discussion" [_ intranet-forum.Discussion_View] [string equal $section "Discussion View"]]
+    set history [im_navbar_tab "index?forum_view_name=forum_list_history" [_ intranet-forum.History] [string equal $section "History"]]
 
     # $discussion_view $history
 
