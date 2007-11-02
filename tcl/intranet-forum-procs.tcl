@@ -1239,52 +1239,22 @@ ad_proc -public im_forum_navbar { base_url export_var_list {forum_folder 0} } {
 	}
     }
 
-    set sel "<td class=tabsel>"
-    set nosel "<td class=tabnotsel>"
-    set a_white "<a class=whitelink"
-    set tdsp "<td>&nbsp;</td>"
+    set active_topics [im_navbar_tab "index" [_ intranet-forum.Inbox] [string equal $section "Inbox"]]
+    set deleted_topics [im_navbar_tab "index?forum_folder=1" [_ intranet-forum.Deleted] [string equal $section "Deleted"]]
+    set unresolved_topics [im_navbar_tab "index?forum_folder=2" [_ intranet-forum.Unresolved] [string equal $section "Unresolved"]]
+    set discussion_view [im_navbar_tab "index?forum_view_name=forum_list_discussion" [_ intranet-forum.Discussion_View] [string equal $section "Discussion View"]]
+    set history [im_navbar_tab "index?forum_view_name=forum_list_history" [_ intranet-forum.History] [string equal $section "History"]]
 
-    set active_topics "$tdsp$nosel<a href='index'>[_ intranet-forum.Inbox]</a></td>"
-    set deleted_topics "$tdsp$nosel<a href='index?forum_folder=1'>[_ intranet-forum.Deleted]</a></td>"
-    set unresolved_topics "$tdsp$nosel<a href='index?forum_folder=2'>[_ intranet-forum.Unresolved]</a></td>"
-    set discussion_view "$tdsp$nosel<a href='index?forum_view_name=forum_list_discussion'>[_ intranet-forum.Discussion_View]</a></td>"
-    set history "$tdsp$nosel<a href='index?forum_view_name=forum_list_history'>[_ intranet-forum.History]</a></td>"
+    # $discussion_view $history
 
-    switch $section {
-"Inbox" {set active_topics "$tdsp$sel [_ intranet-forum.Inbox]</td>"}
-"Deleted" {set deleted_topics "$tdsp$sel [_ intranet-forum.Deleted]</td>"}
-"Unresolved" {set unresolved_topics "$tdsp$sel [_ intranet-forum.Unresolved]</td>"}
-"Discussion View" {set discussion_view "$tdsp$sel [_ intranet-forum.Discussion_View]</td>"}
-"History" {set history "$tdsp$sel [_ intranet-forum.History]</td>"}
-default {
-    # Nothing - just let all sections deselected
-}
-    }
-
-
-# $discussion_view $history
-
-    set navbar "
-<table width=100% cellpadding=0 cellspacing=0 border=0>
-  <tr>
-    <td colspan=6 align=right>
-      <table cellpadding=1 cellspacing=0 border=0>
-	<tr>
-	  $active_topics
-	  $deleted_topics
-	  $unresolved_topics
-	</tr>
-      </table>
-    </td>
-  </tr>
-  <tr>
-    <td colspan=6 class=tabnotsel align=center>
-	&nbsp;
-    </td>
-  </tr>
-</table>
-"
-    return $navbar
+    return "
+         <div id=\"navbar_sub_wrapper\">
+            <ul id=\"navbar_sub\">
+    	       $active_topics
+	       $deleted_topics
+	       $unresolved_topics
+            </ul>
+         </div>"
 }
 
 

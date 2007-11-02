@@ -90,11 +90,6 @@ set project_types [linsert $project_types 0 0 All]
 
 set filter_html "
 	<table border=0 cellpadding=0 cellspacing=1>
-	<tr>
-	  <td colspan='2' class=rowtitle align=center>
-		[_ intranet-forum.Filter_Topics]
-	  </td>
-	</tr>
 "
 
 if {[im_permission $current_user_id "view_topics_all"]} {
@@ -117,6 +112,7 @@ append filter_html "
 	    <input type=submit value=Go name=submit>
 	  </td>
 	</tr>
+        </table>
 "
 
 # ---------------------------------------------------------------
@@ -151,6 +147,8 @@ set forum_content [im_forum_component \
 # ---------------------------------------------------------------
 # Join all parts together
 # ---------------------------------------------------------------
+
+set sub_navbar [im_forum_navbar "/intranet-forum/index" [list forum_group_id forum_start_idx forum_order_byforum_how_many forum_mine_p forum_view_name] $forum_folder]
 
 db_release_unused_handles
 
