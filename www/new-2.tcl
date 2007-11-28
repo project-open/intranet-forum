@@ -52,6 +52,8 @@ set object_type [db_string acs_object_type "select object_type from acs_objects 
 set page_title "[_ intranet-forum.New_topic_type]"
 set context_bar [im_context_bar [list /intranet-forum/ "[_ intranet-forum.Forum]"] $page_title]
 
+set include_topic_message_p [ad_parameter -package_id [im_package_forum_id] "IncludeTopicMessageInNotificationsP" "" 0]
+set include_topic_message_p 1
 
 set exception_text ""
 set exception_count 0
@@ -86,6 +88,15 @@ if {"" != $comments} {
     append message "\n\n\[Comment from $user_name on $today_date\]:\n$comments"
 }
 
+
+set forum_folder_count [db_string forum_folder_count "select count(*) from im_forum_folders"]
+if {!$forum_folder_count} {
+    ad_return_complaint 1 "<b>Forum Folders not Setup</b>:<p>
+	Your system has a configuration issue.<br>
+	Please notify your system administrator and tell him to execute the update script
+	'psql -f /web/projop/packages/intranet-forum/sql/postgresql/upgrade/upgrade-3.2.3.0.0-3.2.4.0.0.sql'.
+    "
+}
 
 # ---------------------------------------------------------------------
 # "Reply" to this topic
@@ -232,7 +243,6 @@ if {[string equal $actions "save"]} {
         return
     }
 }
-
 
 # ---------------------------------------------------------------------
 # New Message: Subscribe all current project members
@@ -439,7 +449,6 @@ where topic_id=:topic_id"
 # Alert about changes
 # ---------------------------------------------------------------------
 
-set msg_url "[ad_parameter -package_id [ad_acs_kernel_id] SystemURL "" ""]intranet-forum/view?topic_id=$topic_id"
 set importance 0
 
 db_1row subject_message "
@@ -484,6 +493,10 @@ while {"" != $parent_id && 0 != $parent_id && $ctr < 10} {
 # 0=none, 1=non-important, 2=important
 #
 
+set org_message ""
+if {$include_topic_message_p} { set org_message "$message\n\n" }
+
+
 set action_type_found 0
 switch $action_type {
     "new_message" { 
@@ -491,7 +504,9 @@ switch $action_type {
 	set importance 2
 	set subject [lang::message::lookup "" intranet-forum.New_topic_in_object "New $topic_type in $object_name: $subject"]
 	set message "
-[_ intranet-forum.lt_A_new_topic_type_has_]\n"
+$org_message
+[_ intranet-forum.lt_A_new_topic_type_has_]
+"
     }
 
     "reply_message" { 
@@ -499,7 +514,9 @@ switch $action_type {
 	set importance 1
 	set subject [lang::message::lookup "" intranet-forum.Reply_to_topic "Reply to $topic_type in $object_name: $subject"]
 	set message "
-[_ intranet-forum.lt_A_new_topic_type_has_]\n"
+$org_message
+[_ intranet-forum.lt_A_new_topic_type_has_]
+"
     }
 }
 
@@ -511,43 +528,58 @@ if {!$action_type_found} {
 	    set importance 1
 	    set subject "[_ intranet-forum.Accepted] $topic_type in $object_name: $subject"
 	    set message "
-[_ intranet-forum.lt_A_new_topic_type_has_]\n"
+$org_message
+[_ intranet-forum.lt_A_new_topic_type_has_]
+"
 	}
 	"reject" { 
 	    set importance 2
 	    set subject "[_ intranet-forum.Rejected] $topic_type in $object_name: $subject"
 	    set message "
-[_ intranet-forum.lt_A_new_topic_type_has_]\n"
+$org_message
+[_ intranet-forum.lt_A_new_topic_type_has_]
+"
 	}
 	"clarify" { 
 	    set importance 2
 	    set subject "$topic_type [_ intranet-forum.needs_clarification] in $object_name: $subject"
 	    set message "
-[_ intranet-forum.lt_The_asignee_of_the_to]\n"
+$org_message
+[_ intranet-forum.lt_The_asignee_of_the_to]
+"
 	}
 	"save" { 
 	    set importance 1
 	    set subject "[_ intranet-forum.Modified] $topic_type in $object_name: $subject"
 	    set message "
-[_ intranet-forum.lt_The_topic_type_has_be]"
+$org_message
+[_ intranet-forum.lt_The_topic_type_has_be]
+"
 	}
 	"close" { 
 	    set importance 2
 	    set subject "[_ intranet-forum.Closed] $topic_type in $object_name: $subject"
 	    set message "
-[_ intranet-forum.lt_The_topic_type_has_be_1]"
+$org_message
+[_ intranet-forum.lt_The_topic_type_has_be_1]
+"
 	}
 	"assign" { 
 	    set importance 1
 	    set subject "[_ intranet-forum.Assigned] $topic_type in $object_name: $subject"
 	    set message "
-[_ intranet-forum.lt_The_topic_type_has_be_2]"
+$org_message
+[_ intranet-forum.lt_The_topic_type_has_be_2]
+"
 	}
         default {
 	    #  probably mistake with a unknown action type in "edit_message"
 	    set importance 1
 	    set subject [lang::message::lookup "" intranet-forum.Changed_topic_in_object "Changed $topic_type in $object_name: $subject"]
-	    set message "[_ intranet-forum.lt_A_new_topic_type_has_]\n"
+	    set message "
+$org_message
+[_ intranet-forum.lt_A_new_topic_type_has_]
+"
         }
     }
 }
@@ -582,5 +614,5 @@ db_multirow -extend {checked} stakeholders stakeholder_query $stakeholder_sql {
 
 
 if {0 == $num_stakeholders} {
-    ad_returnredirect $return_url
+#    ad_returnredirect $return_url
 }
