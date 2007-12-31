@@ -19,6 +19,9 @@
             @filter_html;noquote@
          </form>
       </div>
+
+   <%= [im_navbar_tree -label "main"] %>
+
    </div>
 
    <div class="fullwidth-list">
