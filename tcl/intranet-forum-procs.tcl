@@ -896,8 +896,8 @@ ad_proc -public im_forum_component {
 			set order_by_clause "order by topic_type" 
 		}
 		"Due" { 
-			set order_by_clause "order by t.due_date" 
-			set order_by_clause_ext "order by due_date" 
+			set order_by_clause "order by coalesce(t.due_date, to_date('1970-01-01','YYYY-MM-DD')) DESC" 
+			set order_by_clause_ext "order by coalesce(z.due_date, to_date('1970-01-01','YYYY-MM-DD')) DESC" 
 		}
 		"Posting" { 
 			set order_by_clause "order by t.posting_date" 
@@ -1048,6 +1048,8 @@ ad_proc -public im_forum_component {
     	set old_object_id 0
 	
     	db_foreach forum_query_limited $selection {
+
+	    set due_date "<nobr>$due_date_pretty</nobr>"
 
     	    if {$read_p == "t"} {set read "read"} else {set read "unread"}
     	    if {$folder_id == ""} {set folder_name "Inbox"}
