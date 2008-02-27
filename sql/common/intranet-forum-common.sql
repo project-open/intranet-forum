@@ -28,19 +28,6 @@ insert into im_forum_folders values (8, null, null, 'Sys8');
 insert into im_forum_folders values (9, null, null, 'Sys9');
 
 
-
------------------------------------------------------------
--- Where to show forum topic objects
---
-
-insert into im_biz_object_urls (object_type, url_type, url) values (
-'im_forum_topic','view','/intranet-forum/view?topic_id=');
-insert into im_biz_object_urls (object_type, url_type, url) values (
-'im_forum_topic','edit','/intranet-forum/new?topic_id=');
-
-
-
-
 -- Forum Topic Types
 -- delete from im_categories where category_type = 'Intranet Topic Type';
 
