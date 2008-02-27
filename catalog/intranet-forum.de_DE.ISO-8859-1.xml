@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="intranet-forum" package_version="3.2.7.0.0" locale="de_DE" charset="ISO-8859-1">
+<message_catalog package_key="intranet-forum" package_version="3.4.0.0.0" locale="de_DE" charset="ISO-8859-1">
 
   <msg key="Accept_topic_type">Akzeptiert %topic_type% </msg>
   <msg key="Accepted">Akzeptiert</msg>
