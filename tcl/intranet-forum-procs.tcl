@@ -1165,6 +1165,137 @@ ad_proc -public im_forum_component {
 }
 
 
+
+
+
+# ----------------------------------------------------------------------
+# Component with discussions designed to appear directly in a ProjectViewPage
+# ----------------------------------------------------------------------
+
+ad_proc -public im_forum_full_screen_component {
+    -object_id:required
+} {
+    Creates a HTML table with the threaded discussions for a given object.
+} {
+    set user_id [ad_get_user_id]
+    set todays_date [lindex [split [ns_localsqltimestamp] " "] 0]
+    set bgcolor(0) " class=roweven"
+    set bgcolor(1) " class=rowodd"
+    set date_format "YYYY-MM-DD"
+    set return_url [im_url_with_query]
+
+    set topic_id [db_string tid "select min(topic_id) from im_forum_topics where object_id = :object_id" -default ""]
+    if {"" == $topic_id} { return "" }
+
+    # ------------------------------------------------------------------
+    # Get the message details
+
+    set action_type "edit_message"
+    set topic_sql "
+	select	t.*,
+		to_char(t.due_date, :date_format) as due_date,
+		to_char(t.posting_date, :date_format) as posting_date,
+		m.read_p,
+		m.folder_id,
+		m.receive_updates,
+		im_category_from_id(t.topic_status_id) as topic_status,
+		im_category_from_id(t.topic_type_id) as topic_type,
+		im_name_from_user_id(t.owner_id) as owner_name,
+		im_name_from_user_id(t.asignee_id) as asignee_name,
+		acs_object__name(t.object_id) as object_name
+	from
+		im_forum_topics t
+		LEFT JOIN (
+			select	* 
+			from	im_forum_topic_user_map 
+			where	user_id=:user_id
+		) m USING (topic_id)
+	where
+		t.topic_id = :topic_id
+    "
+    db_1row get_topic $topic_sql
+    if {$due_date == ""} { set due_date $todays_date }
+    set old_asignee_id $asignee_id
+
+    
+    # Only incidents and tasks have priority, status, asignees and due_dates
+    #
+    set task_or_incident_p [im_forum_is_task_or_incident $topic_type_id]
+    set ctr 1
+
+    # ------------------------------------------------------------------
+    # Render the message
+    append table_body [im_forum_render_tind $topic_id $parent_id $topic_type_id $topic_type $topic_status_id $topic_status $owner_id $asignee_id $owner_name $asignee_name $user_id $object_id $object_name $object_admin $subject $message $posting_date $due_date $priority $scope $receive_updates $return_url]
+
+    set actions ""
+
+    if {$task_or_incident_p && $user_id == $asignee_id} {
+	# Add Accept/Reject for "assigned" tasks
+	if {$topic_status_id == [im_topic_status_id_assigned]} {
+	    # Asignee has not "accepted" yet
+	    append actions "<option value=accept>[_ intranet-forum.Accept_topic_type]</option>\n"
+	    append actions "<option value=reject>[_ intranet-forum.Reject_topic_type]</option>\n"
+	}
+	
+	# Allow to mark task as "closed" only after accepted
+	# 061114 fraber: Not anymore - really a hassle
+	if {![string equal $topic_status_id [im_topic_status_id_closed]]} {
+	    append actions "<option value=close>[_ intranet-forum.Close_topic_type]</option>\n"
+	}
+	
+	# Always allow to ask for clarification from owner if not already in clarify
+	if {![string equal $topic_status_id [im_topic_status_id_needs_clarify]] && ![string equal $topic_status_id [im_topic_status_id_closed]]} {
+	    append actions "<option value=clarify>[_ intranet-forum.lt_topic_type_needs_clar]</option>\n"
+	}
+    }
+    
+
+    append actions "<option value=reply selected>[_ intranet-forum.lt_Reply_to_this_topic_t]</option>\n"
+    
+    # Only admins can edit the message
+    set assign_hidden ""
+    if {$object_admin || $user_id==$owner_id} {
+	append actions "<option value=edit>[_ intranet-forum.Edit_topic_type]</option>\n"
+	if {$task_or_incident_p && $topic_status_id == [im_topic_status_id_needs_clarify]} {
+	    append actions "<option value=assign>[_ intranet-forum.Re_assign_topic]</option>\n"
+	    #assignee does not change
+	    set assign_hidden "<input type=hidden name=asignee_id value=$asignee_id>"
+	}
+	# owner can also close topic
+	if {$user_id != $asignee_id && ![string equal $topic_status_id [im_topic_status_id_closed]]} {
+	    append actions "<option value=close>[_ intranet-forum.Close_topic_type]</option>\n"
+	}
+    }
+    
+    append table_body "
+	<tr $bgcolor([expr $ctr % 2])>
+	  <td>[_ intranet-forum.Actions]</td>
+	  <td>
+	    <select name=actions>
+	    $actions
+	    </select>
+	    <input type=submit value=\"[_ intranet-forum.Apply]\">
+	  </td>
+	</tr> $assign_hidden
+    "
+    incr ctr
+
+    # -------------- Table and Form Start -----------------------------
+    set thread_html [im_forum_render_thread $topic_id $user_id $object_id $object_name $object_admin $return_url]
+
+    set page_body "
+	<form action=new-2 method=POST>
+	[export_form_vars action_type owner_id old_asignee_id object_id topic_id parent_id subject message return_url topic_status_id topic_type_id]
+	<table cellspacing=1 border=0 cellpadding=1>
+	$table_body
+	</table>
+	</form>
+	$thread_html
+    "
+    return $page_body
+}
+
+
 # ----------------------------------------------------------------------
 # Forum Navigation Bar
 # ----------------------------------------------------------------------
