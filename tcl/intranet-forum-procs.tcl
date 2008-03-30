@@ -1187,6 +1187,10 @@ ad_proc -public im_forum_full_screen_component {
     set topic_id [db_string tid "select min(topic_id) from im_forum_topics where object_id = :object_id" -default ""]
     if {"" == $topic_id} { return "" }
 
+    set object_admin 0
+    set object_admins [im_biz_object_admin_ids $object_id]
+    if {[lsearch $object_admins $user_id] > -1} { set object_admin 1}
+
     # ------------------------------------------------------------------
     # Get the message details
 
