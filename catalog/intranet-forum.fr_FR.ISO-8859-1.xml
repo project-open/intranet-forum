@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <message_catalog package_key="intranet-forum" package_version="3.2.10.1.0" locale="fr_FR" charset="ISO-8859-1">
 
+  <msg key="Accept_Tasks">Accepter Tâche</msg>
   <msg key="Accept_topic_type">Accepter %topic_type%</msg>
   <msg key="Accepted">Accepté</msg>
   <msg key="Access_permissions">Autoriser l'accès</msg>
@@ -15,6 +16,7 @@
   <msg key="Assigned">Affecté</msg>
   <msg key="Assigned_to">Affecté à</msg>
   <msg key="Body">Corps</msg>
+  <msg key="Close_Tasks">Fermer Tâche</msg>
   <msg key="Close_topic_type">Terminer %topic_type%</msg>
   <msg key="Closed">Terminé</msg>
   <msg key="Create_new_Incident">Créer un nouvel Incident</msg>
@@ -114,6 +116,7 @@
   <msg key="Re_subject">Rép: %subject%</msg>
   <msg key="Read">Lu</msg>
   <msg key="Receive_updates">Recevoir mises à jour</msg>
+  <msg key="Reject_Tasks">Rejeter Tâche</msg>
   <msg key="Reject_topic_type">Rejeter la (l')%topic_type%</msg>
   <msg key="Rejected">Rejeté</msg>
   <msg key="Related_Files">Fichiers associés</msg>
