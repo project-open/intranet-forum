@@ -413,10 +413,10 @@ ad_proc -public im_forum_render_tind {
 		  <td>
 		    [im_gif $topic_type_id "$topic_type"] 
 		    $subject"
-    append tind_html " (<A href=new?parent_id=$topic_id&[export_url_vars return_url]>[_ intranet-forum.Reply]</A>)"
+    append tind_html " (<A href=/intranet-forum/new?parent_id=$topic_id&[export_url_vars return_url]>[_ intranet-forum.Reply]</A>)"
 
     if {$object_admin || $user_id==$owner_id} {
-	append tind_html " (<A href=new?[export_url_vars topic_id return_url]>[_ intranet-forum.Edit]</A>)"
+	append tind_html " (<A href=/intranet-forum/new?[export_url_vars topic_id return_url]>[_ intranet-forum.Edit]</A>)"
     }
 
     append tind_html "
@@ -511,8 +511,9 @@ ad_proc -public im_forum_render_tind {
 
 	
 	if {$object_admin || $user_id==$owner_id} {
-	    append tind_html " (<A href=assign?[export_url_vars topic_id return_url]>[_ intranet-forum.Assign]</A>)"
+#	    append tind_html " (<A href=/intranet-forum/assign?[export_url_vars topic_id return_url]>[_ intranet-forum.Assign]</A>)"
 	}
+
 	append tind_html "
 		  </td>
 		</tr>\n"
