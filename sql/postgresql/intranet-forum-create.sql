@@ -1,12 +1,12 @@
--- /packages/intranet-forum/sql/oracle/intranet-forum-create.sql
+-- /packages/intranet-forum/sql/postgresql/intranet-forum-create.sql
 --
--- Copyright (c) 2003-2004 Project/Open
+-- Copyright (c) 2003-2008 ]project-open[
 --
 -- All rights reserved. Please check
 -- http://www.project-open.com/license/ for details.
 --
 -- @author frank.bergmann@project-open.com
--- @author      juanjoruizx@yahoo.es
+-- @author	juanjoruizx@yahoo.es
 
 -----------------------------------------------------------
 -- Tasks, Incidents, News and Discussions (TIND)
@@ -31,10 +31,10 @@ create table im_forum_topics (
 			constraint im_forum_topics_object_fk
 			references acs_objects,
 	-- Hierarchy of messages
-	parent_id	  integer
-			  constraint im_forum_topics_parent_fk
-			  references im_forum_topics,
-	tree_sortkey      varbit,
+	parent_id	integer
+			constraint im_forum_topics_parent_fk
+			references im_forum_topics,
+	tree_sortkey	varbit,
 	max_child_sortkey varbit,
 
 	topic_type_id	integer not null
@@ -68,33 +68,34 @@ create index im_forum_topics_object_idx on im_forum_topics (object_id);
 create function im_forum_topic_insert_tr ()
 returns opaque as '
 declare
-    v_max_child_sortkey             im_forum_topics.max_child_sortkey%TYPE;
-    v_parent_sortkey                im_forum_topics.tree_sortkey%TYPE;
+	v_max_child_sortkey		im_forum_topics.max_child_sortkey%TYPE;
+	v_parent_sortkey		im_forum_topics.tree_sortkey%TYPE;
 begin
 
-    if new.parent_id is null
-    then
-        new.tree_sortkey := int_to_tree_key(new.topic_id+1000);
+	if new.parent_id is null
+	then
 
-    else
+		new.tree_sortkey := int_to_tree_key(new.topic_id+1000);
 
-        select tree_sortkey, tree_increment_key(max_child_sortkey)
-        into v_parent_sortkey, v_max_child_sortkey
-        from im_forum_topics
-        where topic_id = new.parent_id
-        for update;
+	else
 
-        update im_forum_topics
-        set max_child_sortkey = v_max_child_sortkey
-        where topic_id = new.parent_id;
+		select tree_sortkey, tree_increment_key(max_child_sortkey)
+		into v_parent_sortkey, v_max_child_sortkey
+		from im_forum_topics
+		where topic_id = new.parent_id
+		for update;
 
-        new.tree_sortkey := v_parent_sortkey || v_max_child_sortkey;
+		update im_forum_topics
+		set max_child_sortkey = v_max_child_sortkey
+		where topic_id = new.parent_id;
 
-    end if;
+		new.tree_sortkey := v_parent_sortkey || v_max_child_sortkey;
 
-    new.max_child_sortkey := null;
+	end if;
 
-    return new;
+	new.max_child_sortkey := null;
+
+	return new;
 end;' language 'plpgsql';
 
 create trigger im_forum_topic_insert_tr
@@ -106,44 +107,44 @@ execute procedure im_forum_topic_insert_tr();
 
 create function im_forum_topics_update_tr () returns opaque as '
 declare
-        v_parent_sk     varbit default null;
-        v_max_child_sortkey     varbit;
-        v_old_parent_length     integer;
+	v_parent_sk		varbit default null;
+	v_max_child_sortkey	varbit;
+	v_old_parent_length	integer;
 begin
-        if new.topic_id = old.topic_id
-           and ((new.parent_id = old.parent_id)
-                or (new.parent_id is null
-                    and old.parent_id is null)) then
+	if new.topic_id = old.topic_id
+	and ((new.parent_id = old.parent_id)
+		or (new.parent_id is null
+			and old.parent_id is null)) then
 
-           return new;
+	return new;
 
-        end if;
+	end if;
 
-        -- the tree sortkey is going to change so get the new one and update it and all its
-        -- children to have the new prefix...
-        v_old_parent_length := length(new.tree_sortkey) + 1;
+	-- the tree sortkey is going to change so get the new one and update it and all its
+	-- children to have the new prefix...
+	v_old_parent_length := length(new.tree_sortkey) + 1;
 
-        if new.parent_id is null then
-            v_parent_sk := int_to_tree_key(new.topic_id+1000);
-        else
-            SELECT tree_sortkey, tree_increment_key(max_child_sortkey)
-            INTO v_parent_sk, v_max_child_sortkey
-            FROM im_forum_topics
-            WHERE topic_id = new.parent_id
-            FOR UPDATE;
+	if new.parent_id is null then
+		v_parent_sk := int_to_tree_key(new.topic_id+1000);
+	else
+		SELECT tree_sortkey, tree_increment_key(max_child_sortkey)
+		INTO v_parent_sk, v_max_child_sortkey
+		FROM im_forum_topics
+		WHERE topic_id = new.parent_id
+		FOR UPDATE;
 
-            UPDATE im_forum_topics
-            SET max_child_sortkey = v_max_child_sortkey
-            WHERE topic_id = new.parent_id;
+		UPDATE im_forum_topics
+		SET max_child_sortkey = v_max_child_sortkey
+		WHERE topic_id = new.parent_id;
 
-            v_parent_sk := v_parent_sk || v_max_child_sortkey;
-        end if;
+		v_parent_sk := v_parent_sk || v_max_child_sortkey;
+	end if;
 
-        UPDATE im_forum_topics
-        SET tree_sortkey = v_parent_sk || substring(tree_sortkey, v_old_parent_length)
-        WHERE tree_sortkey between new.tree_sortkey and tree_right(new.tree_sortkey);
+	UPDATE im_forum_topics
+	SET tree_sortkey = v_parent_sk || substring(tree_sortkey, v_old_parent_length)
+	WHERE tree_sortkey between new.tree_sortkey and tree_right(new.tree_sortkey);
 
-        return new;
+	return new;
 end;' language 'plpgsql';
 
 create trigger im_forum_topics_update_tr after update
@@ -170,7 +171,7 @@ DECLARE
 	p_user_is_employee	alias for $8;
 	p_user_is_customer	alias for $9;
 	
-	v_permission_p          integer;
+	v_permission_p	integer;
 BEGIN
 	-- The owner should always be able to see his or her item
 	IF p_user_id = p_owner_id THEN RETURN 1; END IF;
@@ -326,63 +327,63 @@ select acs_privilege__add_child('admin', 'view_topics_all');
 ------------------------------------------------------
 -- See All Topics
 ---
-select im_priv_create('view_topics_all',        'Employees');
-select im_priv_create('view_topics_all',        'P/O Admins');
-select im_priv_create('view_topics_all',        'Project Managers');
-select im_priv_create('view_topics_all',        'Senior Managers');
+select im_priv_create('view_topics_all',	'Employees');
+select im_priv_create('view_topics_all',	'P/O Admins');
+select im_priv_create('view_topics_all',	'Project Managers');
+select im_priv_create('view_topics_all',	'Senior Managers');
 
 
 
 ------------------------------------------------------
 -- Add Topic PM
 ---
-select im_priv_create('add_topic_pm',        'Accounting');
-select im_priv_create('add_topic_pm',        'Customers');
-select im_priv_create('add_topic_pm',        'Employees');
-select im_priv_create('add_topic_pm',        'Freelancers');
-select im_priv_create('add_topic_pm',        'P/O Admins');
-select im_priv_create('add_topic_pm',        'Project Managers');
-select im_priv_create('add_topic_pm',        'Sales');
-select im_priv_create('add_topic_pm',        'Senior Managers');
+select im_priv_create('add_topic_pm',	'Accounting');
+select im_priv_create('add_topic_pm',	'Customers');
+select im_priv_create('add_topic_pm',	'Employees');
+select im_priv_create('add_topic_pm',	'Freelancers');
+select im_priv_create('add_topic_pm',	'P/O Admins');
+select im_priv_create('add_topic_pm',	'Project Managers');
+select im_priv_create('add_topic_pm',	'Sales');
+select im_priv_create('add_topic_pm',	'Senior Managers');
 
 
 ------------------------------------------------------
 -- Add Topic Client
 ---
-select im_priv_create('add_topic_client',        'Accounting');
-select im_priv_create('add_topic_client',        'P/O Admins');
-select im_priv_create('add_topic_client',        'Sales');
-select im_priv_create('add_topic_client',        'Senior Managers');
+select im_priv_create('add_topic_client',	'Accounting');
+select im_priv_create('add_topic_client',	'P/O Admins');
+select im_priv_create('add_topic_client',	'Sales');
+select im_priv_create('add_topic_client',	'Senior Managers');
 
 
 
 ------------------------------------------------------
 -- Add Topic Public
 ---
-select im_priv_create('add_topic_public',        'P/O Admins');
-select im_priv_create('add_topic_public',        'Senior Managers');
+select im_priv_create('add_topic_public',	'P/O Admins');
+select im_priv_create('add_topic_public',	'Senior Managers');
 
 
 
 ------------------------------------------------------
 -- Add Topic Non-Clients
 ---
-select im_priv_create('add_topic_noncli',        'Accounting');
-select im_priv_create('add_topic_noncli',        'Employees');
-select im_priv_create('add_topic_noncli',        'Freelancers');
-select im_priv_create('add_topic_noncli',        'P/O Admins');
-select im_priv_create('add_topic_noncli',        'Project Managers');
-select im_priv_create('add_topic_noncli',        'Sales');
-select im_priv_create('add_topic_noncli',        'Senior Managers');
+select im_priv_create('add_topic_noncli',	'Accounting');
+select im_priv_create('add_topic_noncli',	'Employees');
+select im_priv_create('add_topic_noncli',	'Freelancers');
+select im_priv_create('add_topic_noncli',	'P/O Admins');
+select im_priv_create('add_topic_noncli',	'Project Managers');
+select im_priv_create('add_topic_noncli',	'Sales');
+select im_priv_create('add_topic_noncli',	'Senior Managers');
 
 
 ------------------------------------------------------
 -- Add Topic Groups
 ---
-select im_priv_create('add_topic_group',        'Accounting');
-select im_priv_create('add_topic_group',        'P/O Admins');
-select im_priv_create('add_topic_group',        'Sales');
-select im_priv_create('add_topic_group',        'Senior Managers');
+select im_priv_create('add_topic_group',	'Accounting');
+select im_priv_create('add_topic_group',	'P/O Admins');
+select im_priv_create('add_topic_group',	'Sales');
+select im_priv_create('add_topic_group',	'Senior Managers');
 
 
 
@@ -390,20 +391,20 @@ select im_priv_create('add_topic_group',        'Senior Managers');
 ------------------------------------------------------
 -- Add Topic Public
 ---
-select im_priv_create('add_topic_client',        'P/O Admins');
-select im_priv_create('add_topic_client',        'Senior Managers');
+select im_priv_create('add_topic_client',	'P/O Admins');
+select im_priv_create('add_topic_client',	'Senior Managers');
 
 
 ------------------------------------------------------
 -- Add Topic Staff
 ---
-select im_priv_create('add_topic_staff',        'Accounting');
-select im_priv_create('add_topic_staff',        'Employees');
-select im_priv_create('add_topic_staff',        'Freelancers');
-select im_priv_create('add_topic_staff',        'P/O Admins');
-select im_priv_create('add_topic_staff',        'Project Managers');
-select im_priv_create('add_topic_staff',        'Sales');
-select im_priv_create('add_topic_staff',        'Senior Managers');
+select im_priv_create('add_topic_staff',	'Accounting');
+select im_priv_create('add_topic_staff',	'Employees');
+select im_priv_create('add_topic_staff',	'Freelancers');
+select im_priv_create('add_topic_staff',	'P/O Admins');
+select im_priv_create('add_topic_staff',	'Project Managers');
+select im_priv_create('add_topic_staff',	'Sales');
+select im_priv_create('add_topic_staff',	'Senior Managers');
 
 
 ---------------------------------------------------------
@@ -433,66 +434,60 @@ select im_priv_create('add_topic_staff',        'Senior Managers');
 create or replace function inline_0 ()
 returns integer as '
 declare
-        -- Menu IDs
-        v_menu                  integer;
+	-- Menu IDs
+	v_menu		integer;
 	v_main_menu		integer;
 
-        -- Groups
-        v_employees             integer;
-        v_accounting            integer;
-        v_senman                integer;
-        v_companies             integer;
-        v_freelancers           integer;
-        v_proman                integer;
-        v_admins                integer;
+	-- Groups
+	v_employees		integer;
+	v_accounting		integer;
+	v_senman		integer;
+	v_companies		integer;
+	v_freelancers	integer;
+	v_proman		integer;
+	v_admins		integer;
 	v_reg_users		integer;
 BEGIN
+	select group_id into v_admins from groups where group_name = ''P/O Admins'';
+	select group_id into v_senman from groups where group_name = ''Senior Managers'';
+	select group_id into v_proman from groups where group_name = ''Project Managers'';
+	select group_id into v_accounting from groups where group_name = ''Accounting'';
+	select group_id into v_employees from groups where group_name = ''Employees'';
+	select group_id into v_companies from groups where group_name = ''Customers'';
+	select group_id into v_freelancers from groups where group_name = ''Freelancers'';
+	select group_id into v_reg_users from groups where group_name = ''Registered Users'';
 
-    select group_id into v_admins from groups where group_name = ''P/O Admins'';
-    select group_id into v_senman from groups where group_name = ''Senior Managers'';
-    select group_id into v_proman from groups where group_name = ''Project Managers'';
-    select group_id into v_accounting from groups where group_name = ''Accounting'';
-    select group_id into v_employees from groups where group_name = ''Employees'';
-    select group_id into v_companies from groups where group_name = ''Customers'';
-    select group_id into v_freelancers from groups where group_name = ''Freelancers'';
-    select group_id into v_reg_users from groups where group_name = ''Registered Users'';
+	select menu_id into v_main_menu from im_menus
+	where label=''main'';
 
+	v_menu := im_menu__new (
+		null,		-- p_menu_id
+		''acs_object'',	-- object_type
+		now(),		-- creation_date
+		null,		-- creation_user
+		null,		-- creation_ip
+		null,		-- context_id
+		''intranet-forum'',	-- package_name
+		''forum'',		-- label
+		''Forum'',		-- name
+		''/intranet-forum/'',   -- url
+		20,			-- sort_order
+		v_main_menu,		-- parent_menu_id
+		null			-- p_visible_tcl
+	);
 
-    select menu_id
-    into v_main_menu
-    from im_menus
-    where label=''main'';
+	PERFORM acs_permission__grant_permission(v_menu, v_admins, ''read'');
+	PERFORM acs_permission__grant_permission(v_menu, v_senman, ''read'');
+	PERFORM acs_permission__grant_permission(v_menu, v_proman, ''read'');
+	PERFORM acs_permission__grant_permission(v_menu, v_accounting, ''read'');
+	PERFORM acs_permission__grant_permission(v_menu, v_employees, ''read'');
+	PERFORM acs_permission__grant_permission(v_menu, v_companies, ''read'');
+	PERFORM acs_permission__grant_permission(v_menu, v_freelancers, ''read'');
+	PERFORM acs_permission__grant_permission(v_menu, v_reg_users, ''read'');
 
-    v_menu := im_menu__new (
-        null,                   -- p_menu_id
-        ''acs_object'',         -- object_type
-        now(),                  -- creation_date
-        null,                   -- creation_user
-        null,                   -- creation_ip
-        null,                   -- context_id
-        ''intranet-forum'',     -- package_name
-        ''forum'',              -- label
-        ''Forum'',              -- name
-        ''/intranet-forum/'',   -- url
-        20,                     -- sort_order
-        v_main_menu,            -- parent_menu_id
-        null                    -- p_visible_tcl
-    );
-
-    PERFORM acs_permission__grant_permission(v_menu, v_admins, ''read'');
-    PERFORM acs_permission__grant_permission(v_menu, v_senman, ''read'');
-    PERFORM acs_permission__grant_permission(v_menu, v_proman, ''read'');
-    PERFORM acs_permission__grant_permission(v_menu, v_accounting, ''read'');
-    PERFORM acs_permission__grant_permission(v_menu, v_employees, ''read'');
-    PERFORM acs_permission__grant_permission(v_menu, v_companies, ''read'');
-    PERFORM acs_permission__grant_permission(v_menu, v_freelancers, ''read'');
-    PERFORM acs_permission__grant_permission(v_menu, v_reg_users, ''read'');
-
-    return 0;
+	return 0;
 end;' language 'plpgsql';
-
 select inline_0 ();
-
 drop function inline_0 ();
 
 	
@@ -500,18 +495,18 @@ drop function inline_0 ();
 -- Show the forum component in project page
 --
 SELECT im_component_plugin__new (
-        null,                           -- plugin_id
-        'acs_object',                   -- object_type
-        now(),                          -- creation_date
-        null,                           -- creation_user
-        null,                           -- creation_ip
-        null,                           -- context_id
-        'Project Forum Component',      -- plugin_name
-        'intranet-forum',               -- package_name
-        'right',                        -- location
-        '/intranet/projects/view',      -- page_url
-        null,                           -- view_name
-        10,                             -- sort_order
+	null,				-- plugin_id
+	'acs_object',			-- object_type
+	now(),				-- creation_date
+	null,				-- creation_user
+	null,				-- creation_ip
+	null,				-- context_id
+	'Project Forum Component',	-- plugin_name
+	'intranet-forum',		-- package_name
+	'right',			-- location
+	'/intranet/projects/view',	-- page_url
+	null,				-- view_name
+	10,				-- sort_order
 	'im_forum_component -user_id $user_id -forum_object_id $project_id -current_page_url $current_url -return_url $return_url -forum_type "project" -export_var_list [list project_id forum_start_idx forum_order_by forum_how_many forum_view_name] -view_name [im_opt_val forum_view_name] -forum_order_by [im_opt_val forum_order_by] -start_idx [im_opt_val forum_start_idx] -restrict_to_mine_p "f" -restrict_to_new_topics 0',
 	'im_forum_create_bar "<B><nobr>[_ intranet-forum.Forum_Items]</nobr></B>" $project_id $return_url'
 );
@@ -520,21 +515,43 @@ SELECT im_component_plugin__new (
 -- Show the forum component in company page
 --
 SELECT im_component_plugin__new (
-        null,                           -- plugin_id
-        'acs_object',                   -- object_type
-        now(),                          -- creation_date
-        null,                           -- creation_user
-        null,                           -- creation_ip
-        null,                           -- context_id
-        'Companies Forum Component',    -- plugin_name
-        'intranet-forum',               -- package_name
-        'right',                        -- location
-        '/intranet/companies/view',     -- page_url
-        null,                           -- view_name
-        10,                             -- sort_order
+	null,				-- plugin_id
+	'acs_object',			-- object_type
+	now(),				-- creation_date
+	null,				-- creation_user
+	null,				-- creation_ip
+	null,				-- context_id
+	'Companies Forum Component',	-- plugin_name
+	'intranet-forum',		-- package_name
+	'right',			-- location
+	'/intranet/companies/view',	-- page_url
+	null,				-- view_name
+	10,				-- sort_order
 	'im_forum_component -user_id $user_id -forum_object_id $company_id -current_page_url $current_url -return_url $return_url -export_var_list [list company_id forum_start_idx forum_order_by forum_how_many forum_view_name ] -forum_type company -view_name [im_opt_val forum_view_name] -forum_order_by [im_opt_val forum_order_by] -restrict_to_mine_p "f" -restrict_to_new_topics 0',
 	'im_forum_create_bar "<B>[_ intranet-forum.Forum_Items]<B>" $company_id $return_url'
-    );
+);
+
+
+
+
+-- Show the forum component in user page
+--
+SELECT im_component_plugin__new (
+	null,				-- plugin_id
+	'acs_object',			-- object_type
+	now(),				-- creation_date
+	null,				-- creation_user
+	null,				-- creation_ip
+	null,				-- context_id
+	'User Forum Component',		-- plugin_name
+	'intranet-forum',		-- package_name
+	'right',			-- location
+	'/intranet/users/view',		-- page_url
+	null,				-- view_name
+	40,				-- sort_order
+	'im_forum_component -user_id $user_id -forum_object_id $user_id -current_page_url $current_url -return_url $return_url -export_var_list [list company_id forum_start_idx forum_order_by forum_how_many forum_view_name ] -forum_type company -view_name [im_opt_val forum_view_name] -forum_order_by [im_opt_val forum_order_by] -restrict_to_mine_p "f" -restrict_to_new_topics 0',
+	'im_forum_create_bar "<B>[_ intranet-forum.Forum_Items]<B>" $user_id $return_url'
+);
 
 
 -- Show the forum component in home page
@@ -543,20 +560,23 @@ SELECT im_component_plugin__new (
 delete from im_component_plugins where plugin_name='Home Forum Component';
 
 SELECT im_component_plugin__new (
-        null,                           -- plugin_id
-        'acs_object',                   -- object_type
-        now(),                          -- creation_date
-        null,                           -- creation_user
-        null,                           -- creation_ip
-        null,                           -- context_id
-        'Home Forum Component',         -- plugin_name
-        'intranet-forum',               -- package_name
-        'right',                        -- location
-        '/intranet/index',              -- page_url
-        null,                           -- view_name
-        10,                             -- sort_order
+	null,				-- plugin_id
+	'acs_object',			-- object_type
+	now(),				-- creation_date
+	null,				-- creation_user
+	null,				-- creation_ip
+	null,				-- context_id
+	'Home Forum Component',		-- plugin_name
+	'intranet-forum',		-- package_name
+	'right',			-- location
+	'/intranet/index',		-- page_url
+	null,				-- view_name
+	10,				-- sort_order
 	'im_forum_component -user_id $user_id -forum_object_id 0 -current_page_url $current_url -return_url $return_url -export_var_list [list forum_start_idx forum_order_by forum_how_many forum_view_name ] -forum_type home -view_name [im_opt_val forum_view_name] -forum_order_by [im_opt_val forum_order_by] -start_idx [im_opt_val forum_start_idx] -restrict_to_mine_p t -restrict_to_new_topics 1',
 	'im_forum_create_bar "<B>[_ intranet-forum.Forum_Items]<B>" 0 $return_url'
-    );
+);
 
 \i ../common/intranet-forum-common.sql
+
+
+
