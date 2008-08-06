@@ -17,12 +17,27 @@
   <fullquery name="im_forum_component.forum_query">
     <querytext>
 select
-	t.*,
+	t.topic_id,
+	t.topic_name,
+	t.topic_path,
+	t.object_id,
+	t.parent_id,
+	t.tree_sortkey,
+	t.max_child_sortkey,
+	t.topic_type_id,
+	t.topic_status_id,
+	t.owner_id,
+	t.scope,
+	t.subject,
+	t.message,
+	t.priority,
+	t.asignee_id,
+
 	to_char(t.posting_date, :date_format) as posting_date,
 	to_char(t.due_date, :date_format) as due_date,
-	CASE 	WHEN due_date < now() and t.topic_type_id in (1102, 1104)
-		THEN 1 
-		ELSE 0 
+	CASE 	WHEN t.due_date < now() and t.topic_type_id in (1102, 1104)
+		THEN 1
+		ELSE 0
 	END as overdue,
 	t.asignee_id,
 	acs_object__name(t.object_id) as object_name,
@@ -37,19 +52,19 @@ select
 	im_category_from_id(t.topic_status_id) as topic_status
 from
         im_forum_topics t
-	LEFT JOIN 
+	LEFT JOIN
            (select * from im_forum_topic_user_map where user_id=:user_id) m using (topic_id)
-	LEFT JOIN 
+	LEFT JOIN
            im_forum_folders f using (folder_id)
         LEFT JOIN
-	(	select 1 as p, 
-			object_id_one as object_id 
+	(	select 1 as p,
+			object_id_one as object_id
 		from 	acs_rels
 		where	object_id_two = :user_id
 	) member_objects using (object_id)
         LEFT JOIN
-	(	select 1 as p, 
-			r.object_id_one as object_id 
+	(	select 1 as p,
+			r.object_id_one as object_id
 		from 	acs_rels r,
 			im_biz_object_members m
 		where	r.object_id_two = :user_id
@@ -57,7 +72,7 @@ from
 			and m.object_role_id in (1301, 1302, 1303)
 	) admin_objects using (object_id),
         acs_objects o
-        LEFT JOIN 
+        LEFT JOIN
 	   (select * from im_biz_object_urls where	url_type='view') u using (object_type)
 where
         (t.parent_id is null or t.parent_id=0)
