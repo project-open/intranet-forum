@@ -654,6 +654,7 @@ where
 	}
 	incr msg_ctr
     }
+    append thread_html "</table>\n"
     return $thread_html
 }
 
