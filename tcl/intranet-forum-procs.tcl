@@ -1156,7 +1156,7 @@ ad_proc -public im_forum_component {
 
 <form action=/intranet-forum/forum-action method=POST>
 [export_form_vars object_id return_url]
-<table bgcolor=white border=0 cellpadding=1 cellspacing=1>
+<table class=table_list_page>
   $table_header_html
   $table_body_html
   $table_footer
