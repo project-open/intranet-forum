@@ -8,8 +8,9 @@
 <property name="sub_navbar">@sub_navbar;noquote@</property>
 
 <div class="filter-list">
-
-  <div class="filter">
+<a id="sideBarTab" href="#"><img id="sideBarTabImage" border="0" title="sideBar" alt="sideBar" src="/intranet/images/navbar_saltnpepper/slide-button-active.gif"/></a>
+  <div class="filter" id="sidebar">
+<div id="sideBarContentsInner"> 
     <div class="filter-block">
       <div class="filter-title">
         #intranet-forum.Filter_Topics#
@@ -23,8 +24,8 @@
     <%= [im_navbar_tree -label "main"] %>
 
   </div>
-
-  <div class="fullwidth-list">
+</div>
+  <div class="fullwidth-list" id="fullwidth-list">
     <%= [im_table_with_title "Forum" $forum_content] %>
   </div>
 
