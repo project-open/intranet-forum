@@ -301,9 +301,8 @@ incr ctr
 if {$object_id == 0} {
     append table_body "
 	<tr $bgcolor([expr $ctr % 2])>
-	  <td>[_ intranet-forum.In_Project]</td><td>
-[im_project_select object_id $object_id "Open" "" "" $user_id]
-	  </td>
+	  <td>[_ intranet-forum.In_Project]</td>
+	  <td>[im_project_select -exclude_subprojects_p 0 object_id $object_id]</td>
 	</tr>\n"
     incr ctr
 } else {
