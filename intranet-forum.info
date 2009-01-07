@@ -13,8 +13,8 @@
         <owner url="mailto:frank.bergmann@project-open.com">Frank Bergmann</owner>
         <vendor url="http://www.project-open.com/">]project-open[</vendor>
 
-        <provides url="intranet-forum" version="3.2.6.0.0"/>
-        <requires url="intranet-core" version="3.0.0"/>
+        <provides url="intranet-forum" version="3.4.0.2.0"/>
+        <requires url="intranet-core" version="3.4.0.0.0"/>
 
         <callbacks>
         </callbacks>
