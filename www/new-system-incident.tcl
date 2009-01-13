@@ -31,6 +31,7 @@ ad_page_contract {
     { publisher_name ""}
 }
 
+set current_user_id [ad_get_user_id]
 
 ns_log Notice "new-system-incident: error_url=$error_url"
 ns_log Notice "new-system-incident: error_info=$error_info"
@@ -51,7 +52,7 @@ set username ""
 set title "New System Incident"
 
 set system_owner_email [ad_parameter -package_id [im_package_forum_id] ReportThisErrorEmail]
-set system_owner_id [db_string user_id "select party_id from parties where lower(email) = lower(:system_owner_email)" -default 0]
+set system_owner_id [db_string user_id "select min(user_id) from users where user_id > 0"]
 
 # -----------------------------------------------------------------
 # Get more debug information
@@ -119,10 +120,33 @@ if {0 != $error_user_id} {
 
 }
 
+# Make the user member of group "Customers"
+set rel_id [relation_add -member_state "approved" "membership_rel" [im_profile_customers] $error_user_id]
+db_dml update_relation "update membership_rels set member_state='approved' where rel_id = :rel_id"
+
+
+# Default if there was an error creating a new user
 if {!$error_user_id} {
     # create user didn't succeed...
     set error_user_id $system_owner_id
 }
+
+# -----------------------------------------------------------------
+# Determine the error user's company and SLA. Otherwise use "internal"
+# -----------------------------------------------------------------
+
+set error_company_id [im_company_internal]
+set error_company_ids [db_list comps "
+	select	c.company_id
+	from	im_companies c,
+		acs_rels r
+	where	r.object_id_one = :error_user_id and
+		r.object_id_two = c.company_id
+	order by
+		c.company_id
+"]
+if {[llength $error_company_ids] > 0} { set error_company_id [lindex $error_company_ids 0] }
+
 
 # -----------------------------------------------------------------
 # Find out the report_object
@@ -165,71 +189,7 @@ if {"" == $subject} { set subject $error_url }
 
 
 # -----------------------------------------------------------------
-# Create an incident (without mail alert)
-# -----------------------------------------------------------------
-
-set topic_id [db_nextval "im_forum_topics_seq"]
-set parent_id ""
-set owner_id $error_user_id
-set scope "group"
-set message "
-Error URL: $error_url
-Error Location: $error_location
-System URL: $system_url
-User Name: $error_first_names $error_last_name
-User Email: $error_user_email
-Publisher Name: $publisher_name
-
-$more_info
-
-Package Version(s): $core_version
-Package Versions: $package_versions
-Error Info: 
-$error_info"
-
-
-# Limit Subject and message to their field sizes
-#set message [string range $message 0 400]
-set error_url_50 [string range $error_url 0 50]
-
-
-set priority 3
-set due [db_string tomorrow "select to_date(to_char(now(), 'J'), 'J') + 1 from dual"]
-
-
-set asignee_id $system_owner_id
-
-# 1102 is "Incident"
-set topic_type_id 1102
-
-# 1202 is "Open"
-set topic_status_id 1202
-
-set ttt {
-
-db_transaction {
-        db_dml topic_insert "
-INSERT INTO im_forum_topics (
-        topic_id, object_id, parent_id, topic_type_id, topic_status_id,
-        posting_date, owner_id, scope, subject, message, priority,
-        asignee_id, due_date
-) VALUES (
-        :topic_id, :report_object_id, :parent_id, :topic_type_id, :topic_status_id,
-        now(), :owner_id, :scope, :subject, :message, :priority,
-        :asignee_id, :due
-)"
-} on_error {
-    ad_return_error "Error adding a new topic" "
-    <LI>There was an error adding your ticket to our system.<br>
-    Please send an email to <A href=\"mailto:[ad_parameter "SystemOwner" "" ""]\">
-    our webmaster</a>, thanks."
-}
-
-}
-
-
-# -----------------------------------------------------------------
-# Create a Bug-Tracker entry
+# Determine and/or create the ConfItem 
 # -----------------------------------------------------------------
 
 # Identify the package with the error. intranet-core is only exception 
@@ -244,120 +204,116 @@ foreach package_str $package_list {
     set pver_hash($package) $version
 }
 
-# extract the version of the package in question
-set error_package_version ""
-catch { set error_package_version "V$pver_hash($error_package)" } err
-if {"" == $error_package_version} { ad_return_complaint 1 "Internal Error:<br>Didn't find version for '$error_package'" }
+# Get toplevel ConfItem for ]po[ internal development
+set po_conf_id [db_string cvs "select conf_item_id from im_conf_items where conf_item_nr = 'po'" -default 0]
+if {0 == $po_conf_id} { ad_return_complaint 1 "Didn't find ConfItem 'po'.<br>Please inform support@project-open.com." }
 
-# Skip trailing ".0" pieces of the version
-while {[regexp {^(.*)\.0$} $error_package_version match v]} { set error_package_version $v }
+# Get ConfItem of package below 'po'
+set package_conf_id [db_string cvs "select conf_item_id from im_conf_items where conf_item_nr = :error_package and conf_item_parent_id = :po_conf_id" -default 0]
+if {0 == $package_conf_id} { 
+    # No package yet for this $error_packag - create
 
+    set conf_item_name $error_package
+    set conf_item_nr $error_package
+    set conf_item_parent_id $po_conf_id
+    set conf_item_type_id [im_conf_item_type_po_package]
+    set conf_item_status_id [im_conf_item_status_active]
 
-# Get the standard system bug-tracker instance
-set bt_package_id [apm_package_id_from_key [bug_tracker::package_key]]
-
-# Create component if not already there...
-set component_id [db_string comp_id "
-	select	component_id
-	from	bt_components 
-	where	component_name = :error_package
-		and project_id = :bt_package_id 
-" -default 0]
-if {0 == $component_id} {
-    # Create a new "component" for the package
-    set component_id [db_nextval "t_acs_object_id_seq"]
-    db_dml new_component "
-	insert into bt_components (component_id, project_id, component_name)
-    	values (:component_id, :bt_package_id, :error_package)
+    set conf_item_new_sql "
+		select im_conf_item__new(
+			null,
+			'im_conf_item',
+			now(),
+			:system_owner_id,
+			'[ad_conn peeraddr]',
+			null,
+			:conf_item_name,
+			:conf_item_nr,
+			:conf_item_parent_id,
+			:conf_item_type_id,
+			:conf_item_status_id
+		)
     "
-
-    util_memoize_flush_regexp "bug.*"
-} 
-
-# Create the version if it doesn't exist yet
-set version_id [db_string version_id "
-	select	version_id
-	from	bt_versions
-	where	project_id = :bt_package_id
-		and version_name = :error_package_version
-" -default 0]
-if {0 == $version_id} {
-    # Create a new "version" for the package
-    set version_id [db_nextval "t_acs_object_id_seq"]
-    db_dml insert_version "
-	insert into bt_versions (
-		version_id,
-		project_id,
-		version_name,
-		description
-	) values (
-		:version_id,
-		:bt_package_id,
-		:error_package_version,
-		:error_package_version
-	)
-    "
-    util_memoize_flush_regexp "bug.*"
+    set package_conf_id [db_string new $conf_item_new_sql]
+    db_dml update [im_conf_item_update_sql -include_dynfields_p 1]
 }
 
+# -----------------------------------------------------------------
+# Create a Helpdesk Ticket
+# -----------------------------------------------------------------
 
-# Check if the bug was there already
-set bug_id [db_string bug_id "
-	select	bug_id
-	from	bt_bugs
-	where	component_id = :component_id
-		and found_in_version = :version_id
-		and summary = :subject
-" -default 0]
+set ticket_id [db_nextval "acs_object_id_seq"]
+set ticket_name "$error_url - $ticket_id"
+set ticket_customer_id $error_company_id
+set ticket_customer_contact_id $error_user_id
+set ticket_type_id [im_ticket_type_bug_request]
+set ticket_status_id [im_ticket_status_open]
+set ticket_nr [db_nextval im_ticket_seq]
+set start_date [db_string now "select now()::date from dual"]
+set end_date [db_string now "select (now()::date) from dual"]
+set start_date_sql [template::util::date get_property sql_date $start_date]
+set end_date_sql [template::util::date get_property sql_timestamp $end_date]
+set ticket_sla_id [im_ticket::internal_sla_id]
+set ticket_conf_item_id $package_conf_id
 
-if {0 == $bug_id} {
+set open_nagios_ticket_id [db_string ticket_insert {}]
+db_dml ticket_update {}
+db_dml project_update {}
 
-	# Define Bug classifications
-	set keyword_ids [list]
-	set kid [db_string kid "select keyword_id from cr_keywords where heading = '2 - Broken Function'" -default 0]
-	if {0 != $kid} { lappend keyword_ids $kid }
-	set kid [db_string kid "select keyword_id from cr_keywords where heading = '2 - Broken Function'" -default 0]
-	if {0 != $kid} { lappend keyword_ids $kid }
-	set kid [db_string kid "select keyword_id from cr_keywords where heading = '5 - Normal'" -default 0]
-	if {0 != $kid} { lappend keyword_ids $kid }
-	set kid [db_string kid "select keyword_id from cr_keywords where heading = '3 - Normal'" -default 0]
-	if {0 != $kid} { lappend keyword_ids $kid }
+# Write Audit Trail
+im_project_audit $ticket_id
+    
+# Add the ticket message to the forum tracker of the open ticket.
+set forum_ids [db_list forum_ids "
+	select	ft.topic_id
+	from	im_forum_topics ft
+	where	ft.object_id = :open_nagios_ticket_id
+	order by ft.topic_id
+"]
 
-	# Create a new bug
-	set bug_id [db_nextval "t_acs_object_id_seq"]
-	set bug_container_project_id [db_string cont "
-		select	min(project_id) 
-		from	im_projects 
-		where	project_nr like 'bug_tracker%'
-	" -default ""]
+# Get the first forum topic associated with the ticket and use as parent
+set parent_id [lindex $forum_ids 0]
 
-	bug_tracker::bug::new \
-	        -bug_id $bug_id \
-	        -user_id $error_user_id \
-	        -package_id $bt_package_id \
-	        -component_id $component_id \
-	        -found_in_version $version_id \
-	        -summary $subject \
-	        -description $message \
-	        -desc_format "text/plain" \
-	        -keyword_ids $keyword_ids \
-	        -fix_for_version $version_id \
-	        -bug_container_project_id $bug_container_project_id
+# Create a new forum topic of type "Note"
+set topic_id [db_nextval im_forum_topics_seq]
+set topic_type_id [im_topic_type_id_task]
+set topic_status_id [im_topic_status_id_open]
+set subject $error_url
 
-    set resolved_p 0
-    set bug_resolution ""
+set message "
+Error URL: $error_url
+Error Location: $error_location
+System URL: $system_url
+User Name: $error_first_names $error_last_name
+User Email: $error_user_email
+Publisher Name: $publisher_name
 
-} else {
+$more_info
 
-    set bug_count [db_string bug_count "select bug_count from bt_bugs where bug_id = :bug_id" -default ""]
-    if {"" == $bug_count} { set bug_count 1 }
-    db_dml count "
-	update bt_bugs set
-	bug_count = :bug_count + 1
-	where bug_id = :bug_id
-    "
+Package Version(s): $core_version
+Package Versions: $package_versions
+Error Info:
+$error_info
+"
+set message [string range $message 0 3998]
 
-    set resolved_p [db_string res "select count(*) from bt_bugs where bug_id = :bug_id and resolution is not null" -default 0]
-    set bug_resolution [db_string res "select resolution from bt_bugs where bug_id = :bug_id" -default ""]
+db_dml topic_insert {
+		insert into im_forum_topics (
+			topic_id, object_id, parent_id,
+			topic_type_id, topic_status_id, owner_id, 
+			subject, message
+		) values (
+			:topic_id, :open_nagios_ticket_id, :parent_id,
+			:topic_type_id,	:topic_status_id, :error_user_id, 
+			:subject, :message
+		)
 }
+
+# -----------------------------------------------------------------
+# 
+# -----------------------------------------------------------------
+
+set resolved_p 0
+
+
 
