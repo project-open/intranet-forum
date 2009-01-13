@@ -23,7 +23,7 @@
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ForumItemsPerHomePage"  default="10" description="Number of forum items at the home page"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ForumItemsPerPage"  default="10" description="Number of forum items by default"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="ReportThisErrorEmail"  default="sysadmin@tigerpond.com" description="Email address to notify somebody to deal with &quot;Report this error&quot; events"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="SubscribeAllMembersToNewItemsP"  default="1" description="SubscribeAllMembersToNewItemsP"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="SubscribeAllMembersToNewItemsP"  default="1" description="Set to 1 to notify all members of all new items."/>
         </parameters>
 
     </version>

@@ -82,7 +82,7 @@
   <msg key="lt_The_topic_type_has_be_2">The %topic_type% has been assigned to a new asignee. Please visit the link above for details.</msg>
   <msg key="lt_There_are_no_active_i">There are no active items.</msg>
   <msg key="lt_This_topic_is_not_a_t">This topic is not a task or incident - assignment does't make sense.</msg>
-  <msg key="lt_topic_type_needs_clar">%topic_type% needs clarify</msg>
+  <msg key="lt_topic_type_needs_clar">%topic_type% needs clarification</msg>
   <msg key="lt_Unable_to_find_view_v">Unable to find view '%view_name%'</msg>
   <msg key="lt_Unknown_value_for_act">Unknown value for action</msg>
   <msg key="lt_Unknown_value_for_sub">Unknown value for submit</msg>
