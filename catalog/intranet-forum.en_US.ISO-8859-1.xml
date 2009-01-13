@@ -88,8 +88,8 @@
   <msg key="lt_Unknown_value_for_sub">Unknown value for submit</msg>
   <msg key="lt_You_have_insufficient">You have insufficient privileges to modify this topic</msg>
   <msg key="lt_You_have_no_rights_to">You have no rights to add members to this object.</msg>
-  <msg key="Mark_as_read">Mark as read</msg>
-  <msg key="Mark_as_unread">Mark as unread</msg>
+  <msg key="Mark_as_read">Mark as Read</msg>
+  <msg key="Mark_as_unread">Mark as Unread</msg>
   <msg key="Modified">Modified</msg>
   <msg key="Move_to_Active">Move to Active</msg>
   <msg key="Move_to_Deleted">Move to Deleted</msg>
