@@ -1,3 +1,4 @@
+
 -- /packages/intranet-forum/sql/postgresql/intranet-forum-create.sql
 --
 -- Copyright (c) 2003-2008 ]project-open[
@@ -301,7 +302,7 @@ create table im_forum_files (
 				constraint im_forum_files_pk
 				primary key,
 	n_bytes			integer,
-	client_filename		varchar(1000),
+	client_filename		text,
 	filename_stub		varchar(200),
 	caption			varchar(200),
 	content			text
@@ -540,3 +541,5 @@ SELECT im_component_plugin__new (
 	);
 
 \i ../common/intranet-forum-common.sql
+
+
