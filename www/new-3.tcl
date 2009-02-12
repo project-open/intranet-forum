@@ -87,7 +87,6 @@ if {0 == [llength $perm_topics]} {
 }
 
 
-
 if {![info exists notifyee_id]} { set notifyee_id [list] }
 
 # Get the list of all subscribed users.
@@ -101,18 +100,47 @@ if {![info exists notifyee_id]} { set notifyee_id [list] }
 # Also, the user needs to be a registered users, so he or
 # she could be kicked out easily when misbehaving.
 #
-set stakeholder_sql "
-select
-	user_id as stakeholder_id
-from
-	im_forum_topic_user_map m
-where
-	m.topic_id = :topic_id
+set stakeholder_sql2 "
+	select
+		u.user_id,
+		u.email,
+		im_name_from_user_id(u.user_id) as name
+	from
+		im_forum_topic_user_map m,
+		cc_users u
+	where
+		m.user_id = u.user_id
+		and m.topic_id = :topic_id
+    UNION
+	select
+		u.user_id,
+		u.email,
+		im_name_from_user_id(u.user_id) as name
+	from
+		im_forum_topics t,
+		acs_rels r,
+		cc_users u
+	where
+		t.topic_id = :topic_id and
+		r.object_id_one = t.object_id and
+		r.object_id_two = u.user_id
+    UNION
+	select
+		u.user_id,
+		u.email,
+		im_name_from_user_id(u.user_id) as name
+	from
+		im_forum_topics t,
+		cc_users u
+	where
+		t.topic_id = :topic_id and
+		t.owner_id = u.user_id
 "
 
-
-
-ns_log Notice "forum/new-3: notifyee_id=$notifyee_id"
+set stakeholder_sql "
+	select	user_id as stakeholder_id
+	from	($stakeholder_sql2) t
+"
 
 db_foreach update_stakeholders $stakeholder_sql {
 
