@@ -60,8 +60,8 @@ create table im_forum_topics (
 	-- administrative information
 	topic_id		integer
 				constraint im_forum_topics_pk primary key,
-	topic_name		varchar(200),
-	topic_path		varchar(200),
+	topic_name		text,
+	topic_path		text,
 	object_id		integer not null 
 				constraint im_forum_topics_object_fk
 				references acs_objects,
@@ -303,8 +303,8 @@ create table im_forum_files (
 				primary key,
 	n_bytes			integer,
 	client_filename		text,
-	filename_stub		varchar(200),
-	caption			varchar(200),
+	filename_stub		text,
+	caption			text,
 	content			text
 );
 
