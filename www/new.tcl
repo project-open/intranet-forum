@@ -495,24 +495,10 @@ append table_body "
 incr ctr
 
 
-# -------------- Table and Form Start -----------------------------
-
-set page_body "
-<form action=new-2 method=POST>
-[eval "export_form_vars [join $export_var_list " "]"]
-
-<table cellspacing=1 border=0 cellpadding=1>
-$table_body
-</table>
-</form>
-"
-
-
-
 # -------------- Render Parent Message -----------------------------
 # Render parent in case of a reply message
 
-
+set rendered_parent_html ""
 if {$topic_type_id == [im_topic_type_id_reply]} {
 
     set parent_topic_sql "
@@ -552,7 +538,7 @@ if {$topic_type_id == [im_topic_type_id_reply]} {
 
     set rendered_parent [im_forum_render_tind $parent_id $parents_parent_id $parents_topic_type_id $parents_topic_type $parents_topic_status_id $parents_topic_status $parents_owner_id $parents_asignee_id $parents_owner_name $parents_asignee_name $user_id $parents_object_id $parents_object_name $parents_object_admin $parents_subject $parents_message $parents_posting_date $parents_due_date $parents_priority $parents_scope $parents_receive_updates $return_url]
 
-    append page_body "
+    set rendered_parent_html "
 	<h2>[lang::message::lookup "" intranet-forum.Original_Message "Original Message"]</h2>
 	<blockquote>
 	<table>

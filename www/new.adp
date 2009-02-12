@@ -7,4 +7,15 @@
 <property name="context">@context_bar@</property>
 <property name="main_navbar_label">forum</property>
 
-@page_body;noquote@
+
+<form action=new-2 method=POST>
+<%= [eval "export_form_vars [join $export_var_list " "]"] %>
+
+<table cellspacing=1 border=0 cellpadding=1>
+@table_body;noquote@
+</table>
+</form>
+
+
+@rendered_parent_html;noquote@
+

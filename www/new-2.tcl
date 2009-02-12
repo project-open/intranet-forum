@@ -1,19 +1,15 @@
 # /packages/intranet-forum/www/intranet-forum/forum/new-2.tcl
 #
-# Copyright (C) 2003-2004 Project/Open
+# Copyright (C) 2003-2009 ]project-open[
 #
 # All rights reserved. Please check
 # http://www.project-open.com/license/ for details.
 
 ad_page_contract {
     process a new topic form submission
-    @param receive_updates: 
-        all, none, major (=issue resolved, task done)
-    @param actions: 
-        accept, reject, clarify, close
-
-    @action_type: 
-        new_message, edit_message, undefined, reply_message
+    @param receive_updates: all, none, major (=issue resolved, task done)
+    @param actions: accept, reject, clarify, close
+    @action_type: new_message, edit_message, undefined, reply_message
 
     @author frank.bergmann@project-open.com
     @author juanjoruizx@yahoo.es
@@ -57,6 +53,9 @@ set include_topic_message_p 1
 
 
 
+# ------------------------------------------------------------------
+# 
+# ------------------------------------------------------------------
 
 set exception_text ""
 set exception_count 0
@@ -598,6 +597,30 @@ set stakeholder_sql "
 	where
 		m.user_id = u.user_id
 		and m.topic_id = :topic_id
+    UNION
+	select
+		u.user_id,
+		u.email,
+		im_name_from_user_id(u.user_id) as name
+	from
+		im_forum_topics t,
+		acs_rels r,
+		cc_users u
+	where
+		t.topic_id = :topic_id and
+		r.object_id_one = t.object_id and
+		r.object_id_two = u.user_id
+    UNION
+	select
+		u.user_id,
+		u.email,
+		im_name_from_user_id(u.user_id) as name
+	from
+		im_forum_topics t,
+		cc_users u
+	where
+		t.topic_id = :topic_id and
+		t.owner_id = u.user_id
 "
 
 set num_stakeholders 0
@@ -609,7 +632,8 @@ db_multirow -extend {checked} stakeholders stakeholder_query $stakeholder_sql {
     incr num_stakeholders
 }
 
-
-if {0 == $num_stakeholders} {
-    ad_returnredirect $return_url
-}
+# Owner is alway selected as a "stakeholder", so we don't 
+# have the case of no stakeholder anymore_:
+# if {0 == $num_stakeholders} {
+#    ad_returnredirect $return_url
+# }
