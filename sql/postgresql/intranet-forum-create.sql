@@ -313,8 +313,7 @@ create table im_forum_files (
 -------------------------------------------------------------
 -- Privileges
 --
--- Privileges are permission tokens relative to the "subsite"
--- (package) object "Project/Open Core".
+-- Privileges are permission tokens relative to the "subsite" package object
 --
 
 select acs_privilege__create_privilege('add_topic_public','Add global messages','');
@@ -399,7 +398,7 @@ select im_priv_create('add_topic_staff',	'Senior Managers');
 ---------------------------------------------------------
 -- Register the component in the core TCL pages
 --
--- These DB-entries allow the pages of Project/Open Core
+-- These DB-entries allow the pages of ]po[ Core
 -- to render the forum components in the Home, Users, Projects 
 -- and Company pages.
 --

@@ -1,6 +1,6 @@
 -- /packages/intranet-forum/sql/common/intranet-forum-create.sql
 --
--- Copyright (c) 2003-2004 Project/Open
+-- Copyright (c) 2003 - 2009 ]project-open[
 --
 -- All rights reserved. Please check
 -- http://www.project-open.com/license/ for details.

@@ -35,7 +35,7 @@ ad_proc -public im_import_forum_topics { filename } {
     set csv_version [lindex $csv_version_fields 1]
     set csv_table [lindex $csv_version_fields 2]
     set err_msg [im_backup_accepted_version_nr $csv_version]
-    if {![string equal $csv_system "Project/Open"]} {
+    if {![string equal $csv_system "po"]} {
 	append err_msg "'$csv_system' invalid backup dump<br>"
     }
     if {![string equal $csv_table "im_forum_topics"]} {
