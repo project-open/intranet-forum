@@ -447,14 +447,10 @@ ad_proc -public im_forum_render_tind {
 
     append tind_html "
 		<tr $bgcolor([expr $ctr % 2])>
-		  <td>[_ intranet-forum.Posted_by]:</td><td>
-		    <A HREF=/intranet/users/view?user_id=$owner_id>
-		      $owner_name
-		   </A>
-		  </td>
+		  <td>[_ intranet-forum.Posted_by]:</td>
+		  <td>[im_render_user_id $owner_id $owner_name "" 0]</td>
 		</tr>\n"
     incr ctr
-
 
     # Show the status only for tasks and incidents
     # For all other it really doesn't matter.
@@ -502,10 +498,7 @@ ad_proc -public im_forum_render_tind {
 	    if {"" == $asignee_name} { 
 		append tind_html "unassigned"
 	    } else {
-		append tind_html "
-		    <A href=/intranet/users/view?user_id=$asignee_id>
-		      $asignee_name
-		    </A>"
+		append tind_html [im_render_user_id $asignee_id $asignee_name "" 0]
 	    }
 	}
 
