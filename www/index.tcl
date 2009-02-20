@@ -150,6 +150,21 @@ set forum_content [im_forum_component \
 
 set sub_navbar [im_forum_navbar "/intranet-forum/index" [list forum_group_id forum_start_idx forum_order_byforum_how_many forum_mine_p forum_view_name] $forum_folder]
 
-db_release_unused_handles
+# ---------------------------------------------------------------
+# Build the Left Navbar
+# ---------------------------------------------------------------
+
+set left_navbar_html "
+    <div class='filter-block'>
+      <div class='filter-title'>
+        [lang::message::lookup "" intranet-forum.Filter_Topics "Filter Topics"]
+      </div>
+      <form method=get action='index'>
+        [export_form_vars forum_group_id forum_start_idx forum_order_by forum_how_many forum_view_name]
+        $filter_html
+      </form>
+    </div>
+"
+
 
 ad_return_template
