@@ -744,7 +744,7 @@ ad_proc -public im_forum_component {
 	# to "forum_list_". This allows the writers of future modules
 	# to define customized views for their new business objects.
 	set view_name "forum_list_$forum_type"
-	set view_id [db_string get_view_id "select view_id from im_views where view_name=:view_name" -default 0]
+	set view_id [util_memoize [list db_string get_view_id "select view_id from im_views where view_name = '$view_name'" -default 0]]
 
     } else {
 	# We have got an explicit view_name, probably through
@@ -867,7 +867,7 @@ ad_proc -public im_forum_component {
     # only show messages to intranet users
     set intranet_user_p 0
     db_foreach get_profiles "select profile_id from im_profiles" {
-    	if { [group::member_p -user_id $user_id -group_id $profile_id -cascade] } {
+    	if { [im_profile::member_p -profile_id $profile_id -user_id $user_id] } {
     		set intranet_user_p 1
     		break
     	}
