@@ -675,6 +675,7 @@ ad_proc -public im_forum_component {
     -return_url 
     -export_var_list 
     -forum_type 
+    {-write_icons 0}
 } {
     Creates a HTML table showing a table of "Discussion Topics" of 
     various types. Parameters:
@@ -837,7 +838,15 @@ ad_proc -public im_forum_component {
     # Format the header names with links that modify the
     # sort order of the SQL query.
     #
-    set table_header_html "<tr>\n"
+    
+    if { "1" == $write_icons  } {
+	set table_header_html "<tr><td colspan=\"99\" align=\"right\">"
+	append table_header_html [im_forum_create_bar "<B>[_ intranet-forum.Forum_Items]<B>" 0 $return_url]
+	append table_header_html "</td></tr><tr>\n"
+    } else {
+	set table_header_html "<tr>\n"
+    }
+
     foreach col $column_headers {
 
 	set cmd_eval ""
