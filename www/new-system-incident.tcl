@@ -28,6 +28,7 @@ ad_page_contract {
     { core_version:trim ""}
     { package_versions:trim ""}
     { system_url:trim ""}
+    { system_id:trim ""}
     { publisher_name ""}
 }
 
@@ -284,6 +285,7 @@ set message "
 Error URL: $error_url
 Error Location: $error_location
 System URL: $system_url
+System ID: $system_id
 User Name: $error_first_names $error_last_name
 User Email: $error_user_email
 Publisher Name: $publisher_name
