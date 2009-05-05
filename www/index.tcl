@@ -34,6 +34,8 @@ ad_page_contract {
     { forum_how_many 0 }
     { forum_folder 0 }
     { forum_max_entries_per_page 0 }
+    { forum_start_date "" }
+    { forum_end_date "" }
 }
 
 # ---------------------------------------------------------------
@@ -63,6 +65,33 @@ if {[string equal $forum_view_name "forum_list_tasks"]} {
     # Preselect "Tasks & Incidents"
     set forum_topic_type_id 1
 }
+
+
+# ---------------------------------------------------------------
+# Check dates
+# ---------------------------------------------------------------
+
+# Check that Start & End-Date have correct format
+if {"" != $forum_start_date && ![regexp {[0-9][0-9][0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]} $forum_start_date]} {
+    ad_return_complaint 1 "Start Date doesn't have the right format.<br>
+    Current value: '$forum_start_date'<br>
+    Expected format: 'YYYY-MM-DD'"
+}
+
+if {"" != $forum_end_date && ![regexp {[0-9][0-9][0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]} $forum_end_date]} {
+    ad_return_complaint 1 "End Date doesn't have the right format.<br>
+    Current value: '$forum_end_date'<br>
+    Expected format: 'YYYY-MM-DD'"
+}
+
+
+if {"" == $forum_start_date} { set forum_start_date [parameter::get_from_package_key -package_key "intranet-cost" -parameter DefaultStartDate -default "2000-01-01"] }
+if {"" == $forum_end_date} { set forum_end_date [parameter::get_from_package_key -package_key "intranet-cost" -parameter DefaultEndDate -default "2100-01-01"] }
+
+
+
+
+
 
 # ---------------------------------------------------------------
 # Define Filter Categories
@@ -103,12 +132,24 @@ if {[im_permission $current_user_id "view_topics_all"]} {
     append filter_html "<input type=hidden name=forum_mine_p value='t'>\n"
 }
 
-
 append filter_html "
 	<tr>
 	  <td class=form-label>[_ intranet-forum.Topic_Type]:</td>
 	  <td class=form-widget>
 	    [im_select forum_topic_type_id $forum_topic_types $forum_topic_type_id] 
+	  </td>
+	</tr>
+	<tr>
+	  <td class=form-label>[lang::message::lookup "" intranet-core.Start_Date "Start Date"]</td>
+	  <td class=form-widget><input type=text size=10 maxsize=10 name=forum_start_date value=\"$forum_start_date\"></td>
+	</tr>
+	<tr>
+	  <td class=form-label>[lang::message::lookup "" intranet-core.End_Date "End Date"]</td>
+	  <td class=form-widget><input type=text size=10 maxsize=10 name=forum_end_date value=\"$forum_end_date\"></td>
+	</tr>
+	<tr>
+	  <td class=form-label>&nbsp;</td>
+	  <td class=form-widget>
 	    <input type=submit value=Go name=submit>
 	  </td>
 	</tr>
@@ -142,6 +183,8 @@ set forum_content [im_forum_component \
 	-restrict_to_new_topics 0 \
 	-max_entries_per_page	$forum_max_entries_per_page \
 	-restrict_to_topic_type_id $forum_topic_type_id \
+	-forum_start_date	$forum_start_date \
+	-forum_end_date		$forum_end_date \
 ]
 
 # ---------------------------------------------------------------

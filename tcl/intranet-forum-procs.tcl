@@ -669,6 +669,8 @@ ad_proc -public im_forum_component {
     {-restrict_to_folder 0}
     {-restrict_to_employees 0}
     {-forum_object_id 0}
+    {-forum_start_date ""}
+    {-forum_end_date ""}
     -user_id 
     {-object_id 0}
     -current_page_url 
@@ -941,6 +943,14 @@ ad_proc -public im_forum_component {
     	if {[string equal "t" $restrict_to_mine_p]} {
 	    lappend restrictions "(owner_id=:user_id or asignee_id=:user_id)" 
     	}
+
+    	if {"" != $forum_start_date} {
+	    lappend restrictions "posting_date >= :forum_start_date::date" 
+    	}
+    	if {"" != $forum_end_date} {
+	    lappend restrictions "posting_date <= :forum_end_date::date" 
+    	}
+
     	if {$restrict_to_topic_status_id} {
 	    lappend restrictions "topic_status_id=:restrict_to_topic_status_id" 
     	}
