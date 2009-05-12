@@ -74,7 +74,15 @@ where
 	and t.topic_id=m.topic_id(+)
 "
 
-db_1row get_topic $topic_sql
+db_0or1row get_topic $topic_sql
+if {![info exists ticket_id]} {
+    ad_return_complaint 1 "
+	[lang::message::lookup "" intranet-forum.Topic_doesnt_exist "
+		<b>This forum topic doesn't exist</b>:<br>
+		Maybe somebody has deleted the topic?
+    "]"
+}
+
 if {$due_date == ""} { set due_date $todays_date }
 set old_asignee_id $asignee_id
 set page_title "[_ intranet-forum.View_Topic]"
