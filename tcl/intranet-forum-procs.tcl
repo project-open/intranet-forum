@@ -1022,6 +1022,16 @@ ad_proc -public im_forum_component {
 	}
 
 
+	# Get the list of biz object URLs to avoid a SQL join
+	set biz_url_sql "
+		select	*
+		from	im_biz_object_urls 
+		where	url_type='view'
+	"
+	db_foreach biz_url $biz_url_sql {
+	    set biz_url_hash($object_type) $url
+	}
+
     	# Get the forum_sql statement
     	# Forum items have a complicated "scoped" permission 
     	# system where you can say who should be able to read
@@ -1062,6 +1072,9 @@ ad_proc -public im_forum_component {
     	set old_object_id 0
 	
     	db_foreach forum_query_limited $selection {
+
+	    set object_view_url ""
+	    if {[info exists biz_url_hash($object_type)]} { set object_view_url $biz_url_hash($object_type)}
 
 	    set due_date "<nobr>$due_date_pretty</nobr>"
 
