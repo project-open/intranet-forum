@@ -30,7 +30,6 @@ select
 	m.folder_id,
 	f.folder_name,
 	m.receive_updates,
-	u.url as object_view_url,
 	im_initials_from_user_id(t.owner_id) as owner_initials,
 	im_initials_from_user_id(t.asignee_id) as asignee_initials,
 	im_category_from_id(t.topic_type_id) as topic_type,
@@ -57,8 +56,6 @@ from
 			and m.object_role_id in (1301, 1302, 1303)
 	) admin_objects using (object_id),
         acs_objects o
-        LEFT JOIN 
-	   (select * from im_biz_object_urls where	url_type='view') u using (object_type)
 where
         (t.parent_id is null or t.parent_id=0)
         and t.object_id != 1
