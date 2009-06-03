@@ -29,12 +29,17 @@ SELECT acs_object_type__create_type (
 	'Forum Topics',		-- pretty_plural
 	'acs_object',   	-- supertype
 	'im_forum_topics',	-- table_name
-	'material_id',		-- id_column
+	'topic_id',		-- id_column
 	'intranet-forum',	-- package_name
 	'f',			-- abstract_p
 	null,			-- type_extension_table
 	'im_forum_topic.name'	-- name_method
 );
+
+
+insert into acs_object_type_tables (object_type,table_name,id_column)
+values ('im_forum_topic', 'im_forum_topics', 'topic_id');
+
 
 -----------------------------------------------------------
 -- Business Object View URLs
