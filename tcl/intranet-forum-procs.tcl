@@ -566,38 +566,38 @@ ad_proc -public im_forum_render_thread { topic_id user_id object_id object_name 
     of the specified topic.
 } {
     set topic_sql "
-select
-	t.*,
-	acs_object__name(t.object_id) as project_name,
-	tr.indent_level,
-	(10-tr.indent_level) as colspan_level,
-	ftc.category as topic_type,
-	fts.category as topic_status,
-	im_name_from_user_id(ou.user_id) as owner_name,
-	im_name_from_user_id(au.user_id) as asignee_name
-from
-	(select
-		topic_id,
-		(level-1) as indent_level
+	select
+		t.*,
+		acs_object__name(t.object_id) as project_name,
+		tr.indent_level,
+		(10-tr.indent_level) as colspan_level,
+		ftc.category as topic_type,
+		fts.category as topic_status,
+		im_name_from_user_id(ou.user_id) as owner_name,
+		im_name_from_user_id(au.user_id) as asignee_name
 	from
-		im_forum_topics t
-	start with
-		topic_id=:topic_id
-	connect by
-		parent_id = PRIOR topic_id
-	) tr,
-	im_forum_topics t,
-	users ou,
-	users au,
-	im_categories ftc,
-	im_categories fts
-where
-	tr.topic_id = t.topic_id
-	and t.owner_id=ou.user_id
-	and t.asignee_id=au.user_id(+)
-	and t.topic_type_id=ftc.category_id(+)
-	and t.topic_status_id=fts.category_id(+)
-"
+		(select
+			topic_id,
+			(level-1) as indent_level
+		from
+			im_forum_topics t
+		start with
+			topic_id=:topic_id
+		connect by
+			parent_id = PRIOR topic_id
+		) tr,
+		im_forum_topics t,
+		users ou,
+		users au,
+		im_categories ftc,
+		im_categories fts
+	where
+		tr.topic_id = t.topic_id
+		and t.owner_id=ou.user_id
+		and t.asignee_id=au.user_id(+)
+		and t.topic_type_id=ftc.category_id(+)
+		and t.topic_status_id=fts.category_id(+)
+    "
 
     # -------------- Setup the outer table with indents-----------------------
 
@@ -1073,13 +1073,23 @@ ad_proc -public im_forum_component {
 	
     	db_foreach forum_query_limited $selection {
 
+	    regsub -all " " $topic_status "_" topic_status_subs
+	    set topic_status [lang::message::lookup "" intranet-forum.$topic_status_subs $topic_status]
+
 	    set object_view_url ""
 	    if {[info exists biz_url_hash($object_type)]} { set object_view_url $biz_url_hash($object_type)}
 
 	    set due_date "<nobr>$due_date_pretty</nobr>"
 
-    	    if {$read_p == "t"} {set read "read"} else {set read "unread"}
-    	    if {$folder_id == ""} {set folder_name "Inbox"}
+    	    if {$read_p == "t"} {
+		set read [lang::message::lookup "" intranet-forum.Topic_read "read"]
+	    } else {
+		set read [lang::message::lookup "" intranet-forum.Topic_unread "unread"]
+	    }
+    	    if {$folder_id == ""} {set folder_name Inbox }
+	    regsub -all " " $folder_name "_" folder_name_subs
+	    set folder_name [lang::message::lookup "" intranet-forum.$folder_name_subs $folder_name]
+
 	    if {0 == $asignee_id} { 
 	    	set asignee_id "" 
 	    	set asignee_initials "" 

@@ -45,7 +45,7 @@ ad_page_contract {
 # User id already verified by filters
 set user_id [ad_maybe_redirect_for_registration]
 set current_user_id $user_id
-set view_types [list "t" "Mine" "f" "All"]
+set view_types [list "t" [lang::message::lookup "" intranet-core.Object_Mine "Mine"] "f" [lang::message::lookup "" intranet-core.Object_All "All"]]
 set page_title "[_ intranet-forum.Forum]"
 set context_bar [im_context_bar $page_title]
 set page_focus "im_header_form.keywords"
@@ -124,7 +124,7 @@ set filter_html "
 if {[im_permission $current_user_id "view_topics_all"]} {
     append filter_html "
 	<tr>
-	  <td class=form-label>View:</td>
+	  <td class=form-label>[lang::message::lookup "" intranet-core.Filter_View "View"]:</td>
 	  <td class=form-widget>[im_select forum_mine_p $view_types $forum_mine_p]</td>
 	</tr>
     "
@@ -150,7 +150,7 @@ append filter_html "
 	<tr>
 	  <td class=form-label>&nbsp;</td>
 	  <td class=form-widget>
-	    <input type=submit value=Go name=submit>
+	    <input type=submit value='[lang::message::lookup "" intranet-core.Action_Go "Go"]' name=submit>
 	  </td>
 	</tr>
         </table>
