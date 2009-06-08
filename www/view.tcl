@@ -34,6 +34,7 @@ ad_page_contract {
 # Defaults
 # ------------------------------------------------------------------
 
+
 set user_id [ad_maybe_redirect_for_registration]
 set object_name ""
 
@@ -50,12 +51,16 @@ if {"" == $return_url} {
 }
 
 
+
 # ------------------------------------------------------------------
 # Get the message details
 # ------------------------------------------------------------------
 
+
+
 set action_type "edit_message"
 set topic_sql "
+
 select
 	t.*,
 	m.read_p,
@@ -75,7 +80,7 @@ where
 "
 
 db_0or1row get_topic $topic_sql
-if {![info exists ticket_id]} {
+if {![info exists topic_id]} {
     ad_return_complaint 1 "
 	[lang::message::lookup "" intranet-forum.Topic_doesnt_exist "
 		<b>This forum topic doesn't exist</b>:<br>
