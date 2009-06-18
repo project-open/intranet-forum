@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<message_catalog package_key="intranet-forum" package_version="3.4.0.6.0" locale="nl_NL" charset="ISO-8859-1">
+
+  <msg key="All">Alle</msg>
+  <msg key="Closed">Afgesloten</msg>
+  <msg key="Deleted">Verwijderd </msg>
+  <msg key="Due_Date">Verval Datum</msg>
+</message_catalog>

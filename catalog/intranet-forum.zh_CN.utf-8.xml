@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<message_catalog package_key="intranet-forum" package_version="3.4.0.6.0" locale="zh_CN" charset="utf-8">
+
+  <msg key="Filter_Topics">筛选主题</msg>
+  <msg key="Forum_Items">论坛主题</msg>
+  <msg key="P">P</msg>
+  <msg key="Topic_Type">主题类别</msg>
+</message_catalog>

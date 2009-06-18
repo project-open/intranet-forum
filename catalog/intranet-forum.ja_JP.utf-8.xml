@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<message_catalog package_key="intranet-forum" package_version="3.4.0.6.0" locale="ja_JP" charset="utf-8">
+
+  <msg key="Accept_Tasks">タスクを引き受ける</msg>
+  <msg key="All_members_of_this_object">すべてのメンバー (顧客、フリーランサー、従業員)</msg>
+  <msg key="Ass">割り当て</msg>
+  <msg key="Close_Tasks">タスクを終了させる</msg>
+  <msg key="Discussion">議論</msg>
+  <msg key="Discussion_View">議論閲覧</msg>
+  <msg key="Due">期限</msg>
+  <msg key="Edit_Topic">話題を編集</msg>
+  <msg key="Enter_message_body">メッセージ本文を入力してください</msg>
+  <msg key="Filter_Topics">話題のフィルター</msg>
+  <msg key="Folder">フォルダ</msg>
+  <msg key="Forum_Items">フォーラムの記事</msg>
+  <msg key="lt_Create_a_new_Discussi">新規議論作成</msg>
+  <msg key="lt_Error_adding_a_new_to">新しい話題追加時のエラー</msg>
+  <msg key="lt_Error_modifying_a_top">話題修正時のエラー</msg>
+  <msg key="lt_img_srcintranetimages">&amp;nbsp;</msg>
+  <msg key="lt_Provider_project_memb">業者(顧客以外のプロジェクトメンバー)</msg>
+  <msg key="lt_The_database_rejected">データベースは、議論する話題\&quot;%subject%\&quot;の追加を拒否しました。</msg>
+  <msg key="lt_The_database_rejected_1">データベースは'%subject%'議論する話題の１つの修正を拒否しました。</msg>
+  <msg key="lt_The_database_rejected_2">データベースは\&amp;quot;%subject%\&amp;quot議論の話題1個の修正を拒否しました。</msg>
+  <msg key="lt_topic_type_needs_clar">%topic_type% 内容確認</msg>
+  <msg key="lt_You_have_insufficient">あなたは話題を修正する権限がありません。</msg>
+  <msg key="Mark_as_read">既読にする</msg>
+  <msg key="Mark_as_unread">未読にマーク</msg>
+  <msg key="Move_to_Active">アクティブに移動</msg>
+  <msg key="Move_to_Deleted">削除済みに移動</msg>
+  <msg key="Object">対象</msg>
+  <msg key="Own">オーナー</msg>
+  <msg key="P">優先度</msg>
+  <msg key="Re_assign_topic">話題を再設定してください。</msg>
+  <msg key="Read">既読／未読</msg>
+  <msg key="Reject_Tasks">タスクを拒否する</msg>
+  <msg key="Status">ステータス</msg>
+  <msg key="Subject">題名</msg>
+  <msg key="Tasks__Incidents">タスク及びインシデント</msg>
+  <msg key="Thank_you_for_submitting_your_incident">事案提出ありがとうございます。</msg>
+  <msg key="Topic_Type">話題のタイプ</msg>
+  <msg key="Type">種別</msg>
+  <msg key="View_Topic">話題を閲覧</msg>
+</message_catalog>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<message_catalog package_key="intranet-forum" package_version="3.4.0.6.0" locale="tr_TR" charset="utf-8">
+
+  <msg key="Accept_Tasks">Görev Kabul</msg>
+  <msg key="Apply">Uygula</msg>
+  <msg key="Ass">İlişkilendir</msg>
+  <msg key="Close_Tasks">Görev Kapat</msg>
+  <msg key="Due">Son Tarihi</msg>
+  <msg key="Forum_Items">Oturum Konuları</msg>
+  <msg key="lt_There_are_no_active_i">Şu An İşlemde Olan Konu Yok </msg>
+  <msg key="Mark_as_read">Okundu</msg>
+  <msg key="Mark_as_unread">Okunmadı</msg>
+  <msg key="Move_to_Active">Faal Olanlara Gönder</msg>
+  <msg key="Move_to_Deleted">Silineceklere Gönder</msg>
+  <msg key="Object">Madde</msg>
+  <msg key="Own">Kendi</msg>
+  <msg key="Reject_Tasks">Görev Ret</msg>
+  <msg key="Subject">Konu</msg>
+  <msg key="Type">Tür</msg>
+</message_catalog>
