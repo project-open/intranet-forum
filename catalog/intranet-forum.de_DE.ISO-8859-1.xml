@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="intranet-forum" package_version="3.4.0.0.0" locale="de_DE" charset="ISO-8859-1">
+<message_catalog package_key="intranet-forum" package_version="3.4.0.6.0" locale="de_DE" charset="ISO-8859-1">
 
+  <msg key="Accept_Tasks">Aufgabe akzeptieren</msg>
   <msg key="Accept_topic_type">Akzeptiert %topic_type% </msg>
   <msg key="Accepted">Akzeptiert</msg>
   <msg key="Access_permissions">Zugangsberechtigungen</msg>
   <msg key="Actions">Aktionen</msg>
   <msg key="All">Alle</msg>
   <msg key="All_group_members">Alle Gruppenmitglieder</msg>
+  <msg key="All_members_of_this_object">Alle Mitglieder (Kunden, Freiberufler &amp; Personal)</msg>
   <msg key="Apply">Ausführen</msg>
   <msg key="Ass">Verantw</msg>
   <msg key="Assign">Zuweisen</msg>
@@ -14,6 +16,7 @@
   <msg key="Assigned">Zugewiesen</msg>
   <msg key="Assigned_to">Zugewiese zu</msg>
   <msg key="Body">Nachricht</msg>
+  <msg key="Close_Tasks">Aufgabe schließen</msg>
   <msg key="Close_topic_type">Schließen %topic_type%</msg>
   <msg key="Closed">Geschlossen</msg>
   <msg key="Create_new_Incident">Neuer Vorfall</msg>
@@ -30,6 +33,7 @@
   <msg key="Edit">Bearbeiten</msg>
   <msg key="Edit_Topic">Beitrag bearbeiten</msg>
   <msg key="Edit_topic_type">Bearbeiten %topic_type% </msg>
+  <msg key="Email">Email</msg>
   <msg key="Emergency">Notfall</msg>
   <msg key="Enter_message_body">Nachricht eingeben</msg>
   <msg key="Enter_subject">Titel eingeben</msg>
@@ -49,6 +53,9 @@
   <msg key="Incident_Received">Zwischenfall entgegengenommen</msg>
   <msg key="Low_Normal">Niedrig Normal</msg>
   <msg key="lt_A_new_topic_type_has_">Ein neuer %topic_type% wurde erzeugt. Bitte folgen sie dem Link unten für mehr Details.</msg>
+  <msg key="lt_A_new_topic_type_has__1">Ein neuer %topic_type% wurde geändert. Bitte besuchen Sie den obigen Link für Details.</msg>
+  <msg key="lt_A_new_topic_type_has__2">Ein neuer %topic_type% wurde vom Moderator akzeptiert. Bitte besuchen Sie den obigen Link für Details.</msg>
+  <msg key="lt_A_new_topic_type_has__3">Ein neuer %topic_type% wurde vom Moderator abgelehnt. Bitte besuchen Sie den obigen Link für Details.</msg>
   <msg key="lt_Client_group_members_">Nur Kunden und der Projektmanager</msg>
   <msg key="lt_Create_a_new_Discussi">Neue Diskussion</msg>
   <msg key="lt_Do_you_want_to_receiv">Wollen sie Aktualisierungen abonieren?</msg>
@@ -66,8 +73,13 @@
   <msg key="lt_scope_____set_html___">Gültigkeitsbereich</msg>
   <msg key="lt_Staff_and_Freelance_g">Mitarbeiter und Freiberufler</msg>
   <msg key="lt_Staff_group_members_o">Nur Mitarbeiter</msg>
+  <msg key="lt_The_asignee_of_the_to">Der Moderator des %topic_type% muss präzisiert werden. Bitte besuchen Sie den obigen Link für Details. </msg>
   <msg key="lt_The_database_rejected">Die Datenbank hat den neuen Beitrag \&quot;%subject%\&quot; abgelehnt.</msg>
+  <msg key="lt_The_database_rejected_1">Die Datenbank hat die Änderung des Diskussionsthema '%subject%' abgelehnt.</msg>
+  <msg key="lt_The_database_rejected_2">Die Datenbank hat die Änderung des Diskussionsthema \&amp;quot;%subject%\&amp;quot;. abgelehnt.</msg>
+  <msg key="lt_The_topic_type_has_be">Der %topic_type% wurde geändert oder beantwortet. Bitte besuchen Sie den obigen Link für Details.</msg>
   <msg key="lt_The_topic_type_has_be_1">Die %topic_type% ist geschlossen. Bitte folgen sie dem Link oben für weitere Informationen.</msg>
+  <msg key="lt_The_topic_type_has_be_2">Der %topic_type% wurde einem neuen Moderator zugewiesen. Bitte besuchen Sie den obigen Link für Details.</msg>
   <msg key="lt_There_are_no_active_i">Keine aktiven Beiträge gefunden.</msg>
   <msg key="lt_This_topic_is_not_a_t">Dieser Beitrag ist keine Aufgabe und kein Vorvall. Es macht keinen Sinn, ihn jemandem zuzuweisen.</msg>
   <msg key="lt_topic_type_needs_clar">%topic_type% bedarf Klärung</msg>
@@ -102,9 +114,11 @@
   <msg key="Project_Manager_only">Nur Projektmanager</msg>
   <msg key="Project_Status">Projektstatus</msg>
   <msg key="Publisher_Name">Name</msg>
+  <msg key="Re_assign_topic">Thema neu zuordnen</msg>
   <msg key="Re_subject">Aw: %subject%</msg>
   <msg key="Read">Gelesen</msg>
   <msg key="Receive_updates">Aktualisierungen abonieren</msg>
+  <msg key="Reject_Tasks">Objekt zurückweisen</msg>
   <msg key="Reject_topic_type">%topic_type% zurückweisen</msg>
   <msg key="Rejected">Zurückgwiesen</msg>
   <msg key="Related_Files">Zugehörige Dateien</msg>

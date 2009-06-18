@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="intranet-forum" package_version="3.2.10.1.0" locale="fr_FR" charset="ISO-8859-1">
+<message_catalog package_key="intranet-forum" package_version="3.4.0.6.0" locale="fr_FR" charset="ISO-8859-1">
 
   <msg key="Accept_Tasks">Accepter Tâche</msg>
   <msg key="Accept_topic_type">Accepter %topic_type%</msg>
@@ -33,6 +33,7 @@
   <msg key="Edit">Modifier</msg>
   <msg key="Edit_Topic">Modifier le sujet</msg>
   <msg key="Edit_topic_type">Modifier %topic_type%</msg>
+  <msg key="Email">Email</msg>
   <msg key="Emergency">Urgent</msg>
   <msg key="Enter_message_body">Saisir le corps du message</msg>
   <msg key="Enter_subject">Saisir le sujet</msg>
@@ -113,6 +114,7 @@
   <msg key="Project_Manager_only">Chef de projet uniquement</msg>
   <msg key="Project_Status">Statut du projet</msg>
   <msg key="Publisher_Name">Nom de l'éditeur</msg>
+  <msg key="Re_assign_topic">Reattribuer un sujet</msg>
   <msg key="Re_subject">Rép: %subject%</msg>
   <msg key="Read">Lu</msg>
   <msg key="Receive_updates">Recevoir mises à jour</msg>
