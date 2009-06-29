@@ -1,4 +1,4 @@
-# /packages/intranet-forum/tcl/intranet-forum.tcl
+# /packages/intranet-forum/tcl/intranet-forum-procs.tcl
 #
 # Copyright (C) 2003 - 2009 ]project-open[
 #
