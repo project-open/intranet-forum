@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <message_catalog package_key="intranet-forum" package_version="3.4.0.6.0" locale="it_IT" charset="ISO-8859-1">
 
-  <msg key="Accept_Tasks">Accetta</msg>
+  <msg key="Accept_Tasks">Accetta </msg>
   <msg key="Accept_topic_type">Accetta %topic_type%</msg>
   <msg key="Accepted">Accettato</msg>
-  <msg key="Access_permissions">Permessi di accesso</msg>
+  <msg key="Access_permissions">Autorizzazioni di accesso</msg>
   <msg key="Actions">Azioni</msg>
   <msg key="All">Tutti</msg>
   <msg key="All_group_members">Tutti i membri del gruppo</msg>
@@ -37,11 +37,12 @@
   <msg key="Emergency">Emergenza</msg>
   <msg key="Enter_message_body">Inserisci il corpo del messaggio</msg>
   <msg key="Enter_subject">Inserisci l'oggetto</msg>
-  <msg key="Error_URL">Errore URL</msg>
+  <msg key="Error_URL">URL errore</msg>
   <msg key="Filter_Topics">Filtra messaggi</msg>
   <msg key="Folder">Cartella</msg>
   <msg key="Forum">Forum</msg>
   <msg key="Forum_Items">Elementi del forum</msg>
+  <msg key="Help_Request">Richiesta di aiuto</msg>
   <msg key="High_Normal">Medio alta</msg>
   <msg key="History">Cronologia</msg>
   <msg key="Human_Resources_Files">File di risorse umane</msg>
@@ -52,10 +53,10 @@
   <msg key="Incident_Information">Informazioni sull'imprevisto</msg>
   <msg key="Incident_Received">Imprevisto ricevuto</msg>
   <msg key="Low_Normal">Medio bassa</msg>
-  <msg key="lt_A_new_topic_type_has_">È stato creato un nuovo %topic_type%. Fare clic sul link sovrastante per ulteriori dettagli.</msg>
-  <msg key="lt_A_new_topic_type_has__1">È stato modificato un nuovo %topic_type%. Fare clic sul link sovrastante per ulteriori dettagli.</msg>
-  <msg key="lt_A_new_topic_type_has__2">È stato accettato un nuovo %topic_type% da parte del responsabile. Fare clic sul link sovrastante per ulteriori dettagli.</msg>
-  <msg key="lt_A_new_topic_type_has__3">È stato rifiutato un nuovo %topic_type% da parte del responsabile. Fare clic sul link sovrastante per ulteriori dettagli.</msg>
+  <msg key="lt_A_new_topic_type_has_">È stato creato un nuovo %topic_type%. Fare clic sul link qui sopra per ulteriori dettagli.</msg>
+  <msg key="lt_A_new_topic_type_has__1">È stato modificato un nuovo %topic_type%. Fare clic sul link qui sopra per ulteriori dettagli.</msg>
+  <msg key="lt_A_new_topic_type_has__2">È stato accettato un nuovo %topic_type% da parte del responsabile. Fare clic sul link qui sopra per ulteriori dettagli.</msg>
+  <msg key="lt_A_new_topic_type_has__3">È stato rifiutato un nuovo %topic_type% da parte del responsabile. Fare clic sul link qui sopra per ulteriori dettagli.</msg>
   <msg key="lt_Client_group_members_">Solo membri del cliente e PM</msg>
   <msg key="lt_Create_a_new_Discussi">Nuova discussione</msg>
   <msg key="lt_Do_you_want_to_receiv">Ricevere gli aggiornamenti?</msg>
@@ -70,24 +71,24 @@
   <msg key="lt_Provider_project_memb">Fornitore (membri del progetto esclusi i clienti)</msg>
   <msg key="lt_Public_everybody_in_t">Pubblico (tutti nel sistema)</msg>
   <msg key="lt_Reply_to_this_topic_t">Rispondi a questa %topic_type%</msg>
-  <msg key="lt_scope_____set_html___">portata</msg>
+  <msg key="lt_scope_____set_html___">ambito</msg>
   <msg key="lt_Staff_and_Freelance_g">Personale e free-lance</msg>
   <msg key="lt_Staff_group_members_o">Solo membri del gruppo Dipendenti</msg>
-  <msg key="lt_The_asignee_of_the_to">Il responsabile del %topic_type% ha bisogno di chiarimenti. Fare clic sul link sovrastante per ulteriori dettagli.</msg>
+  <msg key="lt_The_asignee_of_the_to">Il responsabile del %topic_type% ha bisogno di chiarimenti. Fare clic sul link qua sopra per ulteriori dettagli.</msg>
   <msg key="lt_The_database_rejected">Il database ha rifiutato l'aggiunta del messaggio di discussione \&quot;%subject%\&quot;.</msg>
   <msg key="lt_The_database_rejected_1">Il database ha rifiutato la modifica del messaggio di discussione '%subject%'.</msg>
   <msg key="lt_The_database_rejected_2">Il database ha rifiutato l'aggiunta del messaggio di discussione \&quot;%subject%\&quot;.</msg>
-  <msg key="lt_The_topic_type_has_be">Il %topic_type% è stato modificato o ha ricevuto risposta. Fare clic sul link sovrastante per ulteriori dettagli.</msg>
-  <msg key="lt_The_topic_type_has_be_1">Il %topic_type% è stato chiuso. Fare clic sul link sovrastante per ulteriori dettagli.</msg>
-  <msg key="lt_The_topic_type_has_be_2">Il %topic_type% è stato assegnato a un altro responsabile. Fare clic sul link sovrastante per ulteriori dettagli.</msg>
-  <msg key="lt_There_are_no_active_i">Non ci sono elementi attivi.</msg>
+  <msg key="lt_The_topic_type_has_be">Il %topic_type% è stato modificato o ha ricevuto risposta. Fare clic sul link qua sopra per ulteriori dettagli.</msg>
+  <msg key="lt_The_topic_type_has_be_1">Il %topic_type% è stato chiuso. Fare clic sul link qua sopra per ulteriori dettagli.</msg>
+  <msg key="lt_The_topic_type_has_be_2">Il %topic_type% è stato assegnato a un altro responsabile. Fare clic sul link qua sopra per ulteriori dettagli.</msg>
+  <msg key="lt_There_are_no_active_i">Non esistono elementi attivi.</msg>
   <msg key="lt_This_topic_is_not_a_t">Questo messaggio non è un'attività o un imprevisto. Non è possibile assegnarlo a una persona.</msg>
   <msg key="lt_topic_type_needs_clar">%topic_type% richiede chiarimenti</msg>
   <msg key="lt_Unable_to_find_view_v">Impossibile trovare visualizzazione '%view_name%'</msg>
   <msg key="lt_Unknown_value_for_act">Valore sconosciuto per azione</msg>
   <msg key="lt_Unknown_value_for_sub">Valore sconosciuto per invia</msg>
-  <msg key="lt_You_have_insufficient">Non si dispone dei privilegi sufficienti per modificare questo messaggio</msg>
-  <msg key="lt_You_have_no_rights_to">Non si dispone di privilegi sufficienti per aggiungere membri a questo oggetto.</msg>
+  <msg key="lt_You_have_insufficient">Non si dispone dei privilegi sufficienti per modificare questo messaggio.</msg>
+  <msg key="lt_You_have_no_rights_to">Non si dispone dei privilegi sufficienti per aggiungere membri a questo oggetto.</msg>
   <msg key="Mark_as_read">Segna come già letto</msg>
   <msg key="Mark_as_unread">Segna come da leggere</msg>
   <msg key="Modified">Modificato</msg>
@@ -131,8 +132,10 @@
   <msg key="Task">Attività</msg>
   <msg key="Tasks__Incidents">Attività e Imprevisti</msg>
   <msg key="Thank_you_for_submitting_your_incident">Grazie di aver segnalato l'imprevisto.</msg>
+  <msg key="Topic_read">letto</msg>
   <msg key="Topic_Type">Tipo di messaggio</msg>
   <msg key="topic_type_Subject">Oggetto %topic_type%</msg>
+  <msg key="Topic_unread">non letto</msg>
   <msg key="Type">Tipo</msg>
   <msg key="undefined">non definito</msg>
   <msg key="Unresolved">Da risolvere</msg>
