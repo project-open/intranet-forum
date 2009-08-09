@@ -262,7 +262,7 @@ db_dml ticket_update {}
 db_dml project_update {}
 
 # Write Audit Trail
-im_project_audit $ticket_id
+im_project_audit -project_id $ticket_id
     
 # Add the ticket message to the forum tracker of the open ticket.
 set forum_ids [db_list forum_ids "
