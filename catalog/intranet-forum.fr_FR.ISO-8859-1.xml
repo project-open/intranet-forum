@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="intranet-forum" package_version="3.4.0.6.0" locale="fr_FR" charset="ISO-8859-1">
+<message_catalog package_key="intranet-forum" package_version="3.4.0.7.0" locale="fr_FR" charset="ISO-8859-1">
 
   <msg key="Accept_Tasks">Accepter Tâche</msg>
   <msg key="Accept_topic_type">Accepter %topic_type%</msg>
@@ -43,7 +43,7 @@
   <msg key="Forum">Forum</msg>
   <msg key="Forum_Items">Sujets du Forum</msg>
   <msg key="High_Normal">Normale Haute</msg>
-  <msg key="History">Antécédents</msg>
+  <msg key="History">Historique</msg>
   <msg key="Human_Resources_Files">Fichiers RH</msg>
   <msg key="Human_Resources_Forum_Items">Sujets du Forum RH</msg>
   <msg key="In_Project">Pour le projet</msg>
@@ -62,7 +62,7 @@
   <msg key="lt_Error_adding_a_new_to">Erreur lors de l'ajout d'un nouveau sujet</msg>
   <msg key="lt_Error_closing_subject">Erreur en fermant \&quot;%subject%\&quot; </msg>
   <msg key="lt_Error_modifying_a_im_">Erreur en modifiant un im_forum_topic_user_map</msg>
-  <msg key="lt_Error_modifying_a_top">Erreur en modificant un sujet</msg>
+  <msg key="lt_Error_modifying_a_top">Erreur lors de la modification d'un sujet</msg>
   <msg key="lt_Here_the_error_messag">Voici le message d'erreur</msg>
   <msg key="lt_img_srcintranetimages">&amp;amp;nbsp;</msg>
   <msg key="lt_Please_Accept_or_Reje">Veuillez Accepter ou Rejeter la (l') %topic_type%</msg>
