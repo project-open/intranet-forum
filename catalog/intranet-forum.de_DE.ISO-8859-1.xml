@@ -42,6 +42,7 @@
   <msg key="Folder">Verzeichnis</msg>
   <msg key="Forum">Forum</msg>
   <msg key="Forum_Items">Forum Beitr‰ge</msg>
+  <msg key="Help_Request">Hilfeanfrage</msg>
   <msg key="High_Normal">Hoch Normal</msg>
   <msg key="History">History</msg>
   <msg key="Human_Resources_Files">Dateien Personal</msg>
@@ -131,8 +132,10 @@
   <msg key="Task">Aufgabe</msg>
   <msg key="Tasks__Incidents">Aufgaben &amp; Vorf‰lle</msg>
   <msg key="Thank_you_for_submitting_your_incident">Wir bedanken uns, daﬂ Sie diesen Zwischenfall gemeldet haben.</msg>
+  <msg key="Topic_read">gelesen</msg>
   <msg key="Topic_Type">Typ</msg>
   <msg key="topic_type_Subject">%topic_type% Titel</msg>
+  <msg key="Topic_unread">ungelesen</msg>
   <msg key="Type">Typ</msg>
   <msg key="undefined">undefiniert</msg>
   <msg key="Unresolved">Unerledigt</msg>

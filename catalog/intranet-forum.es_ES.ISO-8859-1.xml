@@ -33,6 +33,7 @@
   <msg key="Edit">Editar</msg>
   <msg key="Edit_Topic">Editar Tema</msg>
   <msg key="Edit_topic_type">Editar %topic_type%</msg>
+  <msg key="Email">E-mail</msg>
   <msg key="Emergency">Emergencia</msg>
   <msg key="Enter_message_body">Entrar cuerpo del mensaje</msg>
   <msg key="Enter_subject">Entrar el asunto</msg>
@@ -41,6 +42,7 @@
   <msg key="Folder">Carpeta</msg>
   <msg key="Forum">Foro</msg>
   <msg key="Forum_Items">Elementos del foro</msg>
+  <msg key="Help_Request">Solicitud de ayuda</msg>
   <msg key="High_Normal">Normal-alta</msg>
   <msg key="History">Histórico</msg>
   <msg key="Human_Resources_Files">Archivos de RR.HH.</msg>
@@ -102,6 +104,7 @@
   <msg key="Object">Objeto</msg>
   <msg key="Open">Abiertos</msg>
   <msg key="Optional">Opcionales</msg>
+  <msg key="Original_Message">Mensaje Original</msg>
   <msg key="Own">Prop</msg>
   <msg key="P">P</msg>
   <msg key="Parent_posting">Mensaje principal</msg>
@@ -120,7 +123,7 @@
   <msg key="Reject_topic_type">Rechazar %topic_type% </msg>
   <msg key="Rejected">Rechazado</msg>
   <msg key="Related_Files">Archivos relacionados</msg>
-  <msg key="Reply">Responder</msg>
+  <msg key="Reply">Respuesta</msg>
   <msg key="Save_Changes">Guardar cambios</msg>
   <msg key="Staff_employees_only">Plantilla (sólo empleados)</msg>
   <msg key="Status">Estado</msg>
@@ -129,8 +132,10 @@
   <msg key="Task">Tarea</msg>
   <msg key="Tasks__Incidents">Tareas e Incidencias</msg>
   <msg key="Thank_you_for_submitting_your_incident">Gracias por enviar su incidencia.</msg>
+  <msg key="Topic_read">leído</msg>
   <msg key="Topic_Type">Tipo de tema</msg>
   <msg key="topic_type_Subject">%topic_type% Asunto</msg>
+  <msg key="Topic_unread">no leído</msg>
   <msg key="Type">Tipo</msg>
   <msg key="undefined">no definido</msg>
   <msg key="Unresolved">Sin resolver</msg>

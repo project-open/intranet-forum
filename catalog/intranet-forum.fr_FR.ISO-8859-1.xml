@@ -42,6 +42,7 @@
   <msg key="Folder">Dossier</msg>
   <msg key="Forum">Forum</msg>
   <msg key="Forum_Items">Sujets du Forum</msg>
+  <msg key="Help_Request">Requête d'aide</msg>
   <msg key="High_Normal">Normale Haute</msg>
   <msg key="History">Historique</msg>
   <msg key="Human_Resources_Files">Fichiers RH</msg>
@@ -103,6 +104,7 @@
   <msg key="Object">Objet</msg>
   <msg key="Open">Ouvrir</msg>
   <msg key="Optional">Optionnel</msg>
+  <msg key="Original_Message">Message Original</msg>
   <msg key="Own">Créé par</msg>
   <msg key="P">P</msg>
   <msg key="Parent_posting">Envoi parent</msg>
@@ -131,8 +133,10 @@
   <msg key="Task">Tâche</msg>
   <msg key="Tasks__Incidents">Tâches &amp; Incidents</msg>
   <msg key="Thank_you_for_submitting_your_incident">Merci d'avoir soumis votre incident.</msg>
+  <msg key="Topic_read">Lu</msg>
   <msg key="Topic_Type">Type de sujet</msg>
   <msg key="topic_type_Subject">Sujet de la (l')%topic_type%</msg>
+  <msg key="Topic_unread">non lu</msg>
   <msg key="Type">Type</msg>
   <msg key="undefined">indéfini</msg>
   <msg key="Unresolved">Non résolu</msg>
