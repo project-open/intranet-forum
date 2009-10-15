@@ -1348,7 +1348,7 @@ ad_proc -public im_forum_create_bar { title_text object_id {return_url ""} } {
     forum elements
 } {
     set html "
-<table cellpadding=0 cellspacing=0 border=0>
+<table cellpadding=0 cellspacing=0 border=0 class='forumBar'>
 <tr>
 <td>
   <A HREF=/intranet-forum/index?[export_url_vars object_id return_url]>
