@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<message_catalog package_key="intranet-forum" package_version="3.4.0.7.0" locale="pt_PT" charset="ISO-8859-1">
+
+  <msg key="Apply">Aplicar</msg>
+  <msg key="Forum_Items">Itens do Fórum</msg>
+  <msg key="Mark_as_read">Marcar como lida</msg>
+  <msg key="Object">Objecto</msg>
+  <msg key="P">P</msg>
+  <msg key="Subject">Assunto</msg>
+  <msg key="Type">Tipo</msg>
+</message_catalog>
