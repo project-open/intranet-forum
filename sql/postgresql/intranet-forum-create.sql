@@ -33,7 +33,7 @@ SELECT acs_object_type__create_type (
 	'intranet-forum',	-- package_name
 	'f',			-- abstract_p
 	null,			-- type_extension_table
-	'im_forum_topic.name'	-- name_method
+	'im_forum_topic__name'	-- name_method
 );
 
 
@@ -102,6 +102,24 @@ create table im_forum_topics (
 		references users
 );
 create index im_forum_topics_object_idx on im_forum_topics (object_id);
+
+
+
+create or replace function im_forum_topic__name(integer)
+returns varchar as '
+DECLARE
+        p_topic_id               alias for $1;
+        v_name                  varchar;
+BEGIN
+        select  substring(topic_name for 30)
+        into    v_name
+        from    im_forum_topics
+        where   topic_id = p_topic_id;
+
+        return v_name;
+end;' language 'plpgsql';
+
+
 
 
 -- This is the sortkey code
