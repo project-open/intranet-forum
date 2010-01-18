@@ -1076,7 +1076,7 @@ ad_proc -public im_forum_component {
 	    regsub -all " " $topic_status "_" topic_status_subs
 	    set topic_status [lang::message::lookup "" intranet-forum.$topic_status_subs $topic_status]
 
-	    set object_type [db_string get_object_type "select acs_object_util__get_object_type($object_id)" -default 0]
+	    set object_type [db_string get_object_type "select acs_object_util__get_object_type(:object_id)" -default 0]
 
 	    set object_view_url ""
 	    if {[info exists biz_url_hash($object_type)]} { set object_view_url $biz_url_hash($object_type)}
