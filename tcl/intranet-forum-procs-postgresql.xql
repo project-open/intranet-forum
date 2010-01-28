@@ -18,6 +18,7 @@
     <querytext>
 select
 	t.*,
+	o.object_type,
 	to_char(t.posting_date, :date_format) as posting_date,
 	to_char(t.due_date, :date_format) as due_date_pretty,
 	CASE 	WHEN t.due_date < now() and t.topic_type_id in (1102, 1104)
