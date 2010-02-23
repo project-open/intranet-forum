@@ -676,7 +676,7 @@ ad_proc -public im_forum_component {
     -current_page_url 
     -return_url 
     -export_var_list 
-    -forum_type 
+    -forum_type
     {-write_icons 0}
 } {
     Creates a HTML table showing a table of "Discussion Topics" of 
@@ -832,6 +832,8 @@ ad_proc -public im_forum_component {
     }
     set pass_through_vars_html [join $params "&"]
 
+
+
     # ---------------------- Format Header ----------------------------------
 
     # Set up colspan to be the number of headers + 1 for the # column
@@ -865,7 +867,7 @@ ad_proc -public im_forum_component {
 	    append table_header_html "  <td class=rowtitle>$col_tr</td>\n"
 	} else {
 	    append table_header_html "  <td class=rowtitle>
-            <a href=$current_page_url?$pass_through_vars_html&forum_order_by=[ns_urlencode $cmd_eval]>$col_tr</a>
+            <a href=$current_page_url?$pass_through_vars_html&forum_order_by=[ns_urlencode $cmd_eval]&forum_folder=$restrict_to_folder>$col_tr</a>
             </td>\n"
 	}
     }
@@ -1093,9 +1095,12 @@ ad_proc -public im_forum_component {
 	    if {0 == $asignee_id} { 
 	    	set asignee_id "" 
 	    	set asignee_initials "" 
+	    } else {
+		set asignee_initials [im_name_from_user_id $asignee_id]
 	    }
 
-	
+	    set owner_initials [im_name_from_user_id $owner_id]
+
     	    # insert intermediate headers for every project
     	    if {[string equal "Project" $forum_order_by]} {
     	        if {$old_object_id != $object_id} {
