@@ -879,7 +879,8 @@ ad_proc -public im_forum_component {
 
     # only show messages to intranet users
     set intranet_user_p 0
-    db_foreach get_profiles "select profile_id from im_profiles" {
+    set profiles [util_memoize [list db_list profiles "select profile_id from im_profiles"]]
+    foreach profile_id $profiles {
     	if { [im_profile::member_p -profile_id $profile_id -user_id $user_id] } {
     		set intranet_user_p 1
     		break
@@ -1026,11 +1027,15 @@ ad_proc -public im_forum_component {
 
 	# Get the list of biz object URLs to avoid a SQL join
 	set biz_url_sql "
-		select	*
+		select	object_type,
+			url
 		from	im_biz_object_urls 
 		where	url_type='view'
 	"
-	db_foreach biz_url $biz_url_sql {
+	set biz_url_list [util_memoize [list db_list_of_lists biz_url $biz_url_sql]]
+	foreach biz_url_row $biz_url_list {
+	    set object_type [lindex $biz_url_row 0]
+	    set url [lindex $biz_url_row 1]
 	    set biz_url_hash($object_type) $url
 	}
 
