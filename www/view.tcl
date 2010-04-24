@@ -237,6 +237,3 @@ $thread_html
 
 
 
-
-
-
