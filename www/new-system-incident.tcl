@@ -257,9 +257,21 @@ set end_date_sql [template::util::date get_property sql_timestamp $end_date]
 set ticket_sla_id [im_ticket::internal_sla_id]
 set ticket_conf_item_id $package_conf_id
 
+
+# Fix "core_version" (if not part of the data sent)
+if {"" == $core_version} {
+    regexp {intranet-core:([0-9\.]*)} $package_versions match core_version
+}
+
 set open_nagios_ticket_id [db_string ticket_insert {}]
 db_dml ticket_update {}
 db_dml project_update {}
+
+# Update the core_version. The field may not exist in the im_tickets table...
+if {[db_column_exists im_tickets ticket_po_version]} {
+    db_dml ver "update im_tickets set ticket_po_version = :core_version where ticket_id = :ticket_id"
+}
+
 
 # Write Audit Trail
 im_project_audit -project_id $ticket_id
