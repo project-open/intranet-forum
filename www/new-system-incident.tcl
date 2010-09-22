@@ -21,7 +21,7 @@ ad_page_contract {
 } {
     { error_url:trim ""}
     { error_location:trim ""}
-    { error_info:trim,html ""}
+    { error_info:trim,allhtml ""}
     { error_first_names:trim ""}
     { error_last_name:trim ""}
     { error_user_email:trim ""}
@@ -275,10 +275,36 @@ if {[db_column_exists im_tickets ticket_po_version]} {
     db_dml ver "update im_tickets set ticket_po_version = :core_version where ticket_id = :ticket_id"
 }
 
+# Update the po_product_version_id field
+if {[db_column_exists im_tickets po_product_version_id]} {
+
+    set pretty_version "V$core_version"
+    set version_category_id [db_string cat "select category_id from im_categories where category = :pretty_version and category_type = 'PO Product Version'" -default ""]
+
+    # Check if we need to create a new category
+    if {"" == $version_category_id || 0 == $version_category_id} {
+	
+	set cat_id [db_string cat_id "select nextval('im_categories_seq')"]
+	set cat_id_low_p [db_string cat_id_low "select count(*) from im_categories where category >= :cat_id"]
+        while {$cat_id_low_p} {
+	    set cat_id [db_string cat_id "select nextval('im_categories_seq')"]
+	    set cat_id_low_p [db_string cat_id_low "select count(*) from im_categories where category >= :cat_id"]
+	}
+
+	db_string new_cat "SELECT im_category_new(:cat_id, :pretty_version, 'PO Product Version')"
+	set version_category_id [db_string cat "select category_id from im_categories where category = :pretty_version and category_type = 'PO Product Version'" -default ""]
+    }
+
+    # Update the ticket
+    db_dml ver "update im_tickets set po_product_version_id = :version_category_id where ticket_id = :ticket_id"
+}
+
+
+
 
 # Write Audit Trail
 im_project_audit -project_id $ticket_id
-    
+
 # Add the ticket message to the forum tracker of the open ticket.
 set forum_ids [db_list forum_ids "
 	select	ft.topic_id
@@ -333,14 +359,10 @@ set resolved_p 0
 # -----------------------------------------------------------------
 
 if {"" != $error_content} {
-
     # Check the filename and prepare to be stored in ticket filestorage
     set folder_type "im_ticket"
     regsub -all {[^a-zA-Z0-9]} $error_content_filename "_" error_content_filename
     set base_path [im_filestorage_base_path $folder_type $ticket_id]
     set dest_path "$base_path/$error_content_filename"
-
-
-
 }
 
