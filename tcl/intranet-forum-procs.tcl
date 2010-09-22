@@ -546,10 +546,11 @@ ad_proc -public im_forum_render_tind {
 
     # Only allow plain text messages
     set html_p "f"
+    set message_text [ad_convert_to_html -html_p $html_p -- $message]
     append tind_html "
 		<tr class=rowplain><td colspan=2>
 		  <table cellspacing=2 cellpadding=2 border=0><tr><td>
-		    [ad_convert_to_html -html_p $html_p -- $message]
+		    $message_text
 		  </td></tr></table>
 		</td></tr>
     "
