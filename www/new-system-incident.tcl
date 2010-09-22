@@ -25,6 +25,9 @@ ad_page_contract {
     { error_first_names:trim ""}
     { error_last_name:trim ""}
     { error_user_email:trim ""}
+    { error_type:trim "standard"}
+    { error_content:trim ""}
+    { error_content_filename:trim ""}
     { core_version:trim ""}
     { package_versions:trim ""}
     { system_url:trim ""}
@@ -157,11 +160,11 @@ set report_object_id 0
 
 # Try with a company first
 set report_object_id [db_string report_company "
-select	min(company_id)
-from	im_companies c,
-	acs_rels r
-where	c.company_id = r.object_id_one
-	and r.object_id_two = :error_user_id
+	select	min(company_id)
+	from	im_companies c,
+		acs_rels r
+	where	c.company_id = r.object_id_one
+		and r.object_id_two = :error_user_id
 " -default 0]
 
 # Set the report_object to the user itself
@@ -323,11 +326,21 @@ db_dml topic_insert {
 		)
 }
 
-# -----------------------------------------------------------------
-# 
-# -----------------------------------------------------------------
-
 set resolved_p 0
 
+# -----------------------------------------------------------------
+# Save an error_content file if necessary
+# -----------------------------------------------------------------
 
+if {"" != $error_content} {
+
+    # Check the filename and prepare to be stored in ticket filestorage
+    set folder_type "im_ticket"
+    regsub -all {[^a-zA-Z0-9]} $error_content_filename "_" error_content_filename
+    set base_path [im_filestorage_base_path $folder_type $ticket_id]
+    set dest_path "$base_path/$error_content_filename"
+
+
+
+}
 
