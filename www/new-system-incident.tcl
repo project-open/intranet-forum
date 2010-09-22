@@ -176,15 +176,15 @@ if {"" == $report_object_id || !$report_object_id} {
 # Find out the title line for the error
 # -----------------------------------------------------------------
 
-set error_url [string range $error_url 0 50]
+set error_url_shortened [string range $error_url 0 200]
 set subject ""
 
 if {[regexp {ERROR\:([^\n]*)} $error_info match error_descr]} {
-    set subject "$error_url: $error_descr"
+    set subject "$error_url_shortened: $error_descr"
 }
 
 if {"" == $subject && [regexp {([^\n]*)} $error_info match error_descr]} {
-    set subject "$error_url: $error_descr"
+    set subject "$error_url_shortened: $error_descr"
 }
 
 # Default - didn't find any reasonable piece of error code
@@ -193,7 +193,7 @@ if {"" == $subject} { set subject $error_url }
 
 
 # -----------------------------------------------------------------
-# Determine and/or create the ConfItem 
+# Determine and/or Create a Package ConfItem
 # -----------------------------------------------------------------
 
 # Identify the package with the error. intranet-core is only exception 
@@ -247,7 +247,7 @@ if {0 == $package_conf_id} {
 # -----------------------------------------------------------------
 
 set ticket_id [db_nextval "acs_object_id_seq"]
-set ticket_name "$error_url - $ticket_id"
+set ticket_name "$error_url_shortened - $ticket_id"
 set ticket_customer_id $error_company_id
 set ticket_customer_contact_id $error_user_id
 set ticket_type_id [im_ticket_type_bug_request]
@@ -285,10 +285,10 @@ if {[db_column_exists im_tickets po_product_version_id]} {
     if {"" == $version_category_id || 0 == $version_category_id} {
 	
 	set cat_id [db_string cat_id "select nextval('im_categories_seq')"]
-	set cat_id_low_p [db_string cat_id_low "select count(*) from im_categories where category >= :cat_id"]
+	set cat_id_low_p [db_string cat_id_low "select count(*) from im_categories where category_id >= :cat_id"]
         while {$cat_id_low_p} {
 	    set cat_id [db_string cat_id "select nextval('im_categories_seq')"]
-	    set cat_id_low_p [db_string cat_id_low "select count(*) from im_categories where category >= :cat_id"]
+	    set cat_id_low_p [db_string cat_id_low "select count(*) from im_categories where category_id >= :cat_id"]
 	}
 
 	db_string new_cat "SELECT im_category_new(:cat_id, :pretty_version, 'PO Product Version')"
@@ -299,7 +299,15 @@ if {[db_column_exists im_tickets po_product_version_id]} {
     db_dml ver "update im_tickets set po_product_version_id = :version_category_id where ticket_id = :ticket_id"
 }
 
+# -----------------------------------------------------------------
+# Associate ticket with a Server configuration item
+# -----------------------------------------------------------------
 
+# Update the system_id
+set conf_item_id [db_string conf_item "select min(conf_item_id) from im_conf_items where conf_item_nr = :system_id" -default ""]
+if {"" != $conf_item_id} {
+    db_dml cid "update im_tickets set ticket_conf_item_id = :conf_item_id where ticket_id = :ticket_id"
+}
 
 
 # Write Audit Trail
@@ -338,7 +346,7 @@ Package Versions: $package_versions
 Error Info:
 $error_info
 "
-set message [string range $message 0 3998]
+set message [string range $message 0 9998]
 
 db_dml topic_insert {
 		insert into im_forum_topics (
