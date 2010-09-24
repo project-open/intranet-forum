@@ -176,9 +176,15 @@ if {"" == $report_object_id || !$report_object_id} {
 # Find out the title line for the error
 # -----------------------------------------------------------------
 
-set error_url_shortened [string range $error_url 0 200]
-set subject ""
+# Limit the shortened version of the url to 100 chars
+# and put a space before every "&" to allow the line to break
+set error_url_shortened [string range $error_url 0 100]
+regsub -all {&} $error_url_shortened { &} error_url_shortened
 
+
+
+# Determine the subject line. Do an effort to make it pretty.
+set subject ""
 if {[regexp {ERROR\:([^\n]*)} $error_info match error_descr]} {
     set subject "$error_url_shortened: $error_descr"
 }
@@ -196,6 +202,67 @@ if {"" == $subject} { set subject $error_url }
 # Determine and/or Create a Package ConfItem
 # -----------------------------------------------------------------
 
+# Identify the package with the error. intranet-core is only exception 
+set error_url_parts [split $error_url "/"]
+set error_package [lindex $error_url_parts 1]
+
+# The one and only exception: intranet-core is mounted on /intranet/:
+if {$error_package == "intranet"} { set error_package "intranet-core" }
+
+# Check for strange names and discard
+if {![regexp {^[a-z0-9\-]+$} $error_package match]} {
+    ad_return_complaint 1 "Found an invalid character in package_name: '$error_package'"
+    ad_script_abort
+}
+
+# Parse the package string and store into hash
+set package_list [split $package_versions " "]
+foreach package_str $package_list {
+    regexp {([a-z0-9\-]*)\:([0-9\.]*)} $package_str match package version
+    set pver_hash($package) $version
+}
+
+# Get toplevel ConfItem for ]po[ internal development
+set po_conf_id [db_string cvs "select conf_item_id from im_conf_items where conf_item_nr = 'po'" -default 0]
+if {0 == $po_conf_id} { ad_return_complaint 1 "Didn't find ConfItem 'po'.<br>Please inform support@project-open.com." }
+
+# Get ConfItem of package below 'po'
+set package_conf_id [db_string cvs "select conf_item_id from im_conf_items where conf_item_nr = :error_package and conf_item_parent_id = :po_conf_id" -default 0]
+if {0 == $package_conf_id} { 
+    # No package yet for this $error_packag - create
+
+    set conf_item_name $error_package
+    set conf_item_nr $error_package
+    set conf_item_parent_id $po_conf_id
+    set conf_item_type_id [im_conf_item_type_po_package]
+    set conf_item_status_id [im_conf_item_status_active]
+
+    set conf_item_new_sql "
+		select im_conf_item__new(
+			null,
+			'im_conf_item',
+			now(),
+			:system_owner_id,
+			'[ad_conn peeraddr]',
+			null,
+			:conf_item_name,
+			:conf_item_nr,
+			:conf_item_parent_id,
+			:conf_item_type_id,
+			:conf_item_status_id
+		)
+    "
+    set package_conf_id [db_string new $conf_item_new_sql]
+    db_dml update [im_conf_item_update_sql -include_dynfields_p 1]
+}
+
+
+
+# -----------------------------------------------------------------
+# Determine and/or Create a Version ConfItem
+# -----------------------------------------------------------------
+
+set ttt {
 # Identify the package with the error. intranet-core is only exception 
 set error_url_parts [split $error_url "/"]
 set error_package [lindex $error_url_parts 1]
@@ -242,6 +309,31 @@ if {0 == $package_conf_id} {
     db_dml update [im_conf_item_update_sql -include_dynfields_p 1]
 }
 
+}
+
+
+# -----------------------------------------------------------------
+# Create a category for po_product_version if necessary
+# -----------------------------------------------------------------
+
+set pretty_version "V$core_version"
+set version_category_id [db_string cat "select category_id from im_categories where category = :pretty_version and category_type = 'PO Product Version'" -default ""]
+
+# Check if we need to create a new category
+if {"" == $version_category_id || 0 == $version_category_id} {
+	
+    set cat_id [db_string cat_id "select nextval('im_categories_seq')"]
+    set cat_id_low_p [db_string cat_id_low "select count(*) from im_categories where category_id >= :cat_id"]
+    while {$cat_id_low_p} {
+	set cat_id [db_string cat_id "select nextval('im_categories_seq')"]
+	set cat_id_low_p [db_string cat_id_low "select count(*) from im_categories where category_id >= :cat_id"]
+    }
+    
+    db_string new_cat "SELECT im_category_new(:cat_id, :pretty_version, 'PO Product Version')"
+    set version_category_id [db_string cat "select category_id from im_categories where category = :pretty_version and category_type = 'PO Product Version'" -default ""]
+}
+
+
 # -----------------------------------------------------------------
 # Create a Helpdesk Ticket
 # -----------------------------------------------------------------
@@ -275,33 +367,9 @@ if {[db_column_exists im_tickets ticket_po_version]} {
     db_dml ver "update im_tickets set ticket_po_version = :core_version where ticket_id = :ticket_id"
 }
 
-# Update the po_product_version_id field
-if {[db_column_exists im_tickets po_product_version_id]} {
-
-    set pretty_version "V$core_version"
-    set version_category_id [db_string cat "select category_id from im_categories where category = :pretty_version and category_type = 'PO Product Version'" -default ""]
-
-    # Check if we need to create a new category
-    if {"" == $version_category_id || 0 == $version_category_id} {
-	
-	set cat_id [db_string cat_id "select nextval('im_categories_seq')"]
-	set cat_id_low_p [db_string cat_id_low "select count(*) from im_categories where category_id >= :cat_id"]
-        while {$cat_id_low_p} {
-	    set cat_id [db_string cat_id "select nextval('im_categories_seq')"]
-	    set cat_id_low_p [db_string cat_id_low "select count(*) from im_categories where category_id >= :cat_id"]
-	}
-
-	db_string new_cat "SELECT im_category_new(:cat_id, :pretty_version, 'PO Product Version')"
-	set version_category_id [db_string cat "select category_id from im_categories where category = :pretty_version and category_type = 'PO Product Version'" -default ""]
-    }
-
-    # Update the ticket
-    db_dml ver "update im_tickets set po_product_version_id = :version_category_id where ticket_id = :ticket_id"
-}
 
 # -----------------------------------------------------------------
 # Associate ticket with a Server configuration item
-# -----------------------------------------------------------------
 
 # Update the system_id
 set conf_item_id [db_string conf_item "select min(conf_item_id) from im_conf_items where conf_item_nr = :system_id" -default ""]
@@ -309,7 +377,14 @@ if {"" != $conf_item_id} {
     db_dml cid "update im_tickets set ticket_conf_item_id = :conf_item_id where ticket_id = :ticket_id"
 }
 
+# -----------------------------------------------------------------
+# Associate ticket with a Server configuration item
+#
+if {[db_column_exists im_tickets po_product_version_id]} {
+    db_dml ver "update im_tickets set po_product_version_id = :version_category_id where ticket_id = :ticket_id"
+}
 
+# -----------------------------------------------------------------
 # Write Audit Trail
 im_project_audit -project_id $ticket_id
 
