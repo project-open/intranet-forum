@@ -316,6 +316,11 @@ if {0 == $package_conf_id} {
 # Create a category for po_product_version if necessary
 # -----------------------------------------------------------------
 
+# Fix "core_version" (if not part of the data sent)
+if {"" == $core_version} {
+    regexp {intranet-core:([0-9\.]*)} $package_versions match core_version
+}
+
 set pretty_version "V$core_version"
 set version_category_id [db_string cat "select category_id from im_categories where category = :pretty_version and category_type = 'PO Product Version'" -default ""]
 
@@ -352,11 +357,6 @@ set end_date_sql [template::util::date get_property sql_timestamp $end_date]
 set ticket_sla_id [im_ticket::internal_sla_id]
 set ticket_conf_item_id $package_conf_id
 
-
-# Fix "core_version" (if not part of the data sent)
-if {"" == $core_version} {
-    regexp {intranet-core:([0-9\.]*)} $package_versions match core_version
-}
 
 set open_nagios_ticket_id [db_string ticket_insert {}]
 db_dml ticket_update {}
