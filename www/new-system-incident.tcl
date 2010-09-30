@@ -32,8 +32,13 @@ ad_page_contract {
     { package_versions:trim ""}
     { system_url:trim ""}
     { system_id:trim ""}
+    { hardware_id:trim "" }
     { publisher_name ""}
 }
+
+# -----------------------------------------------------------------
+# Defaults & Security
+# -----------------------------------------------------------------
 
 set current_user_id [ad_get_user_id]
 
@@ -90,8 +95,8 @@ foreach var [ad_ns_set_keys $header_vars] {
 
 # -----------------------------------------------------------------
 # Lookup user_id or create entry
-# -----------------------------------------------------------------
 # Keep in mind that the email and other data might be completely fake.
+# -----------------------------------------------------------------
 
 ns_log Notice "Check if the user already has an account: $error_user_email"
 set error_user_id [db_string user_id "select party_id from parties where lower(email) = lower(:error_user_email)" -default 0]
@@ -100,7 +105,7 @@ if {0 != $error_user_id} {
     # The user already exists:
     # Make sure there are no more then $max_incidents today from the same IP
     
-    # ToDo: Implement !!!
+    # ToDo: Implement
 
 } else {
 
@@ -135,42 +140,23 @@ if {!$error_user_id} {
     set error_user_id $system_owner_id
 }
 
+
+
 # -----------------------------------------------------------------
-# Determine the error user's company and SLA. Otherwise use "internal"
+# Determine the error user's company and SLA. 
+# Otherwise use "internal"
 # -----------------------------------------------------------------
 
-set error_company_id [im_company_internal]
-set error_company_ids [db_list comps "
-	select	c.company_id
+set default_company_id [im_company_internal]
+set error_company_id [db_string error_company "
+	select	min(c.company_id)
 	from	im_companies c,
 		acs_rels r
 	where	r.object_id_one = :error_user_id and
 		r.object_id_two = c.company_id
-	order by
-		c.company_id
-"]
-if {[llength $error_company_ids] > 0} { set error_company_id [lindex $error_company_ids 0] }
+" -default $default_company_id]
+if {"" == $error_company_id} { set error_company_id $default_company_id }
 
-
-# -----------------------------------------------------------------
-# Find out the report_object
-# -----------------------------------------------------------------
-
-set report_object_id 0
-
-# Try with a company first
-set report_object_id [db_string report_company "
-	select	min(company_id)
-	from	im_companies c,
-		acs_rels r
-	where	c.company_id = r.object_id_one
-		and r.object_id_two = :error_user_id
-" -default 0]
-
-# Set the report_object to the user itself
-if {"" == $report_object_id || !$report_object_id} {
-    set report_object_id $error_user_id
-}
 
 # -----------------------------------------------------------------
 # Find out the title line for the error
@@ -180,8 +166,6 @@ if {"" == $report_object_id || !$report_object_id} {
 # and put a space before every "&" to allow the line to break
 set error_url_shortened [string range $error_url 0 100]
 regsub -all {&} $error_url_shortened { &} error_url_shortened
-
-
 
 # Determine the subject line. Do an effort to make it pretty.
 set subject ""
@@ -209,11 +193,8 @@ set error_package [lindex $error_url_parts 1]
 # The one and only exception: intranet-core is mounted on /intranet/:
 if {$error_package == "intranet"} { set error_package "intranet-core" }
 
-# Check for strange names and discard
-if {![regexp {^[a-z0-9\-]+$} $error_package match]} {
-    ad_return_complaint 1 "Found an invalid character in package_name: '$error_package'"
-    ad_script_abort
-}
+# Check for strange names and set to "core"
+if {![regexp {^[a-z0-9\-]+$} $error_package match]} { set error_package "intranet-core" }
 
 # Parse the package string and store into hash
 set package_list [split $package_versions " "]
@@ -227,8 +208,13 @@ set po_conf_id [db_string cvs "select conf_item_id from im_conf_items where conf
 if {0 == $po_conf_id} { ad_return_complaint 1 "Didn't find ConfItem 'po'.<br>Please inform support@project-open.com." }
 
 # Get ConfItem of package below 'po'
-set package_conf_id [db_string cvs "select conf_item_id from im_conf_items where conf_item_nr = :error_package and conf_item_parent_id = :po_conf_id" -default 0]
-if {0 == $package_conf_id} { 
+set package_conf_item_id [db_string cvs "
+	select	conf_item_id
+	from	im_conf_items
+	where	conf_item_nr = :error_package and conf_item_parent_id = :po_conf_id
+" -default 0]
+
+if {0 == $package_conf_item_id} { 
     # No package yet for this $error_packag - create
 
     set conf_item_name $error_package
@@ -252,63 +238,40 @@ if {0 == $package_conf_id} {
 			:conf_item_status_id
 		)
     "
-    set package_conf_id [db_string new $conf_item_new_sql]
+    set package_conf_item_id [db_string new $conf_item_new_sql]
     db_dml update [im_conf_item_update_sql -include_dynfields_p 1]
 }
 
 
 
 # -----------------------------------------------------------------
-# Determine and/or Create a Version ConfItem
+# Determine and/or Create Server ConfItem
 # -----------------------------------------------------------------
 
-set ttt {
-# Identify the package with the error. intranet-core is only exception 
-set error_url_parts [split $error_url "/"]
-set error_package [lindex $error_url_parts 1]
-if {$error_package == "intranet"} { set error_package "intranet-core" }
 
-# Parse the package string and store into hash
-set package_list [split $package_versions " "]
-foreach package_str $package_list {
-    regexp {([a-z0-9\-]*)\:([0-9\.]*)} $package_str match package version
-    set pver_hash($package) $version
-}
 
-# Get toplevel ConfItem for ]po[ internal development
-set po_conf_id [db_string cvs "select conf_item_id from im_conf_items where conf_item_nr = 'po'" -default 0]
-if {0 == $po_conf_id} { ad_return_complaint 1 "Didn't find ConfItem 'po'.<br>Please inform support@project-open.com." }
+# Get ConfItem for SystemID
+set system_conf_item_id [db_string system "
+	select	conf_item_id
+	from	im_conf_items
+	where	conf_item_nr = :system_id
+" -default ""]
 
-# Get ConfItem of package below 'po'
-set package_conf_id [db_string cvs "select conf_item_id from im_conf_items where conf_item_nr = :error_package and conf_item_parent_id = :po_conf_id" -default 0]
-if {0 == $package_conf_id} { 
-    # No package yet for this $error_packag - create
+if {"" == $system_conf_item_id} {
 
-    set conf_item_name $error_package
-    set conf_item_nr $error_package
-    set conf_item_parent_id $po_conf_id
-    set conf_item_type_id [im_conf_item_type_po_package]
-    set conf_item_status_id [im_conf_item_status_active]
+    iim_software_update_server_update_conf_item \
+	-sid $system_id \
+	-hid $hardware_id \
+	-email $error_user_email \
+	-peer_ip [ad_conn peeraddr] \
+	-server_ip $system_url \
+	-package_list [array get pver_hash]
 
-    set conf_item_new_sql "
-		select im_conf_item__new(
-			null,
-			'im_conf_item',
-			now(),
-			:system_owner_id,
-			'[ad_conn peeraddr]',
-			null,
-			:conf_item_name,
-			:conf_item_nr,
-			:conf_item_parent_id,
-			:conf_item_type_id,
-			:conf_item_status_id
-		)
-    "
-    set package_conf_id [db_string new $conf_item_new_sql]
-    db_dml update [im_conf_item_update_sql -include_dynfields_p 1]
-}
-
+    set system_conf_item_id [db_string system "
+	select	conf_item_id
+	from	im_conf_items
+	where	conf_item_nr = :system_id
+    " -default ""]
 }
 
 
@@ -355,10 +318,10 @@ set end_date [db_string now "select (now()::date) from dual"]
 set start_date_sql [template::util::date get_property sql_date $start_date]
 set end_date_sql [template::util::date get_property sql_timestamp $end_date]
 set ticket_sla_id [im_ticket::internal_sla_id]
-set ticket_conf_item_id $package_conf_id
+set ticket_conf_item_id $package_conf_item_id
 
 
-set open_nagios_ticket_id [db_string ticket_insert {}]
+set ticket_id [db_string ticket_insert {}]
 db_dml ticket_update {}
 db_dml project_update {}
 
@@ -374,15 +337,22 @@ if {[db_column_exists im_tickets ticket_po_version]} {
 # Update the system_id
 set conf_item_id [db_string conf_item "select min(conf_item_id) from im_conf_items where conf_item_nr = :system_id" -default ""]
 if {"" != $conf_item_id} {
-    db_dml cid "update im_tickets set ticket_conf_item_id = :conf_item_id where ticket_id = :ticket_id"
+    db_dml cid "
+	update im_tickets set
+		ticket_conf_item_id = :ticket_conf_item_id,
+		ticket_po_package_id = :package_conf_item_id,
+		po_product_version_id = :version_category_id
+	where ticket_id = :ticket_id
+    "
 }
 
-# -----------------------------------------------------------------
-# Associate ticket with a Server configuration item
-#
-if {[db_column_exists im_tickets po_product_version_id]} {
-    db_dml ver "update im_tickets set po_product_version_id = :version_category_id where ticket_id = :ticket_id"
+# Create an acs_rel relationship
+if {"" != $system_conf_item_id && 0 != $system_conf_item_id} {
+    im_conf_item_new_project_rel \
+	-project_id $ticket_id \
+	-conf_item_id $system_conf_item_id
 }
+
 
 # -----------------------------------------------------------------
 # Write Audit Trail
@@ -392,7 +362,7 @@ im_project_audit -project_id $ticket_id
 set forum_ids [db_list forum_ids "
 	select	ft.topic_id
 	from	im_forum_topics ft
-	where	ft.object_id = :open_nagios_ticket_id
+	where	ft.object_id = :ticket_id
 	order by ft.topic_id
 "]
 
@@ -429,7 +399,7 @@ db_dml topic_insert {
 			topic_type_id, topic_status_id, owner_id, 
 			subject, message
 		) values (
-			:topic_id, :open_nagios_ticket_id, :parent_id,
+			:topic_id, :ticket_id, :parent_id,
 			:topic_type_id,	:topic_status_id, :error_user_id, 
 			:subject, :message
 		)
