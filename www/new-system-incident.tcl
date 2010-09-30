@@ -353,6 +353,9 @@ if {"" != $system_conf_item_id && 0 != $system_conf_item_id} {
 	-conf_item_id $system_conf_item_id
 }
 
+# Make the error_user a "member" of the ticket
+im_biz_object_add_role $error_user_id $ticket_id [im_biz_object_role_full_member]
+
 
 # -----------------------------------------------------------------
 # Write Audit Trail
