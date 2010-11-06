@@ -209,7 +209,7 @@ if {0 == $po_conf_id} { ad_return_complaint 1 "Didn't find ConfItem 'po'.<br>Ple
 
 # Get ConfItem of package below 'po'
 set package_conf_item_id [db_string cvs "
-	select	conf_item_id
+	select	min(conf_item_id)
 	from	im_conf_items
 	where	conf_item_nr = :error_package and conf_item_parent_id = :po_conf_id
 " -default 0]
@@ -252,7 +252,7 @@ if {0 == $package_conf_item_id} {
 
 # Get ConfItem for SystemID
 set system_conf_item_id [db_string system "
-	select	conf_item_id
+	select	min(conf_item_id)
 	from	im_conf_items
 	where	conf_item_nr = :system_id
 " -default ""]
