@@ -679,6 +679,7 @@ ad_proc -public im_forum_component {
     -export_var_list 
     -forum_type
     {-write_icons 0}
+    {-debug 0}
 } {
     Creates a HTML table showing a table of "Discussion Topics" of 
     various types. Parameters:
@@ -701,16 +702,18 @@ ad_proc -public im_forum_component {
     if {"" == $start_idx} { set start_idx 0}
     set forum_object_id $object_id
 
-    ns_log Notice "im_forum_component: forum_type=$forum_type"
-    ns_log Notice "im_forum_component: forum_object_id=$forum_object_id"
-    ns_log Notice "im_forum_component: view_name=$view_name"
-    ns_log Notice "im_forum_component: restrict_to_asignee_id=$restrict_to_asignee_id"
-    ns_log Notice "im_forum_component: restrict_to_mine_p=$restrict_to_mine_p"
-    ns_log Notice "im_forum_component: restrict_to_topic_type_id=$restrict_to_topic_type_id"
-    ns_log Notice "im_forum_component: restrict_to_new_topics=$restrict_to_new_topics"
-    ns_log Notice "im_forum_component: restrict_to_folder=$restrict_to_folder"
-    ns_log Notice "im_forum_component: restrict_to_employees=$restrict_to_employees"
-    ns_log Notice "im_forum_component: start_idx=$start_idx"
+    if {$debug} { 
+	ns_log Notice "im_forum_component: forum_type=$forum_type"
+	ns_log Notice "im_forum_component: forum_object_id=$forum_object_id"
+	ns_log Notice "im_forum_component: view_name=$view_name"
+	ns_log Notice "im_forum_component: restrict_to_asignee_id=$restrict_to_asignee_id"
+	ns_log Notice "im_forum_component: restrict_to_mine_p=$restrict_to_mine_p"
+	ns_log Notice "im_forum_component: restrict_to_topic_type_id=$restrict_to_topic_type_id"
+	ns_log Notice "im_forum_component: restrict_to_new_topics=$restrict_to_new_topics"
+	ns_log Notice "im_forum_component: restrict_to_folder=$restrict_to_folder"
+	ns_log Notice "im_forum_component: restrict_to_employees=$restrict_to_employees"
+	ns_log Notice "im_forum_component: start_idx=$start_idx"
+    }
 
     set bgcolor(0) " class=roweven"
     set bgcolor(1) " class=rowodd"
@@ -763,7 +766,7 @@ ad_proc -public im_forum_component {
 	set view_name "forum_list_short"
 	set view_id [db_string get_view_id "select view_id from im_views where view_name=:view_name" -default 0]
     }
-    ns_log Notice "im_forum_component: view_id=$view_id"
+    if {$debug} { ns_log Notice "im_forum_component: view_id=$view_id" }
     if {!$view_id} {
 	return "<b>[_ intranet-forum.lt_Unable_to_find_view_v]</b>\n"
     }
@@ -795,7 +798,7 @@ ad_proc -public im_forum_component {
         lappend column_vars "$column_render_tcl"
 	}
     }
-    ns_log Notice "im_forum_component: column_headers=$column_headers"
+    if {$debug} { ns_log Notice "im_forum_component: column_headers=$column_headers" }
 
     # -------- Compile the list of parameters to pass-through-------
 
@@ -807,13 +810,13 @@ ad_proc -public im_forum_component {
         upvar 1 $var value
         if { [info exists value] } {
             ns_set put $bind_vars $var $value
-            ns_log Notice "im_forum_component: $var <- $value"
+            if {$debug} { ns_log Notice "im_forum_component: $var <- $value" }
         } else {
         
             set value [ns_set get $form_vars $var]
             if {![string equal "" $value]} {
  	        ns_set put $bind_vars $var $value
- 	        ns_log Notice "im_forum_component: $var <- $value"
+ 	        if {$debug} { ns_log Notice "im_forum_component: $var <- $value" }
             }
             
         }
@@ -855,7 +858,7 @@ ad_proc -public im_forum_component {
     foreach col $column_headers {
 
 	set cmd_eval ""
-	ns_log Notice "im_forum_component: eval=$cmd_eval $col"
+	if {$debug} { ns_log Notice "im_forum_component: eval=$cmd_eval $col" }
 	set cmd "set cmd_eval $col"
         eval $cmd
 	if { [regexp "im_gif" $col] } {
@@ -1003,7 +1006,7 @@ ad_proc -public im_forum_component {
     	if {"" != $restriction_clause} { 
 		set restriction_clause "and $restriction_clause" 
     	}
-    	ns_log Notice "im_forum_component: restriction_clause=$restriction_clause"
+    	if {$debug} { ns_log Notice "im_forum_component: restriction_clause=$restriction_clause" }
 
 	
 	# Permissions - who should see what
@@ -1070,7 +1073,7 @@ ad_proc -public im_forum_component {
 	
     	# How many items remain unseen?
     	set remaining_items [expr $total_in_limited - $start_idx - $max_entries_per_page]
-    	ns_log Notice "im_forum_component: total_in_limited=$total_in_limited, remaining_items=$remaining_items"
+    	if {$debug} { ns_log Notice "im_forum_component: total_in_limited=$total_in_limited, remaining_items=$remaining_items" }
 	
     	# ---------------------- Format the body -------------------------------
 	
