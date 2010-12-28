@@ -499,12 +499,13 @@ while {"" != $parent_id && 0 != $parent_id && $ctr < 10} {
 set org_message ""
 if {$include_topic_message_p} { set org_message "$message\n\n" }
 
+
 set action_type_found 0
 switch $action_type {
     "new_message" { 
 	set action_type_found 1
 	set importance 2
-	set subject [lang::message::lookup "" intranet-forum.New_topic_in_object "New $topic_type in $object_name: $subject"]
+	set subject [lang::message::lookup "" intranet-forum.New_topic_in_object2 "New $topic_type in $object_name: $subject"]
 	set message "
 $org_message
 [_ intranet-forum.lt_A_new_topic_type_has_]\n"
@@ -513,13 +514,12 @@ $org_message
     "reply_message" { 
 	set action_type_found 1
 	set importance 1
-	set subject [lang::message::lookup "" intranet-forum.Reply_to_topic "Reply to $topic_type in $object_name: $subject"]
+	set subject [lang::message::lookup "" intranet-forum.Reply_to_topic2 "Reply to $topic_type in $object_name: $subject"]
 	set message "
 $org_message
 [_ intranet-forum.lt_A_new_topic_type_has_]\n"
     }
 }
-
 
 if {!$action_type_found} {
 

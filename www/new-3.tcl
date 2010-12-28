@@ -34,6 +34,12 @@ set user_id [ad_maybe_redirect_for_registration]
 set user_is_employee_p [im_user_is_employee_p $user_id]
 set user_is_customer_p [im_user_is_customer_p $user_id]
 
+# Determine the sender address
+set sender_email [ad_parameter -package_id [ad_acs_kernel_id] SystemOwner "" [ad_system_owner]]
+catch {
+    set sender_email [db_string sender_email "select email as sender_email from parties where party_id = :current_user_id" -default $sender_email]
+}
+
 
 # Permissions - who should see what
 set permission_clause "
@@ -138,7 +144,9 @@ set stakeholder_sql2 "
 "
 
 set stakeholder_sql "
-	select	user_id as stakeholder_id
+	select distinct
+		user_id as stakeholder_id,
+		email as stakeholder_email
 	from	($stakeholder_sql2) t
 "
 
@@ -152,9 +160,18 @@ db_foreach update_stakeholders $stakeholder_sql {
     ns_log Notice "forum/new-3: stakeholder_id=$stakeholder_id"
     if {[lsearch $notifyee_id $stakeholder_id] > -1} {
 
-	ns_log Notice "intranet-forum/new-3: Sending out alert: '$subject'"
-	im_send_alert $stakeholder_id "hourly" $subject "$msg_url\n\n$message"
-
+	set subject [string trim $subject]
+	if {[catch {
+	    acs_mail_lite::send \
+		-send_immediately \
+		-to_addr $stakeholder_email \
+		-from_addr $sender_email \
+		-subject $subject \
+		-body "$msg_url\n\n$message"
+	} errmsg]} {
+	    ad_return_error $subject "<p>Error sending out mail:</p><div><code>[ad_quotehtml $errmsg]</code></div>"
+	    ad_script_abort
+	}
     }
 }
 
