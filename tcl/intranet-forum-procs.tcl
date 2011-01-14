@@ -1225,6 +1225,7 @@ ad_proc -public im_forum_component {
 
 ad_proc -public im_forum_full_screen_component {
     -object_id:required
+    { -read_only_p 0}
 } {
     Creates a HTML table with the threaded discussions for a given object.
 } {
@@ -1304,7 +1305,6 @@ ad_proc -public im_forum_full_screen_component {
 	}
     }
     
-
     append actions "<option value=reply selected>[_ intranet-forum.lt_Reply_to_this_topic_t]</option>\n"
     
     # Only admins can edit the message
@@ -1322,17 +1322,20 @@ ad_proc -public im_forum_full_screen_component {
 	}
     }
     
-    append table_body "
-	<tr $bgcolor([expr $ctr % 2])>
-	  <td>[_ intranet-forum.Actions]</td>
-	  <td>
-	    <select name=actions>
-	    $actions
-	    </select>
-	    <input type=submit value=\"[_ intranet-forum.Apply]\">
-	  </td>
-	</tr> $assign_hidden
-    "
+    if {!$read_only_p} {
+	append table_body "
+		<tr $bgcolor([expr $ctr % 2])>
+		  <td>[_ intranet-forum.Actions]</td>
+		  <td>
+		    <select name=actions>
+		    $actions
+		    </select>
+		    <input type=submit value=\"[_ intranet-forum.Apply]\">
+		  </td>
+		</tr> 
+		$assign_hidden
+        "
+    }
     incr ctr
 
     # -------------- Table and Form Start -----------------------------
