@@ -259,7 +259,7 @@ set system_conf_item_id [db_string system "
 
 if {"" == $system_conf_item_id} {
 
-    iim_software_update_server_update_conf_item \
+    im_software_update_server_update_conf_item \
 	-sid $system_id \
 	-hid $hardware_id \
 	-email $error_user_email \
