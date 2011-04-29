@@ -26,6 +26,7 @@ ad_proc -public im_topic_status_id_closed { } { return 1210 }
 
 ad_proc -public im_topic_type_id_task { } { return 1102 }
 ad_proc -public im_topic_type_id_incident { } { return 1104 }
+ad_proc -public im_topic_type_id_discussion { } { return 1106 }
 ad_proc -public im_topic_type_id_reply { } { return 1190 }
 
 
