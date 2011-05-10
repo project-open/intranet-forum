@@ -41,7 +41,7 @@ ad_page_contract {
 # Security, Parameters & Default
 # ------------------------------------------------------------------
 
-set user_id [ad_maybe_redirect_for_registration]
+set current_user_id [ad_maybe_redirect_for_registration]
 
 set topic_type [db_string topic_type "select im_category_from_id(:topic_type_id)" -default ""]
 set object_type [db_string acs_object_type "select object_type from acs_objects where object_id = :object_id" -default ""]
@@ -82,7 +82,7 @@ set task_or_incident_p [im_forum_is_task_or_incident $topic_type_id]
 
 # Optional comments are added to the message
 if {"" != $comments} {
-    set user_name [db_string get_user_name "select im_name_from_user_id(:user_id) from dual"]
+    set user_name [db_string get_user_name "select im_name_from_user_id(:current_user_id) from dual"]
     set today_date [db_string get_today_date "select sysdate from dual"]
     append message "\n\n\[Comment from $user_name on $today_date\]:\n$comments"
 }
@@ -135,7 +135,7 @@ if {[string equal $actions "save"]} {
     set object_admin 0
     if {$object_id != 0} {
 	if {"" != $object_type} {
-	    set perm_cmd "${object_type}_permissions \$user_id \$object_id object_view object_read object_write object_admin"
+	    set perm_cmd "${object_type}_permissions \$current_user_id \$object_id object_view object_read object_write object_admin"
 	    eval $perm_cmd
 	}
 	if {!$object_read} {
@@ -149,7 +149,7 @@ if {[string equal $actions "save"]} {
 	return
     }
 
-    if {!$object_admin && $user_id != $owner_id } {
+    if {!$object_admin && $current_user_id != $owner_id } {
 	ad_return_complaint 1 "<li>[_ intranet-forum.lt_You_have_insufficient]"
 	return
     }
@@ -211,14 +211,14 @@ if {[string equal $actions "save"]} {
 	select	count(*)
 	from	im_forum_topic_user_map
 	where	topic_id = :topic_id
-		and user_id = :user_id
+		and user_id = :current_user_id
     "]
     if {!$exists_p} {
 	db_transaction {
 	    db_dml im_forum_topic_user_map_insert "
 		insert into im_forum_topic_user_map 
 		(topic_id, user_id, read_p, folder_id, receive_updates) values 
-		(:topic_id, :user_id, :read_p, :folder_id, :receive_updates)
+		(:topic_id, :current_user_id, :read_p, :folder_id, :receive_updates)
 	    "
 	} on_error {
 	    # nothing - may already exist...
@@ -235,7 +235,7 @@ if {[string equal $actions "save"]} {
 		receive_updates=:receive_updates
 	where 
 		topic_id=:topic_id
-		and user_id=:user_id
+		and user_id=:current_user_id
 	"
     } on_error {
         ad_return_error "[_ intranet-forum.lt_Error_modifying_a_im_]" "
@@ -299,7 +299,7 @@ if {[string equal $action_type "new_message"]} {
 		and o_mem.user_id = p.party_id
 		and 1 = im_forum_permission(
 			p.party_id,
-			:user_id,
+			:current_user_id,
 			:asignee_id,
 			:object_id,
 			:scope,
@@ -311,7 +311,7 @@ if {[string equal $action_type "new_message"]} {
 
 	db_foreach subscribe_object_members $object_member_sql {
 
-	    ns_log Notice "intranet-forum/new-2: subscribe user\#$user_id to message\#$topic_id in object\#$object_id"
+	    ns_log Notice "intranet-forum/new-2: subscribe user\#$current_user_id to message\#$topic_id in object\#$object_id"
 
 	    # im_forum_topics_user_map may or may not exist for every user.
 	    # So we create a record just in case, even if the SQL fails.
@@ -319,7 +319,7 @@ if {[string equal $action_type "new_message"]} {
 	        select  count(*)
 	        from    im_forum_topic_user_map
 	        where   topic_id = :topic_id
-	                and user_id = :user_id
+	                and user_id = :current_user_id
 	    "]
 
 	    if {!$map_exists_p} {
@@ -327,7 +327,7 @@ if {[string equal $action_type "new_message"]} {
 		db_dml im_forum_topic_user_map_insert "
 	            insert into im_forum_topic_user_map
 	            (topic_id, user_id, read_p, folder_id, receive_updates) values
-	            (:topic_id, :user_id, :read_p, :folder_id, 'all')
+	            (:topic_id, :current_user_id, :read_p, :folder_id, 'all')
 	        "
 		} on_error {
 		    # nothing - may already exist...
@@ -621,11 +621,15 @@ set stakeholder_sql "
 "
 
 set num_stakeholders 0
-db_multirow -extend {checked} stakeholders stakeholder_query $stakeholder_sql {
+db_multirow -extend {checked show_user_style} stakeholders stakeholder_query $stakeholder_sql {
 
     set checked ""
-    if {$user_id == $asignee_id} { set checked "checked" }
-    if {$user_id == $owner_id} { set checked "checked" }
+    if {$current_user_id == $asignee_id} { set checked "checked" }
+    if {$current_user_id == $owner_id} { set checked "checked" }
+
+    # How to display? -1=name only, 0=none, 1=Link
+    set show_user_style [im_show_user_style $user_id $current_user_id $topic_id]
+
     incr num_stakeholders
 }
 

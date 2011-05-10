@@ -55,7 +55,7 @@ where
 	and o_mem.user_id = p.party_id
 	and 1 = im_forum_permission(
 		p.party_id,
-		:user_id,
+		:current_user_id,
 		:asignee_id,
 		:object_id,
 		:scope,

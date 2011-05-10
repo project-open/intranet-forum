@@ -24,6 +24,9 @@
   </tr>
 
   <multiple name=stakeholders>
+
+  <if @stakeholders.show_user_style@>
+
   <if @stakeholders.rownum@ odd>
     <tr class="list-odd">
   </if> <else>
@@ -40,6 +43,9 @@
         <input type=checkbox name=notifyee_id value="@stakeholders.user_id@" id="alerts,@user_id@" @stakeholders.checked@>
     </td>
   </tr>
+
+
+  </if>
   </multiple>
 
   <tr>
