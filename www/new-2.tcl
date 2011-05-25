@@ -48,7 +48,6 @@ set object_type [db_string acs_object_type "select object_type from acs_objects 
 set page_title "[_ intranet-forum.New_topic_type]"
 set context_bar [im_context_bar [list /intranet-forum/ "[_ intranet-forum.Forum]"] $page_title]
 
-
 # ------------------------------------------------------------------
 # 
 # ------------------------------------------------------------------
@@ -57,10 +56,12 @@ set include_topic_message_p [ad_parameter -package_id [im_package_forum_id] "Inc
 set exception_text ""
 set exception_count 0
 
-if { [info exists subject] && [string match {*\"*} $subject] } { 
-    append exception_text "<li>Your topic name cannot include string quotes.  It makes life too difficult for this collection of software."
-    incr exception_count
-}
+regsub -all {\"+} $subject "" subject
+
+# if { [info exists subject] && [string match {*\"*} $subject] } { 
+#    append exception_text "<li>Your topic name cannot include string quotes.  It makes life too difficult for this collection of software."
+#    incr exception_count
+# }
 
 # check for not null start date
 if { [info exists due_date(date) ] } {
