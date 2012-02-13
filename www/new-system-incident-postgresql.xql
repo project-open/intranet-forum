@@ -14,6 +14,7 @@
 		null,			-- context_id
 
 		:ticket_name,
+		:ticket_nr,
 		:ticket_customer_id,
 		:ticket_type_id,
 		:ticket_status_id
