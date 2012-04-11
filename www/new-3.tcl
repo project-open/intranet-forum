@@ -35,11 +35,11 @@ set user_is_employee_p [im_user_is_employee_p $user_id]
 set user_is_customer_p [im_user_is_customer_p $user_id]
 
 # Determine the sender address
-set sender_email [ad_parameter -package_id [ad_acs_kernel_id] SystemOwner "" [ad_system_owner]]
-catch {
-    set sender_email [db_string sender_email "select email as sender_email from parties where party_id = :current_user_id" -default $sender_email]
-}
 
+set sender_email [ad_parameter -package_id [ad_acs_kernel_id] SystemOwner "" [ad_system_owner]]
+if { "CurrentUser" == [parameter::get -package_id [apm_package_id_from_key intranet-forum] -parameter "SenderMail" -default "CurrentUser"] } {
+    set sender_email [db_string sender_email "select email as sender_email from parties where party_id = :user_id" -default $sender_email]
+} 
 
 # Permissions - who should see what
 set permission_clause "
