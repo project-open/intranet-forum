@@ -321,7 +321,6 @@ set ticket_sla_id [im_ticket::internal_sla_id]
 set ticket_conf_item_id $package_conf_item_id
 
 set ticket_id [db_string ticket_insert {}]
-callback im_ticket_after_create -object_id $ticket_id
 
 db_dml ticket_update {}
 db_dml project_update {}
@@ -423,3 +422,5 @@ if {"" != $error_content} {
     set dest_path "$base_path/$error_content_filename"
 }
 
+# Position at the end, this way we can refer to all actions happend in callback 
+callback im_ticket_after_create -object_id $ticket_id
