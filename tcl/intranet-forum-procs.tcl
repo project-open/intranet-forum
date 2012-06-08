@@ -386,10 +386,9 @@ where
     set sql [join $sql_list " UNION "]
     ns_log Notice "im_forum_potential_asignees: sql=$sql"
 
-
     set asignee_list [list]
     db_foreach object_admins $sql {
-	if {!$user_id} { continue }
+	if { "" == $user_id || "0" == $user_id } { continue }
 	lappend asignee_list $user_id
 	lappend asignee_list $user_name
     }
