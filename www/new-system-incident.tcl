@@ -402,16 +402,20 @@ $error_info
 "
 set message [string range $message 0 9998]
 
-db_dml topic_insert {
-		insert into im_forum_topics (
-			topic_id, object_id, parent_id,
-			topic_type_id, topic_status_id, owner_id, 
-			subject, message
-		) values (
-			:topic_id, :ticket_id, :parent_id,
-			:topic_type_id,	:topic_status_id, :error_user_id, 
-			:subject, :message
-		)
+if {[catch { 
+    db_dml topic_insert {
+                insert into im_forum_topics (
+                        topic_id, object_id, parent_id,
+                        topic_type_id, topic_status_id, owner_id,
+                        subject, message
+                ) values (
+                        :topic_id, :ticket_id, :parent_id,
+                        :topic_type_id, :topic_status_id, :error_user_id,
+                        :subject, :message
+                )
+    }
+} errmsg ]} {
+        ad_return_complaint 1 "Unable to handle submission, please contact support@project-open.com"
 }
 
 set resolved_p 0
