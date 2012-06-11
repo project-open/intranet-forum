@@ -238,8 +238,14 @@ if {0 == $package_conf_item_id} {
 			:conf_item_status_id
 		)
     "
-    set package_conf_item_id [db_string new $conf_item_new_sql]
-    db_dml update [im_conf_item_update_sql -include_dynfields_p 1]
+
+    if {[catch { set package_conf_item_id [db_string new $conf_item_new_sql] } errmsg ]} {
+	ad_return_complaint 1 "Unable to handle your submission, pls. contact support@project-open.com"
+    }
+
+    if {[catch { db_dml update [im_conf_item_update_sql -include_dynfields_p 1] } errmsg ]} {
+	ad_return_complaint 1 "Unable to handle your submission, pls. contact support@project-open.com"
+    }
 }
 
 
