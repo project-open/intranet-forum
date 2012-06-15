@@ -94,7 +94,7 @@ if {!$forum_folder_count} {
     ad_return_complaint 1 "<b>Forum Folders not Setup</b>:<p>
         Your system has a configuration issue.<br>
         Please notify your system administrator and tell him to execute the update script
-        'psql -f /web/projop/packages/intranet-forum/sql/postgresql/upgrade/upgrade-3.2.3.0.0-3.2.4.0.0.sql'.
+        'psql -f \[PATH_TO_PACKAGES\]/packages/intranet-forum/sql/postgresql/upgrade/upgrade-3.2.3.0.0-3.2.4.0.0.sql'.
     "
 }
 
