@@ -217,100 +217,100 @@ ad_proc -public im_forum_potential_asignees {user_id object_id} {
     # ----------------------- Start building the SQL Query ----------
     #
     set object_admin_sql "(
--- object_admin_sql
-select distinct
-	u.user_id,
-	im_name_from_user_id(u.user_id) as user_name
-from
-	users u
-where
-	user_id in ($object_admins_commalist)
-)"
+	-- object_admin_sql
+	select distinct
+		u.user_id,
+		im_name_from_user_id(u.user_id) as user_name
+	from
+		users u
+	where
+		user_id in ($object_admins_commalist)
+    )"
 
     set object_group_sql "(
-select distinct
-	u.user_id,
-	im_name_from_user_id(u.user_id) as user_name
-from
-	users u
-where
-	user_id in ($object_members_commalist)
-)"
+	select distinct
+		u.user_id,
+		im_name_from_user_id(u.user_id) as user_name
+	from
+		users u
+	where
+		user_id in ($object_members_commalist)
+    )"
 
     # If the user can talk to the public (probably a SenMan
     # or SysAdmin), he can also assign the task to everybody.
     # ToDo: This may cause problems with large installations
     set public_sql "(
--- public_sql
-select distinct
-	u.user_id,
-	im_name_from_user_id(u.user_id) as user_name
-from
-	users u
-)"
+	-- public_sql
+	select distinct
+		u.user_id,
+		im_name_from_user_id(u.user_id) as user_name
+	from
+		users u
+    )"
 
     # Add the objects customers to the list
     set object_customer_sql "(
--- object_customer_sql
-select distinct
-	u.user_id,
-	im_name_from_user_id(u.user_id) as user_name
-from
-	acs_rels r,
-	group_member_map m,
-	membership_rels mr,
-	users u
-where
-	r.object_id_one = :object_id
-	and r.object_id_two = u.user_id
-	and m.rel_id = mr.rel_id
-	and mr.member_state = 'approved'
-	and m.member_id = u.user_id
-	and m.group_id = :customer_group_id
-)"
+	-- object_customer_sql
+	select distinct
+		u.user_id,
+		im_name_from_user_id(u.user_id) as user_name
+	from
+		acs_rels r,
+		group_member_map m,
+		membership_rels mr,
+		users u
+	where
+		r.object_id_one = :object_id
+		and r.object_id_two = u.user_id
+		and m.rel_id = mr.rel_id
+		and mr.member_state = 'approved'
+		and m.member_id = u.user_id
+		and m.group_id = :customer_group_id
+    )"
 
     # Add all object members to the list who are
     # not customers
     set object_non_customer_sql "(
--- object_non_customer_sql
-select distinct
-	u.user_id,
-	im_name_from_user_id(u.user_id) as user_name
-from
-	acs_rels r,
-	users u
-where
-	r.object_id_one = :object_id
-	and r.object_id_two = u.user_id
-	and u.user_id not in (
-		select distinct
-			m.member_id
-		from	group_member_map m,
-			membership_rels mr
-		where	m.rel_id = mr.rel_id
-			and mr.member_state = 'approved'
-			and m.group_id = :customer_group_id
-	)
-)"
+	-- object_non_customer_sql
+	select distinct
+		u.user_id,
+		im_name_from_user_id(u.user_id) as user_name
+	from
+		acs_rels r,
+		users u
+	where
+		r.object_id_one = :object_id
+		and r.object_id_two = u.user_id
+		and u.user_id not in (
+			select distinct
+				m.member_id
+			from	group_member_map m,
+				membership_rels mr
+			where	m.rel_id = mr.rel_id
+				and mr.member_state = 'approved'
+				and m.group_id = :customer_group_id
+		)
+    )"
 
     set object_staff_sql "(
--- object_staff_sql
-select distinct
-	u.user_id,
-	im_name_from_user_id(u.user_id) as user_name
-from
-	acs_rels r,
-	group_member_map m,
-	membership_rels mr,
-	users u
-where
-	r.object_id_one = :object_id
-	and r.object_id_two = u.user_id
-	and m.rel_id = mr.rel_id
-	and mr.member_state = 'approved'
-	and m.member_id = u.user_id
-	and m.group_id = :employee_group_id
-)"
+	-- object_staff_sql
+	select distinct
+		u.user_id,
+		im_name_from_user_id(u.user_id) as user_name
+	from
+		acs_rels r,
+		group_member_map m,
+		membership_rels mr,
+		users u
+	where
+		r.object_id_one = :object_id
+		and r.object_id_two = u.user_id
+		and m.rel_id = mr.rel_id
+		and mr.member_state = 'approved'
+		and m.member_id = u.user_id
+		and m.group_id = :employee_group_id
+    )"
 
 
     set primary_accounting_contact_client_sql "(
@@ -318,8 +318,8 @@ where
 	select distinct
 		user_id, 
 		im_name_from_user_id(user_id) as user_name
-	from 
-		(select   
+	from (
+		select   
 			primary_contact_id as user_id
 		from 
 			im_companies c,
@@ -350,16 +350,72 @@ where
 			im_companies
 		where 
 			company_id = :object_id
-		) tt
-	)"
+
+		-- Get Primary/Accounting user is a employee of  
+		UNION 
+		select distinct
+                        primary_contact_id as user_id
+                from
+                        im_companies c
+                where
+                        c.company_id in ( 
+				select 
+					object_id_one 
+				from 
+					acs_rels
+				where 
+					object_id_two = :object_id and 
+					rel_type = 'im_company_employee_rel'
+			) 
+		UNION 
+		select distinct
+                        accounting_contact_id as user_id
+                from
+                        im_companies c
+                where
+                        c.company_id in ( 
+				select 
+					object_id_one 
+				from 
+					acs_rels
+				where 
+					object_id_two = :object_id and 
+					rel_type = 'im_company_employee_rel'
+			)  
+  	) tt 
+    )"
+
+    set im_company_rel_sql "(
+        -- get company employees of companies user has a im_company_rel with
+        select distinct
+                user_id,
+                im_name_from_user_id(user_id) as user_name
+        from (
+                select distinct
+                        object_id_two as user_id
+                from
+                        acs_rels r
+                where
+                        rel_type = 'im_key_account_rel' and
+                        object_id_one in (
+                                select
+                                        object_id_one
+                                from
+                                        acs_rels
+                                where
+                                        object_id_two = :object_id and
+                                        rel_type = 'im_company_employee_rel'
+                         ) 
+	) tt
+    )"
 
     set sql_list [list]
 
-    # Don't enable the list of the entire public - 
-    # too many users in large installations
-#    if {[im_permission $user_id add_topic_public]} {
-#	lappend sql_list $public_sql
-#    }
+        # Don't enable the list of the entire public - 
+        # too many users in large installations
+	#    if {[im_permission $user_id add_topic_public]} {
+	#	lappend sql_list $public_sql
+	#    }
 
 
     if {[im_permission $user_id add_topic_group]} {
@@ -368,6 +424,7 @@ where
     if {[im_permission $user_id add_topic_staff]} {
 	lappend sql_list $object_staff_sql
 	lappend sql_list $primary_accounting_contact_client_sql
+	lappend sql_list $im_company_rel_sql
     }
     if {[im_permission $user_id add_topic_client]} {
 	lappend sql_list $object_customer_sql
