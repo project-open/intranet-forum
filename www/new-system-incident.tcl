@@ -265,13 +265,15 @@ set system_conf_item_id [db_string system "
 
 if {"" == $system_conf_item_id} {
 
-    im_software_update_server_update_conf_item \
+    set err [im_software_update_server_update_conf_item \
 	-sid $system_id \
 	-hid $hardware_id \
 	-email $error_user_email \
 	-peer_ip [ad_conn peeraddr] \
 	-server_ip $system_url \
-	-package_list [array get pver_hash]
+	-package_list [array get pver_hash] \
+    ]
+    if {"" != $err} { ad_return_complaint 1 "<pre>$err</pre>" }
 
     set system_conf_item_id [db_string system "
 	select	conf_item_id
@@ -340,17 +342,14 @@ if {[db_column_exists im_tickets ticket_po_version]} {
 # -----------------------------------------------------------------
 # Associate ticket with a Server configuration item
 
-# Update the system_id
-set conf_item_id [db_string conf_item "select min(conf_item_id) from im_conf_items where conf_item_nr = :system_id" -default ""]
-if {"" != $conf_item_id} {
-    db_dml cid "
+db_dml cid "
 	update im_tickets set
 		ticket_conf_item_id = :ticket_conf_item_id,
 		ticket_po_package_id = :package_conf_item_id,
 		po_product_version_id = :version_category_id
 	where ticket_id = :ticket_id
-    "
-}
+"
+
 
 # Create an acs_rel relationship
 if {"" != $system_conf_item_id && 0 != $system_conf_item_id} {
@@ -361,7 +360,6 @@ if {"" != $system_conf_item_id && 0 != $system_conf_item_id} {
 
 # Make the error_user a "member" of the ticket
 im_biz_object_add_role $error_user_id $ticket_id [im_biz_object_role_full_member]
-
 
 # -----------------------------------------------------------------
 # Write Audit Trail
