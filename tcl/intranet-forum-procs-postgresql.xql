@@ -74,7 +74,7 @@ select
 	t.*,
 	acs_object__name(t.object_id) as project_name,
 	tr.indent_level,
-	(10-tr.indent_level) as colspan_level,
+	(20-tr.indent_level) as colspan_level,
 	ftc.category as topic_type,
 	fts.category as topic_status,
 	im_name_from_user_id(ou.user_id) as owner_name,
