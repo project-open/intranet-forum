@@ -245,6 +245,7 @@ ad_proc -public im_forum_potential_asignees {user_id object_id} {
 	select distinct
 		u.user_id,
 		im_name_from_user_id(u.user_id) as user_name
+		(select acs_permission__permission_p (user_id, ''
 	from
 		users u
     )"
@@ -411,12 +412,28 @@ ad_proc -public im_forum_potential_asignees {user_id object_id} {
 
     set sql_list [list]
 
-        # Don't enable the list of the entire public - 
-        # too many users in large installations
-	#    if {[im_permission $user_id add_topic_public]} {
-	#	lappend sql_list $public_sql
-	#    }
+    # too many users in large installations
+    #    if {[im_permission $user_id add_topic_public]} {
+    #	lappend sql_list $public_sql
+    #    }
 
+    # Add all users with privilege 'add_topic_assignee'
+    set subsite_id [ad_conn subsite_id]
+    set priv_sql "
+        select distinct
+                cc.user_id,
+                im_name_from_user_id(cc.user_id) as user_name
+        from
+                cc_users cc,
+                acs_object_party_privilege_map ppm
+        where
+                ppm.privilege = 'add_topic_assignee'
+                and ppm.party_id = cc.user_id
+                and ppm.object_id = :subsite_id
+		and cc.member_state = 'approved'
+    "
+
+    lappend sql_list $priv_sql
 
     if {[im_permission $user_id add_topic_group]} {
 	lappend sql_list $object_group_sql
