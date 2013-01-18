@@ -169,8 +169,8 @@ db_foreach update_stakeholders $stakeholder_sql {
 		-subject $subject \
 		-body "$msg_url\n\n$message"
 	} errmsg]} {
-	    ad_return_error $subject "<p>Error sending out mail:</p><div><code>[ad_quotehtml $errmsg]</code></div>"
-	    ad_script_abort
+	    # ad_return_error $subject "<p>Error sending out mail:</p><div><code>[ad_quotehtml $errmsg]</code></div>"
+	    # ad_script_abort
 	}
     }
 }
