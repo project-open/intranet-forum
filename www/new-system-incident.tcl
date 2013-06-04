@@ -7,21 +7,20 @@
 
 ad_page_contract {
     Creates a new system error from a "Report this error" button.
-    Works as an inteface between the request procesor generating
+    Works as an interface between the request procesor generating
     the incident and the forum module that works differntly then
     the old ACS ticket tracker.
 
     So there are several difficulties:
-    - This page is publicly accessible, so it may be used for
-      denial of service attacks by flooding the system with
-      incidents
-    - We have to route the incidents to 
+    - This page is publicly accessible, so it may be used to flood 
+      the system with incidents
 
     @author frank.bergmann@project-open.com
 } {
     { error_url:trim ""}
     { error_location:trim ""}
     { error_info:trim,allhtml ""}
+    { error_message:trim,allhtml ""}
     { error_first_names:trim ""}
     { error_last_name:trim ""}
     { error_user_email:trim ""}
@@ -44,6 +43,7 @@ set current_user_id [ad_get_user_id]
 
 ns_log Notice "new-system-incident: error_url=$error_url"
 ns_log Notice "new-system-incident: error_info=$error_info"
+ns_log Notice "new-system-incident: error_message=$error_message"
 ns_log Notice "new-system-incident: error_first_names=$error_first_names"
 ns_log Notice "new-system-incident: error_last_name=$error_last_name"
 ns_log Notice "new-system-incident: error_user_email=$error_user_email"
@@ -249,7 +249,6 @@ if {0 == $package_conf_item_id} {
 }
 
 
-
 # -----------------------------------------------------------------
 # Determine and/or Create Server ConfItem
 # -----------------------------------------------------------------
@@ -395,10 +394,19 @@ $more_info
 
 Package Version(s): $core_version
 Package Versions: $package_versions
+
+Error Message:
+$error_message
+
 Error Info:
 $error_info
+
 "
+
 set message [string range $message 0 9998]
+
+# Avoid empty subject
+if { "" == $subject } { set subject "Report Bug On Page" }
 
 if {[catch { 
     db_dml topic_insert {
