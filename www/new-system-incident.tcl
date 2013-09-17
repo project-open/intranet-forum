@@ -33,6 +33,9 @@ ad_page_contract {
     { system_id:trim ""}
     { hardware_id:trim "" }
     { publisher_name ""}
+    { platform "" } 
+    { os ""} 
+    { os_version ""}
 }
 
 # -----------------------------------------------------------------
@@ -389,6 +392,7 @@ System ID: $system_id
 User Name: $error_first_names $error_last_name
 User Email: $error_user_email
 Publisher Name: $publisher_name
+OS: $platform - $os - $os_version 
 
 $more_info
 
