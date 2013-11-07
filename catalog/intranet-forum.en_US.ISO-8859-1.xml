@@ -94,8 +94,11 @@
   <msg key="Modified">Modified</msg>
   <msg key="Move_to_Active">Move to Active</msg>
   <msg key="Move_to_Deleted">Move to Deleted</msg>
+  <msg key="Name">Name</msg>
   <msg key="needs_clarification">needs clarification</msg>
+  <msg key="Needs_Clarify">Needs Clarification</msg>
   <msg key="Needs_to_be_done">Needs to be done</msg>
+  <msg key="New_topic_in_object">New Topic</msg>
   <msg key="New_topic_type">New %topic_type%</msg>
   <msg key="News">News</msg>
   <msg key="Normal">Normal</msg>
@@ -125,7 +128,11 @@
   <msg key="Rejected">Rejected</msg>
   <msg key="Related_Files">Related Files</msg>
   <msg key="Reply">Reply</msg>
+  <msg key="Reply_to_topic">Reply to topic</msg>
   <msg key="Save_Changes">Save Changes</msg>
+  <msg key="Select_users_to_notify">Select users to notify</msg>
+  <msg key="Send_Email">Send Email</msg>
+  <msg key="Send_Forum_Notifications">Send Forum Notifications</msg>
   <msg key="Staff_employees_only">Staff (employees only)</msg>
   <msg key="Status">Status</msg>
   <msg key="Subject">Subject</msg>
@@ -141,6 +148,7 @@
   <msg key="undefined">undefined</msg>
   <msg key="Unresolved">Unresolved</msg>
   <msg key="Urgent">Urgent</msg>
+  <msg key="Very_Urgent">Very Urgent</msg>
   <msg key="View_Topic">View Topic</msg>
   <msg key="Visible_for">Visible for</msg>
   <msg key="We_will_notify_you_as_soon_as_possible">We will notify you as soon as possible.</msg>
