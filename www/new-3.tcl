@@ -24,6 +24,7 @@ ad_page_contract {
     msg_url
     message:html
     notifyee_id:multiple,optional
+    { cancel "" }
 }
 
 # ------------------------------------------------------------------
@@ -34,8 +35,12 @@ set user_id [ad_maybe_redirect_for_registration]
 set user_is_employee_p [im_user_is_employee_p $user_id]
 set user_is_customer_p [im_user_is_customer_p $user_id]
 
-# Determine the sender address
+if { "" != $cancel } {
+    ad_returnredirect $return_url
+    ad_script_abort
+}
 
+# Determine the sender address
 set sender_email [ad_parameter -package_id [ad_acs_kernel_id] SystemOwner "" [ad_system_owner]]
 if { "CurrentUser" == [parameter::get -package_id [apm_package_id_from_key intranet-forum] -parameter "SenderMail" -default "CurrentUser"] } {
     set sender_email [db_string sender_email "select email as sender_email from parties where party_id = :user_id" -default $sender_email]

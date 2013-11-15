@@ -45,6 +45,7 @@
   <tr>
     <td colspan=3 align=right>
       <input type=submit value="<%= [lang::message::lookup "" intranet-forum.Send_Email "Send Email"] %>">
+      <input type=submit value="<%= [lang::message::lookup "" intranet-forum.Cancel "Cancel"]"%>" name="cancel">
     </td>
   </tr>
 </table>
