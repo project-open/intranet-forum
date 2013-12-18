@@ -186,7 +186,22 @@ ad_proc -public im_forum_potential_asignees {user_id object_id} {
     set admin_group_id [im_admin_group_id]
     set customer_group_id [im_customer_group_id]
     set employee_group_id [im_employee_group_id]
-    set admins [db_list get_admins "select member_id from group_distinct_member_map where group_id = :admin_group_id"]
+
+    set admins [db_list get_admins "
+	select	member_id
+	from 	group_distinct_member_map
+	where	group_id = :admin_group_id and
+		member_id not in (
+			-- Exclude deleted or disabled users
+			select	m.member_id
+			from	group_member_map m,
+				membership_rels mr
+			where	m.group_id = acs__magic_object_id('registered_users') and
+				m.rel_id = mr.rel_id and
+				m.container_id = m.group_id and
+				mr.member_state != 'approved'
+		)
+    "]
 
     if {![llength $admins]} {
         ad_return_complaint 1 "Bad System Configuration:<br>
