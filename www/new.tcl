@@ -102,14 +102,14 @@ if {!$done && $parent_id != 0} {
     # Get some information about the parent topic:
     set org_parent_id $parent_id
     db_1row get_topic_for_reply "
-select
-	t.*,
-	acs_object.name(t.object_id) as object_name
-from
-	im_forum_topics t
-where
-	topic_id=:parent_id"
+	select	t.*,
+		acs_object.name(t.object_id) as object_name
+	from	im_forum_topics t
+	where	topic_id=:parent_id"
     set parent_id $org_parent_id
+
+    # Quote double quotes - they cause HTML issues
+    set subject [string map {\" \'} $subject]
 
     # Overwrite the owner for the reply: the current user
     set owner_id $user_id
