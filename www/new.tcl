@@ -489,7 +489,7 @@ append table_body "
 	    <select name=actions>
 	    $actions
 	    </select>
-	    <input type=submit value=\"Apply\">
+	    <input type=submit value=\"[_ intranet-core.Apply]\">
 	  </td>
 	</tr>\n"
 incr ctr
