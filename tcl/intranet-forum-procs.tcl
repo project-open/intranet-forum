@@ -34,7 +34,7 @@ ad_proc -public im_topic_type_id_reply { } { return 1190 }
 ad_proc -public im_package_forum_id {} {
     Returns the package id of the intranet-forum module
 } {
-    return [util_memoize "im_package_forum_id_helper"]
+    return [util_memoize im_package_forum_id_helper]
 }
 
 ad_proc -private im_package_forum_id_helper {} {
