@@ -858,6 +858,9 @@ ad_proc -public im_forum_component {
     Future versions would need to call an object method to render adecuately the
     object name etc.
 } {
+
+    # ad_return_complaint xx $forum_object_id
+
     # ToDo: Remove -object_id from argument list.
     # It has been replaced 2005-03-18 by forum_object_id.
     # Now doing backward compatibility operation 
@@ -1011,8 +1014,8 @@ ad_proc -public im_forum_component {
     #
     
     if { "1" == $write_icons  } {
-	set table_header_html "<tr><td colspan=\"99\" align=\"right\">"
-	append table_header_html [im_forum_create_bar "<B>[_ intranet-forum.Forum_Items]<B>" 0 $return_url]
+	set table_header_html "<tr><td colspan=\"99\" align=\"left\">"
+	append table_header_html [im_forum_create_bar "<B>[_ intranet-forum.Forum_Items]<B>" $forum_object_id $return_url]
 	append table_header_html "</td></tr><tr>\n"
     } else {
 	set table_header_html "<tr>\n"
