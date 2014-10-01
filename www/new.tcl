@@ -269,7 +269,7 @@ if {!$topic_type_id} {
 	 <tr $bgcolor([expr $ctr % 2])>
 	   <td>[_ intranet-forum.Topic_Type]</td>
 	   <td valign=center>
-	     [im_gif $topic_type_id "$topic_type"] 
+	     [im_gif -translate_p 0 $topic_type_id "$topic_type"] 
 	     $topic_type
 	   </td>
 	 </tr>\n"

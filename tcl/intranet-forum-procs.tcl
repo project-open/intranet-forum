@@ -544,7 +544,7 @@ ad_proc -public im_forum_render_tind {
 		<tr $bgcolor([expr $ctr % 2])>
 		  <td>[_ intranet-forum.Subject]:</td>
 		  <td>
-		    [im_gif $topic_type_id "$topic_type"] 
+		    [im_gif -translate_p 1 $topic_type_id "$topic_type"] 
 		    $subject"
     append tind_html " (<A href=/intranet-forum/new?parent_id=$topic_id&[export_url_vars return_url]>[_ intranet-forum.Reply]</A>)"
 
@@ -1540,27 +1540,27 @@ ad_proc -public im_forum_create_bar { title_text object_id {return_url ""} } {
 </td>
 <td>
   <A href='/intranet-forum/new?topic_type_id=1102&[export_url_vars object_id return_url]'>
-    [im_gif "incident" "Create new Incident"]
+    [im_gif -translate_p 1 "incident" "Create new Incident"]
   </A>
 </td>
 <td>
   <A href='/intranet-forum/new?topic_type_id=1104&[export_url_vars object_id return_url]'>
-    [im_gif "task" "Create new Task"]
+    [im_gif -translate_p 1 "task" "Create new Task"]
   </A>
 </td>
 <td>
   <A href='/intranet-forum/new?topic_type_id=1106&[export_url_vars object_id return_url]'>
-    [im_gif "discussion" "Create a new Discussion"]
+    [im_gif -translate_p 1 "discussion" "Create a new Discussion"]
   </A>
 </td>
 <td>
   <A href='/intranet-forum/new?topic_type_id=1100&[export_url_vars object_id return_url]'>
-    [im_gif "news" "Create new News Item"]
+    [im_gif -translate_p 1 "news" "Create new News Item"]
   </A>
 </td>
 <td>
   <A href='/intranet-forum/new?topic_type_id=1108&[export_url_vars object_id return_url]'>
-    [im_gif "note" "Create new Note"]
+    [im_gif -translate_p 1 "note" "Create new Note"]
   </A>
 </td>
 </tr>
