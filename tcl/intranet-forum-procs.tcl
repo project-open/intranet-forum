@@ -1540,27 +1540,27 @@ ad_proc -public im_forum_create_bar { title_text object_id {return_url ""} } {
 </td>
 <td>
   <A href='/intranet-forum/new?topic_type_id=1102&[export_url_vars object_id return_url]'>
-    [im_gif -translate_p 1 "incident" "Create new Incident"]
+    [im_gif -translate_p 1 "incident_add" "Create new Incident"]
   </A>
 </td>
 <td>
   <A href='/intranet-forum/new?topic_type_id=1104&[export_url_vars object_id return_url]'>
-    [im_gif -translate_p 1 "task" "Create new Task"]
+    [im_gif -translate_p 1 "task_add" "Create new Task"]
   </A>
 </td>
 <td>
   <A href='/intranet-forum/new?topic_type_id=1106&[export_url_vars object_id return_url]'>
-    [im_gif -translate_p 1 "discussion" "Create a new Discussion"]
+    [im_gif -translate_p 1 "discussion_add" "Create a new Discussion"]
   </A>
 </td>
 <td>
   <A href='/intranet-forum/new?topic_type_id=1100&[export_url_vars object_id return_url]'>
-    [im_gif -translate_p 1 "news" "Create new News Item"]
+    [im_gif -translate_p 1 "news_add" "Create new News Item"]
   </A>
 </td>
 <td>
   <A href='/intranet-forum/new?topic_type_id=1108&[export_url_vars object_id return_url]'>
-    [im_gif -translate_p 1 "note" "Create new Note"]
+    [im_gif -translate_p 1 "note_add" "Create new Note"]
   </A>
 </td>
 </tr>
