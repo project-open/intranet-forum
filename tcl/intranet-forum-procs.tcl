@@ -1014,8 +1014,8 @@ ad_proc -public im_forum_component {
     #
     
     if { "1" == $write_icons  } {
-	set table_header_html "<tr><td colspan=\"99\" align=\"left\">"
-	append table_header_html [im_forum_create_bar "<B>[_ intranet-forum.Forum_Items]<B>" $forum_object_id $return_url]
+	set table_header_html "<tr><td colspan=\"99\" align=\"right\">"
+	append table_header_html [im_forum_create_bar "" $forum_object_id $return_url]
 	append table_header_html "</td></tr><tr>\n"
     } else {
 	set table_header_html "<tr>\n"
