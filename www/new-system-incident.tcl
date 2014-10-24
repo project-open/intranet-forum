@@ -363,10 +363,6 @@ if {"" != $system_conf_item_id && 0 != $system_conf_item_id} {
 # Make the error_user a "member" of the ticket
 im_biz_object_add_role $error_user_id $ticket_id [im_biz_object_role_full_member]
 
-# -----------------------------------------------------------------
-# Write Audit Trail
-im_project_audit -project_id $ticket_id
-
 # Add the ticket message to the forum tracker of the open ticket.
 set forum_ids [db_list forum_ids "
 	select	ft.topic_id
@@ -442,5 +438,10 @@ if {"" != $error_content} {
     set dest_path "$base_path/$error_content_filename"
 }
 
-# Position at the end, this way we can refer to all actions happend in callback 
-callback im_ticket_after_create -object_id $ticket_id
+
+
+
+# -----------------------------------------------------------------
+# Write Audit Trail
+#
+im_audit -object_type "im_ticket" -object_id $ticket_id -type_id $ticket_type_id -status_id $ticket_status_id -action after_create
