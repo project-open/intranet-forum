@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="intranet-forum" package_version="3.4.0.7.0" locale="en_GB" charset="ISO-8859-1">
+<message_catalog package_key="intranet-forum" locale="en_GB" charset="ISO-8859-1">
 
   <msg key="Ass">Al</msg>
   <msg key="Create_new_Incident">Create new Allocation</msg>
