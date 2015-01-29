@@ -28,7 +28,7 @@ ad_page_contract {
     {old_topic_status_id 0}
     {scope "pm"}
     {subject:trim ""}
-    {message:trim,html ""}
+    {message:trim,allhtml ""}
     {priority "5"}
     {asignee_id:integer 0}
     {due_date:array,date ""}
