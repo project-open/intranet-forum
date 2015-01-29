@@ -1386,14 +1386,14 @@ ad_proc -public im_forum_component {
 
 
 # ----------------------------------------------------------------------
-# Component with discussions designed to appear directly in a ProjectViewPage
+# Shows threaded discussions for Tickets
 # ----------------------------------------------------------------------
 
 ad_proc -public im_forum_full_screen_component {
     -object_id:required
     { -read_only_p 0}
 } {
-    Creates a HTML table with the threaded discussions for a given object.
+    Creates a HTML table with the threaded discussions used for tickets
 } {
     set user_id [ad_get_user_id]
     set todays_date [lindex [split [ns_localsqltimestamp] " "] 0]
