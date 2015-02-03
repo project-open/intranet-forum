@@ -627,6 +627,8 @@ db_multirow -extend {checked} stakeholders stakeholder_query $stakeholder_sql {
     set checked ""
     if {$user_id == $asignee_id} { set checked "checked" }
     if {$user_id == $owner_id} { set checked "checked" }
+    if {"im_ticket" == $object_type} { set checked "checked" }
+
     incr num_stakeholders
 }
 
