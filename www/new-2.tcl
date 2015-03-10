@@ -53,6 +53,7 @@ set context_bar [im_context_bar [list /intranet-forum/ "[_ intranet-forum.Forum]
 # ------------------------------------------------------------------
 
 set include_topic_message_p [ad_parameter -package_id [im_package_forum_id] "IncludeTopicMessageInNotificationsP" "" 0]
+set show_employees_as_stakeholders_p [ad_parameter -package_id [im_package_forum_id] "ShowEmployeesAsStakeholdersP" "" 0]
 set exception_text ""
 set exception_count 0
 
@@ -621,13 +622,31 @@ set stakeholder_sql "
 		t.owner_id = u.user_id
 "
 
+if {$show_employees_as_stakeholders_p} {
+    append stakeholder_sql "
+    UNION
+	select
+		u.user_id,
+		u.email,
+		im_name_from_user_id(u.user_id) as name
+	from
+		cc_users u
+	where
+		u.user_id in (
+			select	member_id
+			from	group_distinct_member_map
+			where	group_id = [im_employee_group_id]  
+		)
+
+    "
+}
+
 set num_stakeholders 0
 db_multirow -extend {checked} stakeholders stakeholder_query $stakeholder_sql {
 
     set checked ""
     if {$user_id == $asignee_id} { set checked "checked" }
     if {$user_id == $owner_id} { set checked "checked" }
-    if {"im_ticket" == $object_type} { set checked "checked" }
 
     incr num_stakeholders
 }
