@@ -641,6 +641,11 @@ if {$show_employees_as_stakeholders_p} {
     "
 }
 
+set stakeholder_sql "
+	select	*
+	from	($stakeholder_sql) s
+	order by name
+"
 set num_stakeholders 0
 db_multirow -extend {checked} stakeholders stakeholder_query $stakeholder_sql {
 
