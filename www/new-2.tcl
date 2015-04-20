@@ -644,6 +644,16 @@ if {$show_employees_as_stakeholders_p} {
 set stakeholder_sql "
 	select	*
 	from	($stakeholder_sql) s
+	where	s.user_id not in (
+		select  u.user_id
+		from    users u,
+		        acs_rels r,
+		        membership_rels mr
+		where   r.rel_id = mr.rel_id and
+		        r.object_id_two = u.user_id and
+		        r.object_id_one = acs__magic_object_id('registered_users') and
+		        mr.member_state != 'approved'		
+		)
 	order by name
 "
 set num_stakeholders 0

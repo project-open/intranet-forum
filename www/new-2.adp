@@ -34,7 +34,7 @@
         @stakeholders.email@
     </td>
     <td class="list-narrow">
-        @stakeholders.name@
+        <a href="/intranet/users/view?user_id=@stakeholders.user_id@">@stakeholders.name@</a>
     </td>
     <td class="list-narrow">
         <input type=checkbox name=notifyee_id value="@stakeholders.user_id@" id="alerts,@user_id@" @stakeholders.checked@>
