@@ -487,7 +487,7 @@ ad_proc -public im_forum_potential_asignees {user_id object_id} {
     # user
     if {0 == [llength $asignee_list]} {
 
-	set system_owner_email [ad_parameter -package_id [ad_acs_kernel_id] SystemOwner]
+	set system_owner_email [im_parameter -package_id [ad_acs_kernel_id] SystemOwner]
 	set system_owner_id [db_string user_id "select party_id from parties where lower(email) = lower(:system_owner_email)" -default 0]
 	set system_owner_name [db_string sysowner_name "select im_name_from_user_id(:system_owner_id) from dual"]
 
@@ -889,16 +889,16 @@ ad_proc -public im_forum_component {
     set user_id [ad_conn user_id]
 
     if {0 == $max_entries_per_page && [string equal "home" $forum_type]} {
-	set max_entries_per_page [ad_parameter -package_id [im_package_forum_id] "ForumItemsPerHomePage" "" 10]
+	set max_entries_per_page [im_parameter -package_id [im_package_forum_id] "ForumItemsPerHomePage" "" 10]
     }
 
     if {0 == $max_entries_per_page && [string equal "forum" $forum_type]} {
-	set max_entries_per_page [ad_parameter -package_id [im_package_forum_id] "ForumItemsPerForumPage" "" 50]
+	set max_entries_per_page [im_parameter -package_id [im_package_forum_id] "ForumItemsPerForumPage" "" 50]
     }
 
     # Get the default value
     if {0 == $max_entries_per_page} { 
-	set max_entries_per_page [ad_parameter -package_id [im_package_forum_id] ForumItemsPerPage "" 10]
+	set max_entries_per_page [im_parameter -package_id [im_package_forum_id] ForumItemsPerPage "" 10]
     }
 
     set end_idx [expr $start_idx + $max_entries_per_page - 1]

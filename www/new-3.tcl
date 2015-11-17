@@ -41,7 +41,7 @@ if { "" != $cancel } {
 }
 
 # Determine the sender address
-set sender_email [ad_parameter -package_id [ad_acs_kernel_id] SystemOwner "" [ad_system_owner]]
+set sender_email [im_parameter -package_id [ad_acs_kernel_id] SystemOwner "" [ad_system_owner]]
 if { "CurrentUser" == [parameter::get -package_id [apm_package_id_from_key intranet-forum] -parameter "SenderMail" -default "CurrentUser"] } {
     set sender_email [db_string sender_email "select email as sender_email from parties where party_id = :user_id" -default $sender_email]
 } 
@@ -160,7 +160,7 @@ db_foreach update_stakeholders $stakeholder_sql {
     set url "/intranet-forum/view?topic_id=$topic_id"
     set auto_login [im_generate_auto_login -user_id $stakeholder_id]
     set msg_url [export_vars -base "/intranet/auto-login" {{user_id $stakeholder_id} {url $url} {auto_login $auto_login}}]
-    set msg_url "[ad_parameter -package_id [ad_acs_kernel_id] SystemURL "" ""]$msg_url"
+    set msg_url "[im_parameter -package_id [ad_acs_kernel_id] SystemURL "" ""]$msg_url"
 
     ns_log Notice "forum/new-3: stakeholder_id=$stakeholder_id"
     if {[lsearch $notifyee_id $stakeholder_id] > -1} {

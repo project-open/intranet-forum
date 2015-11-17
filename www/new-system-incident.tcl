@@ -63,7 +63,7 @@ set username ""
 
 set title "New System Incident"
 
-set system_owner_email [ad_parameter -package_id [im_package_forum_id] ReportThisErrorEmail]
+set system_owner_email [im_parameter -package_id [im_package_forum_id] ReportThisErrorEmail]
 set system_owner_id [db_string user_id "select min(user_id) from users where user_id > 0"]
 
 # -----------------------------------------------------------------

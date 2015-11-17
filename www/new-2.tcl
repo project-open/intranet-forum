@@ -52,8 +52,8 @@ set context_bar [im_context_bar [list /intranet-forum/ "[_ intranet-forum.Forum]
 # 
 # ------------------------------------------------------------------
 
-set include_topic_message_p [ad_parameter -package_id [im_package_forum_id] "IncludeTopicMessageInNotificationsP" "" 0]
-set show_employees_as_stakeholders_p [ad_parameter -package_id [im_package_forum_id] "ShowEmployeesAsStakeholdersP" "" 0]
+set include_topic_message_p [im_parameter -package_id [im_package_forum_id] "IncludeTopicMessageInNotificationsP" "" 0]
+set show_employees_as_stakeholders_p [im_parameter -package_id [im_package_forum_id] "ShowEmployeesAsStakeholdersP" "" 0]
 set exception_text ""
 set exception_count 0
 
@@ -257,7 +257,7 @@ ns_log Notice "/intranet-forum/new-2: action_type=$action_type"
 if {[string equal $action_type "new_message"]} {
 
     # .. and only if the parameter is enabled...
-    if {[ad_parameter -package_id [im_package_forum_id] SubscribeAllMembersToNewItemsP "" "0"]} {
+    if {[im_parameter -package_id [im_package_forum_id] SubscribeAllMembersToNewItemsP "" "0"]} {
 	ns_log Notice "/intranet-forum/new-2: subscribing all project members to the new message"
 
 	# Select the list of all project members allowed to see
@@ -453,7 +453,7 @@ where topic_id=:topic_id"
 # Alert about changes
 # ---------------------------------------------------------------------
 
-set msg_url "[ad_parameter -package_id [ad_acs_kernel_id] SystemURL "" ""]intranet-forum/view?topic_id=$topic_id"
+set msg_url "[im_parameter -package_id [ad_acs_kernel_id] SystemURL "" ""]intranet-forum/view?topic_id=$topic_id"
 set importance 0
 
 db_1row subject_message "

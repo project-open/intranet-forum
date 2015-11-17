@@ -55,7 +55,7 @@ set return_url [im_url_with_query]
 set current_url [ns_conn url]
 
 if { [empty_string_p $forum_how_many] || $forum_how_many < 1 } {
-    set forum_how_many [ad_parameter -package_id [im_package_core_id] NumberResultsPerPage "" 50]
+    set forum_how_many [im_parameter -package_id [im_package_core_id] NumberResultsPerPage "" 50]
 } 
 
 set end_idx [expr $forum_start_idx + $forum_how_many - 1]
