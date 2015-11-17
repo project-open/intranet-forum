@@ -886,7 +886,7 @@ ad_proc -public im_forum_component {
 
     set date_format "YYYY-MM-DD"
 
-    set user_id [ad_get_user_id]
+    set user_id [ad_conn user_id]
 
     if {0 == $max_entries_per_page && [string equal "home" $forum_type]} {
 	set max_entries_per_page [ad_parameter -package_id [im_package_forum_id] "ForumItemsPerHomePage" "" 10]
@@ -1395,7 +1395,7 @@ ad_proc -public im_forum_full_screen_component {
 } {
     Creates a HTML table with the threaded discussions used for tickets
 } {
-    set user_id [ad_get_user_id]
+    set user_id [ad_conn user_id]
     set todays_date [lindex [split [ns_localsqltimestamp] " "] 0]
     set bgcolor(0) " class=roweven"
     set bgcolor(1) " class=rowodd"
@@ -1584,7 +1584,7 @@ ad_proc -public im_forum_navbar { base_url export_var_list {forum_folder 0} } {
     }
 
     # --------------- Determine the calling page ------------------
-    set user_id [ad_get_user_id]
+    set user_id [ad_conn user_id]
     set section ""
     
     switch $forum_folder {

@@ -42,7 +42,7 @@ ad_page_contract {
 # Defaults & Security
 # -----------------------------------------------------------------
 
-set current_user_id [ad_get_user_id]
+set current_user_id [ad_conn user_id]
 
 ns_log Notice "new-system-incident: error_url=$error_url"
 ns_log Notice "new-system-incident: error_info=$error_info"
@@ -77,7 +77,7 @@ set header_vars [ns_conn headers]
 set url [ns_conn url]
 
 # UserId probably 0, except for returning users
-set user_id [ad_get_user_id]
+set user_id [ad_conn user_id]
 append more_info "user_id: $user_id\n"
 
 
