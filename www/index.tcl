@@ -203,7 +203,7 @@ set left_navbar_html "
         [lang::message::lookup "" intranet-forum.Filter_Topics "Filter Topics"]
       </div>
       <form method=get action='index'>
-        [export_form_vars forum_group_id forum_start_idx forum_order_by forum_how_many forum_view_name]
+        [export_vars -form {forum_group_id forum_start_idx forum_order_by forum_how_many forum_view_name}]
         $filter_html
       </form>
     </div>

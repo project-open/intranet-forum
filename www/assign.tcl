@@ -131,7 +131,7 @@ set actions "assign"
 
 set page_body "
 <form action=new-2 method=POST>
-[export_form_vars topic_id old_asignee_id actions return_url]
+[export_vars -form {topic_id old_asignee_id actions return_url}]
 
 <table cellspacing=1 border=0 cellpadding=1>
 

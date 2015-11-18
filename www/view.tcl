@@ -223,7 +223,7 @@ set thread_html [im_forum_render_thread $topic_id $user_id $object_id $object_na
 
 set page_body "
 <form action=new-2 method=POST>
-[export_form_vars action_type owner_id old_asignee_id object_id topic_id parent_id subject message return_url topic_status_id topic_type_id]
+[export_vars -form {action_type owner_id old_asignee_id object_id topic_id parent_id subject message return_url topic_status_id topic_type_id}]
 
 <table cellspacing=1 border=0 cellpadding=1>
 $table_body

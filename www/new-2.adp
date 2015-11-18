@@ -7,7 +7,7 @@
 
 <h1><%= [lang::message::lookup "" intranet-forum.Send_Forum_Notifications "Send Forum Notifications"] %></h1>
 <form name=alerts method=post action=new-3>
-<%= [export_form_vars object_id topic_id object_type subject msg_url message return_url] %>
+<%= [export_vars -form {object_id topic_id object_type subject msg_url message return_url}] %>
 <table class="list">
 
   <tr class="list-header">
