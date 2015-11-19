@@ -136,7 +136,7 @@ extra_select, extra_where, sort_order, visible_for) values (4000,40,NULL,'P',
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4002,40,NULL,'Type',
-'"<a href=/intranet-forum/view?[export_url_vars topic_id return_url]>\
+'"<a href=/intranet-forum/view?[export_vars -url {topic_id return_url}]>\
 [im_gif $topic_type]</a>"',
 '','',4,'');
 
@@ -147,7 +147,7 @@ extra_select, extra_where, sort_order, visible_for) values (4003,40,NULL,'Object
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4004,40,NULL,'Subject',
-'"<a href=/intranet-forum/view?[export_url_vars topic_id return_url]>\
+'"<a href=/intranet-forum/view?[export_vars -url {topic_id return_url}]>\
 [string_truncate -len 80 $subject]</a>"','','',6,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
@@ -177,13 +177,13 @@ extra_select, extra_where, sort_order, visible_for) values (4100,41,NULL,'P',
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4102,41,NULL,'Type',
-'"<a href=/intranet-forum/view?[export_url_vars topic_id return_url]>\
+'"<a href=/intranet-forum/view?[export_vars -url {topic_id return_url}]>\
 [im_gif $topic_type]</a>"',
 '','',4,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4104,41,NULL,'Subject',
-'"<a href=/intranet-forum/view?[export_url_vars topic_id return_url]>\
+'"<a href=/intranet-forum/view?[export_vars -url {topic_id return_url}]>\
 [string_truncate -len 80 $subject]</a>"','','',6,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
@@ -232,13 +232,13 @@ extra_select, extra_where, sort_order, visible_for) values (4201,42,NULL,'Object
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4202,42,NULL,'Type',
-'"<a href=/intranet-forum/view?[export_url_vars topic_id return_url]>\
+'"<a href=/intranet-forum/view?[export_vars -url {topic_id return_url}]>\
 [im_gif $topic_type]</a>"',
 '','',4,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4204,42,NULL,'Subject',
-'"<a href=/intranet-forum/view?[export_url_vars topic_id return_url]>\
+'"<a href=/intranet-forum/view?[export_vars -url {topic_id return_url}]>\
 [string_truncate -len 80 $subject]</A>"','','',6,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
@@ -290,13 +290,13 @@ extra_select, extra_where, sort_order, visible_for) values (4400,44,NULL,'P',
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4402,44,NULL,'Type',
-'"<a href=/intranet-forum/view?[export_url_vars topic_id return_url]>\
+'"<a href=/intranet-forum/view?[export_vars -url {topic_id return_url}]>\
 [im_gif $topic_type]</a>"',
 '','',4,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4404,44,NULL,'Subject',
-'"<a href=/intranet-forum/view?[export_url_vars topic_id return_url]>\
+'"<a href=/intranet-forum/view?[export_vars -url {topic_id return_url}]>\
 [string_truncate -len 80 $subject]</a>"','','',6,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
@@ -335,13 +335,13 @@ extra_select, extra_where, sort_order, visible_for) values (4500,45,NULL,'P',
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4502,45,NULL,'Type',
-'"<a href=/intranet-forum/view?[export_url_vars topic_id return_url]>\
+'"<a href=/intranet-forum/view?[export_vars -url { topic_id return_url}]>\
 [im_gif $topic_type]</a>"',
 '','',4,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4504,45,NULL,'Subject',
-'"<a href=/intranet-forum/view?[export_url_vars topic_id return_url]>\
+'"<a href=/intranet-forum/view?[export_vars -url { topic_id return_url}]>\
 [string_truncate -len 80 $subject]</a>"','','',6,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
@@ -380,13 +380,13 @@ extra_select, extra_where, sort_order, visible_for) values (4600,46,NULL,'P',
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4602,46,NULL,'Type',
-'"<a href=/intranet-forum/view?[export_url_vars topic_id return_url]>\
+'"<a href=/intranet-forum/view?[export_vars -url { topic_id return_url}]>\
 [im_gif $topic_type]</a>"',
 '','',4,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (4604,46,NULL,'Subject',
-'"<a href=/intranet-forum/view?[export_url_vars topic_id return_url]>\
+'"<a href=/intranet-forum/view?[export_vars -url { topic_id return_url}]>\
 [string_truncate -len 80 $subject]</a>"','','',6,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,

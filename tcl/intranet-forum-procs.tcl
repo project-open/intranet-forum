@@ -546,10 +546,10 @@ ad_proc -public im_forum_render_tind {
 		  <td>
 		    [im_gif -translate_p 1 $topic_type_id "$topic_type"] 
 		    $subject"
-    append tind_html " (<A href=/intranet-forum/new?parent_id=$topic_id&[export_url_vars return_url]>[_ intranet-forum.Reply]</A>)"
+    append tind_html " (<A href=/intranet-forum/new?parent_id=$topic_id&[export_vars -url {return_url}]>[_ intranet-forum.Reply]</A>)"
 
     if {$object_admin || $user_id==$owner_id} {
-	append tind_html " (<A href=/intranet-forum/new?[export_url_vars topic_id return_url]>[_ intranet-forum.Edit]</A>)"
+	append tind_html " (<A href=/intranet-forum/new?[export_vars -url {topic_id return_url}]>[_ intranet-forum.Edit]</A>)"
     }
 
     append tind_html "
@@ -637,7 +637,7 @@ ad_proc -public im_forum_render_tind {
 
 	
 	if {$object_admin || $user_id==$owner_id} {
-#	    append tind_html " (<A href=/intranet-forum/assign?[export_url_vars topic_id return_url]>[_ intranet-forum.Assign]</A>)"
+	    #	    append tind_html " (<A href=/intranet-forum/assign?[export_vars -url {topic_id return_url}]>[_ intranet-forum.Assign]</A>)"
 	}
 
 	append tind_html "
@@ -1317,7 +1317,7 @@ ad_proc -public im_forum_component {
 		# Include a link to go to the next page
 		set next_start_idx [expr $end_idx + 1]
 		set forum_max_entries_per_page $max_entries_per_page
-		set next_page_url  "$current_page_url?[export_url_vars forum_object_id forum_max_entries_per_page forum_order_by]&forum_start_idx=$next_start_idx&$pass_through_vars_html"
+		set next_page_url  "$current_page_url?[export_vars -url {forum_object_id forum_max_entries_per_page forum_order_by}]&forum_start_idx=$next_start_idx&$pass_through_vars_html"
 		set next_page_html "($remaining_items more) <A href=\"$next_page_url\">&gt;&gt;</a>"
         } else {
 		set next_page_html ""
@@ -1524,7 +1524,7 @@ ad_proc -public im_forum_full_screen_component {
 # Forum Navigation Bar
 # ----------------------------------------------------------------------
 
-# <A HREF=/intranet-forum/index?[export_url_vars object_id return_url]>
+# <A HREF=/intranet-forum/index?[export_vars -url {object_id return_url}]>
 
 ad_proc -public im_forum_create_bar { title_text object_id {return_url ""} } {
     Returns rendered HTML table with icons for creating new 
@@ -1534,32 +1534,32 @@ ad_proc -public im_forum_create_bar { title_text object_id {return_url ""} } {
 <table cellpadding=0 cellspacing=0 border=0 class='forumBar'>
 <tr>
 <td>
-  <A HREF=/intranet-forum/index?[export_url_vars object_id return_url]>
+  <A HREF=/intranet-forum/index?[export_vars -url {object_id return_url}]>
     $title_text
   </A>
 </td>
 <td>
-  <A href='/intranet-forum/new?topic_type_id=1102&[export_url_vars object_id return_url]'>
+  <A href='/intranet-forum/new?topic_type_id=1102&[export_vars -url {object_id return_url}]'>
     [im_gif -translate_p 1 "incident_add" "Create new Incident"]
   </A>
 </td>
 <td>
-  <A href='/intranet-forum/new?topic_type_id=1104&[export_url_vars object_id return_url]'>
+  <A href='/intranet-forum/new?topic_type_id=1104&[export_vars -url {object_id return_url}]'>
     [im_gif -translate_p 1 "task_add" "Create new Task"]
   </A>
 </td>
 <td>
-  <A href='/intranet-forum/new?topic_type_id=1106&[export_url_vars object_id return_url]'>
+  <A href='/intranet-forum/new?topic_type_id=1106&[export_vars -url {object_id return_url}]'>
     [im_gif -translate_p 1 "discussion_add" "Create a new Discussion"]
   </A>
 </td>
 <td>
-  <A href='/intranet-forum/new?topic_type_id=1100&[export_url_vars object_id return_url]'>
+  <A href='/intranet-forum/new?topic_type_id=1100&[export_vars -url {object_id return_url}]'>
     [im_gif -translate_p 1 "news_add" "Create new News Item"]
   </A>
 </td>
 <td>
-  <A href='/intranet-forum/new?topic_type_id=1108&[export_url_vars object_id return_url]'>
+  <A href='/intranet-forum/new?topic_type_id=1108&[export_vars -url {object_id return_url}]'>
     [im_gif -translate_p 1 "note_add" "Create new Note"]
   </A>
 </td>

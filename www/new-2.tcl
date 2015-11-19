@@ -108,7 +108,7 @@ if {!$forum_folder_count} {
 # Forward to create a new reply topic...
 if {[string equal $actions "reply"]} {
     set parent_id $topic_id
-    ad_returnredirect "/intranet-forum/new?[export_url_vars parent_id return_url]"
+    ad_returnredirect "/intranet-forum/new?[export_vars -url {parent_id return_url}]"
     return
 }
 
@@ -119,7 +119,7 @@ if {[string equal $actions "reply"]} {
 
 # Forward to "new"
 if {[string equal $actions "edit"]} {
-    ad_returnredirect "/intranet-forum/new?&[export_url_vars topic_id return_url]"
+    ad_returnredirect "/intranet-forum/new?&[export_vars -url {topic_id return_url}]"
     return
 }
 

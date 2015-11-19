@@ -9,7 +9,7 @@
 
 
 <form action=new-2 method=POST>
-<%= [eval "export_vars -form {[join $export_var_list " "]}"] %>
+<%= [export_vars -form $export_var_list] %>
 
 <table cellspacing=1 border=0 cellpadding=1>
 @table_body;noquote@
