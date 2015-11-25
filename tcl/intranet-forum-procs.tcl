@@ -78,9 +78,9 @@ ad_proc -public im_forum_notification_select {name {default ""}} {
     set checked_major ""
     set checked_all ""
     set checked_none ""
-    if {[string equal $default "major"]} { set checked_major "checked" }
-    if {[string equal $default "all"]} { set checked_all "checked" }
-    if {[string equal $default "none"]} { set checked_none "checked" }
+    if {$default eq "major"} { set checked_major "checked" }
+    if {$default eq "all"} { set checked_all "checked" }
+    if {$default eq "none"} { set checked_none "checked" }
 
     return "
 	<input type=radio name=$name value=major $checked_major>[lang::message::lookup "" intranet-forum.Important_Updates "Important Updates"]
@@ -541,15 +541,15 @@ ad_proc -public im_forum_render_tind {
 
     set ctr 1
     set tind_html "
-		<tr $bgcolor([expr $ctr % 2])>
+		<tr $bgcolor([expr {$ctr % 2}])>
 		  <td>[_ intranet-forum.Subject]:</td>
 		  <td>
 		    [im_gif -translate_p 1 $topic_type_id "$topic_type"] 
 		    $subject"
-    append tind_html " (<A href=/intranet-forum/new?parent_id=$topic_id&[export_vars -url {return_url}]>[_ intranet-forum.Reply]</A>)"
+    append tind_html " (<A href=/intranet-forum/new?parent_id=$topic_id&[export_vars {return_url}]>[_ intranet-forum.Reply]</A>)"
 
     if {$object_admin || $user_id==$owner_id} {
-	append tind_html " (<A href=/intranet-forum/new?[export_vars -url {topic_id return_url}]>[_ intranet-forum.Edit]</A>)"
+	append tind_html " (<A href=/intranet-forum/[export_vars -base new {topic_id return_url}]>[_ intranet-forum.Edit]</A>)"
     }
 
     append tind_html "
@@ -560,7 +560,7 @@ ad_proc -public im_forum_render_tind {
 
     if {$topic_type_id != [im_topic_type_id_reply]} {
 	append tind_html "
-		<tr $bgcolor([expr $ctr % 2])>
+		<tr $bgcolor([expr {$ctr % 2}])>
 		  <td>[_ intranet-forum.Posted_in]</td>
 		  <td><A href=[im_biz_object_url $object_id]>$object_name</A></td>
 		</tr>\n"
@@ -570,7 +570,7 @@ ad_proc -public im_forum_render_tind {
     if {0 != $parent_id && "" != $parent_id} {
 	set parent_subject [db_string parent_subject "select subject from im_forum_topics where topic_id=:parent_id" -default ""]
 	append tind_html "
-		<tr $bgcolor([expr $ctr % 2])>
+		<tr $bgcolor([expr {$ctr % 2}])>
 		  <td>[_ intranet-forum.Parent_posting]:</td>
 		  <td><A href=/intranet-forum/view?topic_id=$parent_id>$parent_subject</A></td>
 		</tr>\n"
@@ -579,7 +579,7 @@ ad_proc -public im_forum_render_tind {
 
 
     append tind_html "
-		<tr $bgcolor([expr $ctr % 2])>
+		<tr $bgcolor([expr {$ctr % 2}])>
 		  <td>[_ intranet-forum.Posted_by]:</td>
 		  <td>[im_render_user_id $owner_id $owner_name "" 0]</td>
 		</tr>\n"
@@ -595,7 +595,7 @@ ad_proc -public im_forum_render_tind {
 	    append topic_status_msg " : <font color=red>[_ intranet-forum.lt_Please_Accept_or_Reje]</font>"
 	}
 	append tind_html "
-		<tr $bgcolor([expr $ctr % 2])>
+		<tr $bgcolor([expr {$ctr % 2}])>
 		  <td>[_ intranet-forum.Status]:</td>
                   <td>$topic_status_msg</td>
 		</tr>\n"
@@ -604,7 +604,7 @@ ad_proc -public im_forum_render_tind {
 
 
     append tind_html "
-		<tr $bgcolor([expr $ctr % 2])>
+		<tr $bgcolor([expr {$ctr % 2}])>
 		  <td>[_ intranet-forum.Posting_Date]:</td>
 		  <td>$posting_date</td>
 		</tr>\n"
@@ -613,7 +613,7 @@ ad_proc -public im_forum_render_tind {
     # Only tasks and incidents have a priority, assignee and due date.
     if {$task_or_incident_p} {
 	append tind_html "
-		<tr $bgcolor([expr $ctr % 2])>
+		<tr $bgcolor([expr {$ctr % 2}])>
 		  <td>[_ intranet-forum.Priority]:</td>
 		  <td>$priority</td>
 		</tr>\n"
@@ -625,7 +625,7 @@ ad_proc -public im_forum_render_tind {
 	if {"" != $asignee_html} {
 
 	    append tind_html "
-		<tr $bgcolor([expr $ctr % 2])>
+		<tr $bgcolor([expr {$ctr % 2}])>
 		  <td>[_ intranet-forum.Assigned_to]:</td>
 		  <td>\n"
 	    if {"" == $asignee_name} { 
@@ -637,7 +637,7 @@ ad_proc -public im_forum_render_tind {
 
 	
 	if {$object_admin || $user_id==$owner_id} {
-	    #	    append tind_html " (<A href=/intranet-forum/assign?[export_vars -url {topic_id return_url}]>[_ intranet-forum.Assign]</A>)"
+	    #	    append tind_html " (<A href=/intranet-forum/[export_vars -base assign {topic_id return_url}]>[_ intranet-forum.Assign]</A>)"
 	}
 
 	append tind_html "
@@ -646,9 +646,9 @@ ad_proc -public im_forum_render_tind {
 	incr ctr
 
 
-	if {$due_date != ""} {
+	if {$due_date ne ""} {
 	    append tind_html "
-		<tr $bgcolor([expr $ctr % 2])>
+		<tr $bgcolor([expr {$ctr % 2}])>
 		  <td>[_ intranet-forum.Due_Date]:</td>
 		  <td>$due_date</td>
 		</tr>\n"
@@ -660,7 +660,7 @@ ad_proc -public im_forum_render_tind {
     # (not necessary because it is governed by the thread parent)
     if {$topic_type_id != [im_topic_type_id_reply]} {
 	append tind_html "
-                <tr $bgcolor([expr $ctr % 2])>
+                <tr $bgcolor([expr {$ctr % 2}])>
                   <td>[_ intranet-forum.Visible_for]</td>
                   <td>[im_forum_scope_html $scope]
                   </td>
@@ -669,7 +669,7 @@ ad_proc -public im_forum_render_tind {
 
 	# Show whether the user has subscribed to updates
 	append tind_html "
-                <tr $bgcolor([expr $ctr % 2])>
+                <tr $bgcolor([expr {$ctr % 2}])>
                   <td>[_ intranet-forum.Receive_updates]</td>
                   <td>$receive_updates
                   </td>
@@ -888,11 +888,11 @@ ad_proc -public im_forum_component {
 
     set user_id [ad_conn user_id]
 
-    if {0 == $max_entries_per_page && [string equal "home" $forum_type]} {
+    if {0 == $max_entries_per_page && "home" eq $forum_type} {
 	set max_entries_per_page [im_parameter -package_id [im_package_forum_id] "ForumItemsPerHomePage" "" 10]
     }
 
-    if {0 == $max_entries_per_page && [string equal "forum" $forum_type]} {
+    if {0 == $max_entries_per_page && "forum" eq $forum_type} {
 	set max_entries_per_page [im_parameter -package_id [im_package_forum_id] "ForumItemsPerForumPage" "" 50]
     }
 
@@ -901,7 +901,7 @@ ad_proc -public im_forum_component {
 	set max_entries_per_page [im_parameter -package_id [im_package_forum_id] ForumItemsPerPage "" 10]
     }
 
-    set end_idx [expr $start_idx + $max_entries_per_page - 1]
+    set end_idx [expr {$start_idx + $max_entries_per_page - 1}]
     set user_is_employee_p [im_user_is_employee_p $user_id]
     set user_is_customer_p [im_user_is_customer_p $user_id]
 
@@ -980,7 +980,7 @@ ad_proc -public im_forum_component {
         } else {
         
             set value [ns_set get $form_vars $var]
-            if {![string equal "" $value]} {
+            if {$value ne ""} {
  	        ns_set put $bind_vars $var $value
  	        if {$debug} { ns_log Notice "im_forum_component: $var <- $value" }
             }
@@ -996,7 +996,7 @@ ad_proc -public im_forum_component {
     for {set i 0} {$i < $len} {incr i} {
         set key [ns_set key $bind_vars $i]
         set value [ns_set value $bind_vars $i]
-        if {![string equal $value ""]} {
+        if {$value ne "" } {
             lappend params "$key=[ns_urlencode $value]"
         }
     }
@@ -1007,7 +1007,7 @@ ad_proc -public im_forum_component {
     # ---------------------- Format Header ----------------------------------
 
     # Set up colspan to be the number of headers + 1 for the # column
-    set colspan [expr [llength $column_headers] + 1]
+    set colspan [expr {[llength $column_headers] + 1}]
 
     # Format the header names with links that modify the
     # sort order of the SQL query.
@@ -1033,7 +1033,7 @@ ad_proc -public im_forum_component {
 	    set col_tr [lang::message::lookup "" intranet-forum.[lang::util::suggest_key $cmd_eval] $cmd_eval]
 	}
 
-	if { [string compare $forum_order_by $cmd_eval] == 0 } {
+	if { $forum_order_by eq $cmd_eval  } {
 	    append table_header_html "  <td class=rowtitle>$col_tr</td>\n"
 	} else {
 	    append table_header_html "  <td class=rowtitle>
@@ -1113,7 +1113,7 @@ ad_proc -public im_forum_component {
     	if {0 != $forum_object_id} {
 	    lappend restrictions "t.object_id=:forum_object_id" 
     	}
-    	if {[string equal "t" $restrict_to_mine_p]} {
+    	if {"t" eq $restrict_to_mine_p} {
 	    lappend restrictions "(owner_id=:user_id or asignee_id=:user_id)" 
     	}
 
@@ -1232,13 +1232,13 @@ ad_proc -public im_forum_component {
     	# sort inside the table on the page for only those rows in the query 
     	# results
     	
-    	set limited_query [im_select_row_range $forum_sql $start_idx [expr $start_idx + $max_entries_per_page]]
+    	set limited_query [im_select_row_range $forum_sql $start_idx [expr {$start_idx + $max_entries_per_page}]]
     	set total_in_limited_sql "select count(*) from ($forum_sql) f"
     	set total_in_limited [db_string total_limited $total_in_limited_sql]
     	set selection "select z.* from ($limited_query) z $order_by_clause_ext"
 	
     	# How many items remain unseen?
-    	set remaining_items [expr $total_in_limited - $start_idx - $max_entries_per_page]
+    	set remaining_items [expr {$total_in_limited - $start_idx - $max_entries_per_page}]
     	if {$debug} { ns_log Notice "im_forum_component: total_in_limited=$total_in_limited, remaining_items=$remaining_items" }
 	
     	# ---------------------- Format the body -------------------------------
@@ -1263,7 +1263,7 @@ ad_proc -public im_forum_component {
 	    } else {
 		set read [lang::message::lookup "" intranet-forum.Topic_unread "unread"]
 	    }
-    	    if {$folder_id == ""} {set folder_name Inbox }
+    	    if {$folder_id eq ""} {set folder_name Inbox }
 	    regsub -all " " $folder_name "_" folder_name_subs
 	    set folder_name [lang::message::lookup "" intranet-forum.$folder_name_subs $folder_name]
 
@@ -1277,7 +1277,7 @@ ad_proc -public im_forum_component {
 	    set owner_initials [im_name_from_user_id $owner_id]
 
     	    # insert intermediate headers for every project
-    	    if {[string equal "Project" $forum_order_by]} {
+    	    if {"Project" eq $forum_order_by} {
     	        if {$old_object_id != $object_id} {
     	            append table_body_html "
     	            <tr><td colspan=$colspan>&nbsp;</td></tr>
@@ -1290,7 +1290,7 @@ ad_proc -public im_forum_component {
     	        }
     	    }
 	
-    	    append table_body_html "<tr$bgcolor([expr $ctr % 2])>\n"
+    	    append table_body_html "<tr$bgcolor([expr {$ctr % 2}])>\n"
     	    foreach column_var $column_vars {
     	        append table_body_html "\t<td valign=top>"
     	        set cmd "append table_body_html $column_var"
@@ -1305,19 +1305,19 @@ ad_proc -public im_forum_component {
 	    }
     	}
     	# Show a reasonable message when there are no result rows:
-    	if { [empty_string_p $table_body_html] } {
+    	if { $table_body_html eq "" } {
 		set table_body_html "
 		<tr><td colspan=$colspan align=center><b>
 		[_ intranet-forum.lt_There_are_no_active_i]
 		</b></td></tr>"
     	}
    	
-        if { $ctr == $max_entries_per_page && $end_idx < [expr $total_in_limited - 1] } {
+        if { $ctr == $max_entries_per_page && $end_idx < [expr {$total_in_limited - 1}] } {
 		# This means that there are rows that we decided not to return
 		# Include a link to go to the next page
-		set next_start_idx [expr $end_idx + 1]
+		set next_start_idx [expr {$end_idx + 1}]
 		set forum_max_entries_per_page $max_entries_per_page
-		set next_page_url  "$current_page_url?[export_vars -url {forum_object_id forum_max_entries_per_page forum_order_by}]&forum_start_idx=$next_start_idx&$pass_through_vars_html"
+		set next_page_url  "[export_vars -base $current_page_url {forum_object_id forum_max_entries_per_page forum_order_by}]&forum_start_idx=$next_start_idx&$pass_through_vars_html"
 		set next_page_html "($remaining_items more) <A href=\"$next_page_url\">&gt;&gt;</a>"
         } else {
 		set next_page_html ""
@@ -1326,7 +1326,7 @@ ad_proc -public im_forum_component {
        if { $start_idx > 0 } {
    		# This means we didn't start with the first row - there is
 		# at least 1 previous row. add a previous page link
-		set previous_start_idx [expr $start_idx - $max_entries_per_page]
+		set previous_start_idx [expr {$start_idx - $max_entries_per_page}]
 		if { $previous_start_idx < 0 } { set previous_start_idx 0 }
 		set previous_page_html "<A href=$current_page_url?$pass_through_vars_html&forum_order_by=$forum_order_by&forum_start_idx=$previous_start_idx>&lt;&lt;</a>"
        } else {
@@ -1342,7 +1342,7 @@ ad_proc -public im_forum_component {
 	set previous_page_html ""
 	set ctr 0
     }
-    # end else user_id != "0"	
+    # end else user_id != 0	
 
 
 
@@ -1350,7 +1350,7 @@ ad_proc -public im_forum_component {
 
     set table_footer "
 <tr>
-  <td $bgcolor([expr $ctr % 2]) colspan=$colspan align=right>
+  <td $bgcolor([expr {$ctr % 2}]) colspan=$colspan align=right>
     $previous_page_html
     $next_page_html
     <select name=action>
@@ -1436,7 +1436,7 @@ ad_proc -public im_forum_full_screen_component {
 		t.topic_id = :topic_id
     "
     db_1row get_topic $topic_sql
-    if {$due_date == ""} { set due_date $todays_date }
+    if {$due_date eq ""} { set due_date $todays_date }
     set old_asignee_id $asignee_id
 
     
@@ -1461,12 +1461,12 @@ ad_proc -public im_forum_full_screen_component {
 	
 	# Allow to mark task as "closed" only after accepted
 	# 061114 fraber: Not anymore - really a hassle
-	if {![string equal $topic_status_id [im_topic_status_id_closed]]} {
+	if {$topic_status_id ne [im_topic_status_id_closed] } {
 	    append actions "<option value=close>[_ intranet-forum.Close_topic_type]</option>\n"
 	}
 	
 	# Always allow to ask for clarification from owner if not already in clarify
-	if {![string equal $topic_status_id [im_topic_status_id_needs_clarify]] && ![string equal $topic_status_id [im_topic_status_id_closed]]} {
+	if {$topic_status_id ne [im_topic_status_id_needs_clarify] && $topic_status_id ne [im_topic_status_id_closed] } {
 	    append actions "<option value=clarify>[_ intranet-forum.lt_topic_type_needs_clar]</option>\n"
 	}
     }
@@ -1483,14 +1483,14 @@ ad_proc -public im_forum_full_screen_component {
 	    set assign_hidden "<input type=hidden name=asignee_id value=$asignee_id>"
 	}
 	# owner can also close topic
-	if {$user_id != $asignee_id && ![string equal $topic_status_id [im_topic_status_id_closed]]} {
+	if {$user_id != $asignee_id && $topic_status_id ne [im_topic_status_id_closed] } {
 	    append actions "<option value=close>[_ intranet-forum.Close_topic_type]</option>\n"
 	}
     }
     
     if {!$read_only_p} {
 	append table_body "
-		<tr $bgcolor([expr $ctr % 2])>
+		<tr $bgcolor([expr {$ctr % 2}])>
 		  <td>[_ intranet-forum.Actions]</td>
 		  <td>
 		    <select name=actions>
@@ -1524,7 +1524,7 @@ ad_proc -public im_forum_full_screen_component {
 # Forum Navigation Bar
 # ----------------------------------------------------------------------
 
-# <A HREF=/intranet-forum/index?[export_vars -url {object_id return_url}]>
+# <A HREF=/intranet-forum/[export_vars -base index {object_id return_url}]>
 
 ad_proc -public im_forum_create_bar { title_text object_id {return_url ""} } {
     Returns rendered HTML table with icons for creating new 
@@ -1534,32 +1534,32 @@ ad_proc -public im_forum_create_bar { title_text object_id {return_url ""} } {
 <table cellpadding=0 cellspacing=0 border=0 class='forumBar'>
 <tr>
 <td>
-  <A HREF=/intranet-forum/index?[export_vars -url {object_id return_url}]>
+  <A HREF=/intranet-forum/[export_vars -base index {object_id return_url}]>
     $title_text
   </A>
 </td>
 <td>
-  <A href='/intranet-forum/new?topic_type_id=1102&[export_vars -url {object_id return_url}]'>
+  <A href='/intranet-forum/new?topic_type_id=1102&[export_vars {object_id return_url}]'>
     [im_gif -translate_p 1 "incident_add" "Create new Incident"]
   </A>
 </td>
 <td>
-  <A href='/intranet-forum/new?topic_type_id=1104&[export_vars -url {object_id return_url}]'>
+  <A href='/intranet-forum/new?topic_type_id=1104&[export_vars {object_id return_url}]'>
     [im_gif -translate_p 1 "task_add" "Create new Task"]
   </A>
 </td>
 <td>
-  <A href='/intranet-forum/new?topic_type_id=1106&[export_vars -url {object_id return_url}]'>
+  <A href='/intranet-forum/new?topic_type_id=1106&[export_vars {object_id return_url}]'>
     [im_gif -translate_p 1 "discussion_add" "Create a new Discussion"]
   </A>
 </td>
 <td>
-  <A href='/intranet-forum/new?topic_type_id=1100&[export_vars -url {object_id return_url}]'>
+  <A href='/intranet-forum/new?topic_type_id=1100&[export_vars {object_id return_url}]'>
     [im_gif -translate_p 1 "news_add" "Create new News Item"]
   </A>
 </td>
 <td>
-  <A href='/intranet-forum/new?topic_type_id=1108&[export_vars -url {object_id return_url}]'>
+  <A href='/intranet-forum/new?topic_type_id=1108&[export_vars {object_id return_url}]'>
     [im_gif -translate_p 1 "note_add" "Create new Note"]
   </A>
 </td>

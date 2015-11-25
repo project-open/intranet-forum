@@ -1,5 +1,5 @@
 <master src="../../intranet-core/www/master">
-<property name="title">@title@</property>
+<property name="doc(title)">@title;literal@</property>
 
 <H1>#intranet-forum.Incident_Received#</H1>
 
@@ -8,14 +8,14 @@
 </p>
 
 
-<table border=0 cellspacing=1 cellpadding=1>
-<tr valign=top>
-  <td valign=top>
+<table border="0" cellspacing="1" cellpadding="1">
+<tr valign="top">
+  <td valign="top">
 
 
-	<table border=0 cellspacing=2 cellpadding=2 width="100%">
+	<table border="0" cellspacing="2" cellpadding="2" width="100%">
 	<tr class=rowtitle>
-	  <td class=rowtitle align=center colspan=2>
+	  <td class=rowtitle align="center" colspan="2">
 	    #intranet-forum.Incident_Information#
 	  </td>
 	</tr>
@@ -55,16 +55,16 @@ to check the status of your issue requests.
 
 </td></tr>
 <tr>
-  <td valign=top>
+  <td valign="top">
 
-	<table border=0 cellspacing=2 cellpadding=2 width="100%">
+	<table border="0" cellspacing="2" cellpadding="2" width="100%">
 	<tr class=rowtitle>
-	  <td class=rowtitle align=center colspan=2>
+	  <td class=rowtitle align="center" colspan="2">
 	    #acs-kernel.common_Login#
 	  </td>
 	</tr>
 	<tr>
-	  <td colspan=2>
+	  <td colspan="2">
 	<include src="/packages/acs-subsite/lib/login" return_url="@return_url;noquote@" no_frame_p="1" authority_id="@authority_id@" username="@username;noquote@" email="@error_user_email;noquote@" &="__adp_properties">
 	  </td>
 	</tr>
@@ -82,9 +82,9 @@ Please use the navigation tabs above to explore the system.
 
 
 <if @resolved_p@>
-	<table border=0 cellspacing=1 cellpadding=1>
+	<table border="0" cellspacing="1" cellpadding="1">
 	<tr class=rowtitle>
-	  <td class=rowtitle align=center colspan=2>
+	  <td class=rowtitle align="center" colspan="2">
 	    Bug Resolution
 	  </td>
 	</tr>

@@ -31,7 +31,7 @@ ad_page_contract {
 # Security, Parameters & Default
 # ------------------------------------------------------------------
 
-set user_id [ad_maybe_redirect_for_registration]
+set user_id [auth::require_login]
 set user_is_employee_p [im_user_is_employee_p $user_id]
 set user_is_customer_p [im_user_is_customer_p $user_id]
 
@@ -174,7 +174,7 @@ db_foreach update_stakeholders $stakeholder_sql {
 		-subject $subject \
 		-body "$msg_url\n\n$message"
 	} errmsg]} {
-	    # ad_return_error $subject "<p>Error sending out mail:</p><div><code>[ad_quotehtml $errmsg]</code></div>"
+	    # ad_return_error $subject "<p>Error sending out mail:</p><div><code>[ns_quotehtml $errmsg]</code></div>"
 	    # ad_script_abort
 	}
     }

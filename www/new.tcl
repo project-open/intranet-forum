@@ -36,7 +36,7 @@ ad_page_contract {
 # Default
 # ------------------------------------------------------------------
 
-set user_id [ad_maybe_redirect_for_registration]
+set user_id [auth::require_login]
 set object_name ""
 
 set todays_date [lindex [split [ns_localsqltimestamp] " "] 0]
@@ -209,7 +209,7 @@ where
 "
 
      db_1row get_topic $topic_sql
-     if {$due_date == ""} { set due_date $todays_date }
+     if {$due_date eq ""} { set due_date $todays_date }
      set submit_action "[_ intranet-forum.Save_Changes]"
      set page_title "[_ intranet-forum.Edit_Topic]"
      set context_bar [im_context_bar [list /intranet-forum/ "[_ intranet-forum.Forum]"] $page_title]
@@ -257,7 +257,7 @@ set export_var_list [list owner_id old_asignee_id parent_id topic_id return_url 
 
 if {!$topic_type_id} {
      append table_body "
-	 <tr $bgcolor([expr $ctr % 2])>
+	 <tr $bgcolor([expr {$ctr % 2}])>
 	   <td>[_ intranet-forum.Topic_Type]</td>
 	   <td>
 	     [im_forum_topic_type_select topic_type_id]
@@ -266,7 +266,7 @@ if {!$topic_type_id} {
 } else {
      lappend export_var_list "topic_type_id"
      append table_body "
-	 <tr $bgcolor([expr $ctr % 2])>
+	 <tr $bgcolor([expr {$ctr % 2}])>
 	   <td>[_ intranet-forum.Topic_Type]</td>
 	   <td valign=center>
 	     [im_gif -translate_p 0 $topic_type_id "$topic_type"] 
@@ -283,7 +283,7 @@ incr ctr
 # and for the owner (to make changes to his text).
 #
 append table_body "
-	 <tr $bgcolor([expr $ctr % 2])>
+	 <tr $bgcolor([expr {$ctr % 2}])>
 	   <td>[_ intranet-forum.topic_type_Subject]</td>
 	   <td>
 	     <input type=text size=50 name=subject value=\"$subject\">
@@ -300,14 +300,14 @@ incr ctr
 
 if {$object_id == 0} {
     append table_body "
-	<tr $bgcolor([expr $ctr % 2])>
+	<tr $bgcolor([expr {$ctr % 2}])>
 	  <td>[_ intranet-forum.In_Project]</td>
 	  <td>[im_project_select -exclude_subprojects_p 0 object_id $object_id]</td>
 	</tr>\n"
     incr ctr
 } else {
     append table_body "
-	<tr $bgcolor([expr $ctr % 2])>
+	<tr $bgcolor([expr {$ctr % 2}])>
 	  <td>[_ intranet-forum.Posted_in]</td>
           <td><A href=[im_biz_object_url $object_id]>$object_name</td>
 	</tr>\n"
@@ -322,7 +322,7 @@ if {$object_id == 0} {
 
 if {$task_or_incident_p} {
     append table_body "
-	<tr $bgcolor([expr $ctr % 2])>
+	<tr $bgcolor([expr {$ctr % 2}])>
 	  <td>[_ intranet-forum.Priority]</td>
 	  <td>
 		<select name=priority>
@@ -357,7 +357,7 @@ if {$task_or_incident_p} {
 	lappend export_var_list "asignee_id"
 
 	append table_body "
-	<tr $bgcolor([expr $ctr % 2])>
+	<tr $bgcolor([expr {$ctr % 2}])>
 	  <td>[_ intranet-forum.Assign_to]</td>
 	  <td>[lindex $asignee_list 1]</td>
 	</tr>\n"
@@ -366,7 +366,7 @@ if {$task_or_incident_p} {
     } else {
 	# Build a select box to let the user chose
 	append table_body "
-	<tr $bgcolor([expr $ctr % 2])>
+	<tr $bgcolor([expr {$ctr % 2}])>
 	  <td>[_ intranet-forum.Assign_to]</td>
 	  <td>
 	    [im_select -translate_p 0 asignee_id $asignee_list $asignee_id]
@@ -383,7 +383,7 @@ if {$task_or_incident_p} {
 if {$task_or_incident_p} {
 
     append table_body "
-	<tr $bgcolor([expr $ctr % 2])>
+	<tr $bgcolor([expr {$ctr % 2}])>
 	  <td>[_ intranet-forum.Due_Date]</td>
 	  <td>[philg_dateentrywidget due_date $due_date]</td>
 	</tr>\n"
@@ -398,7 +398,7 @@ if {$task_or_incident_p} {
 # In general, status changes are introduced by action buttons,
 # so we don't show a status select box here.
 
-if {[string equal $action_type "new_message"]} {
+if {$action_type eq "new_message"} {
     if {$task_or_incident_p} {
 	# A new taks/incident is in status "Assigned"
 	set topic_status_id [im_topic_status_id_assigned]
@@ -415,7 +415,7 @@ if {[string equal $action_type "new_message"]} {
 set html_p "f"
 
 append table_body "
-	<tr $bgcolor([expr $ctr % 2])>
+	<tr $bgcolor([expr {$ctr % 2}])>
 	  <td>$topic_type [_ intranet-forum.Body]</td>
 	  <td>
 	    <textarea name=message rows=15 cols=90 wrap=[im_html_textarea_wrap]>$message</textarea>
@@ -434,7 +434,7 @@ if {$topic_type_id != [im_topic_type_id_reply]} {
 
     if {$object_admin || $user_id == $owner_id} {
 	append table_body "
-		<tr $bgcolor([expr $ctr % 2])>
+		<tr $bgcolor([expr {$ctr % 2}])>
 		  <td>[_ intranet-forum.Access_permissions]</td>
 		  <td>
                     [im_forum_scope_select "scope" $user_id $scope]
@@ -443,7 +443,7 @@ if {$topic_type_id != [im_topic_type_id_reply]} {
 	incr ctr
     } else {
 	append table_body "
-		<tr $bgcolor([expr $ctr % 2])>
+		<tr $bgcolor([expr {$ctr % 2}])>
 		  <td>[_ intranet-forum.Access_permissions]</td>
 		  <td>[im_forum_scope_html $scope]
 		  </td>
@@ -457,7 +457,7 @@ if {$topic_type_id != [im_topic_type_id_reply]} {
 
 if {$topic_type_id != [im_topic_type_id_reply]} {
     append table_body "
-	<tr $bgcolor([expr $ctr % 2])>
+	<tr $bgcolor([expr {$ctr % 2}])>
 	  <td>[_ intranet-forum.lt_Do_you_want_to_receiv]</td>
 	 <td>[im_forum_notification_select "receive_updates" $receive_updates]</td>
 	</tr>"
@@ -483,7 +483,7 @@ set actions ""
 append actions "<option value=save selected>$submit_action</option>\n"
 
 append table_body "
-	<tr $bgcolor([expr $ctr % 2])>
+	<tr $bgcolor([expr {$ctr % 2}])>
 	  <td>[_ intranet-forum.Actions]</td>
 	  <td>
 	    <select name=actions>

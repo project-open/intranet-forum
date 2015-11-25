@@ -18,7 +18,7 @@ ad_page_contract {
 # Default
 # ------------------------------------------------------------------
 
-set user_id [ad_maybe_redirect_for_registration]
+set user_id [auth::require_login]
 
 set bgcolor(0) " class=roweven"
 set bgcolor(1) " class=rowodd"
@@ -104,7 +104,7 @@ set asignee_list [im_forum_potential_asignees $user_id $object_id]
 
 # Build a select box to let the user chose
 append table_body "
-	<tr $bgcolor([expr $ctr % 2])>
+	<tr $bgcolor([expr {$ctr % 2}])>
 	  <td>[_ intranet-forum.Assign_to]:</td>
 	  <td>
 	    [im_select -translate_p 0 asignee_id $asignee_list $asignee_id]
@@ -113,7 +113,7 @@ append table_body "
 incr ctr
 
 append table_body "
-	<tr $bgcolor([expr $ctr % 2])>
+	<tr $bgcolor([expr {$ctr % 2}])>
 	  <td></td>
 	  <td>
 	    <input type=submit value=\"[_ intranet-forum.Assign]\">

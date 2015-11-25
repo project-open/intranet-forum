@@ -43,7 +43,7 @@ ad_page_contract {
 # ---------------------------------------------------------------
 
 # User id already verified by filters
-set user_id [ad_maybe_redirect_for_registration]
+set user_id [auth::require_login]
 set current_user_id $user_id
 set view_types [list "t" [lang::message::lookup "" intranet-core.Object_Mine "Mine"] "f" [lang::message::lookup "" intranet-core.Object_All "All"]]
 set page_title "[_ intranet-forum.Forum]"
@@ -54,13 +54,13 @@ set user_admin_p [im_is_user_site_wide_or_intranet_admin $current_user_id]
 set return_url [im_url_with_query]
 set current_url [ns_conn url]
 
-if { [empty_string_p $forum_how_many] || $forum_how_many < 1 } {
+if { $forum_how_many eq "" || $forum_how_many < 1 } {
     set forum_how_many [im_parameter -package_id [im_package_core_id] NumberResultsPerPage "" 50]
 } 
 
-set end_idx [expr $forum_start_idx + $forum_how_many - 1]
+set end_idx [expr {$forum_start_idx + $forum_how_many - 1}]
 
-if {[string equal $forum_view_name "forum_list_tasks"]} {
+if {$forum_view_name eq "forum_list_tasks"} {
     set forum_view_name "forum_list_forum"
     # Preselect "Tasks & Incidents"
     set forum_topic_type_id 1

@@ -1,7 +1,7 @@
 <!-- packages/intranet-forum/www/new-2.adp -->
 <master src="../../intranet-core/www/master">
-<property name="title">@page_title@</property>
-<property name="context">@context_bar@</property>
+<property name="doc(title)">@page_title;literal@</property>
+<property name="context">@context_bar;literal@</property>
 <property name="main_navbar_label">forum</property>
 
 
@@ -37,15 +37,15 @@
         <a href="/intranet/users/view?user_id=@stakeholders.user_id@">@stakeholders.name@</a>
     </td>
     <td class="list-narrow">
-        <input type=checkbox name=notifyee_id value="@stakeholders.user_id@" id="alerts,@user_id@" @stakeholders.checked@>
+        <input type="checkbox" name="notifyee_id" value="@stakeholders.user_id@" id="alerts,@user_id@" @stakeholders.checked@>
     </td>
   </tr>
   </multiple>
 
   <tr>
-    <td colspan=3 align=right>
-      <input type=submit value="<%= [lang::message::lookup "" intranet-forum.Send_Email "Send Email"] %>">
-      <input type=submit value="<%= [lang::message::lookup "" intranet-forum.Cancel "Cancel"] %>" name="cancel">
+    <td colspan="3" align="right">
+      <input type="submit" value="<%= [lang::message::lookup "" intranet-forum.Send_Email "Send Email"] %>">
+      <input type="submit" value="<%= [lang::message::lookup "" intranet-forum.Cancel "Cancel"] %>" name="cancel">
     </td>
   </tr>
 </table>

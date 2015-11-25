@@ -35,7 +35,7 @@ ad_page_contract {
 # ------------------------------------------------------------------
 
 
-set user_id [ad_maybe_redirect_for_registration]
+set user_id [auth::require_login]
 set object_name ""
 
 set todays_date [lindex [split [ns_localsqltimestamp] " "] 0]
@@ -88,7 +88,7 @@ if {![info exists topic_id]} {
     "]"
 }
 
-if {$due_date == ""} { set due_date $todays_date }
+if {$due_date eq ""} { set due_date $todays_date }
 set old_asignee_id $asignee_id
 set page_title "[_ intranet-forum.View_Topic]"
 set context_bar [im_context_bar [list /intranet-forum/ "[_ intranet-forum.Forum]"] $page_title]
@@ -175,12 +175,12 @@ if {$task_or_incident_p && $user_id == $asignee_id} {
 
     # Allow to mark task as "closed" only after accepted
     # 061114 fraber: Not anymore - really a hassle
-    if {![string equal $topic_status_id [im_topic_status_id_closed]]} {
+    if {$topic_status_id ne [im_topic_status_id_closed] } {
 	append actions "<option value=close>[_ intranet-forum.Close_topic_type]</option>\n"
     }
 
     # Always allow to ask for clarification from owner if not already in clarify
-    if {![string equal $topic_status_id [im_topic_status_id_needs_clarify]] && ![string equal $topic_status_id [im_topic_status_id_closed]]} {
+    if {$topic_status_id ne [im_topic_status_id_needs_clarify] && $topic_status_id ne [im_topic_status_id_closed] } {
     	append actions "<option value=clarify>[_ intranet-forum.lt_topic_type_needs_clar]</option>\n"
     }
 }
@@ -198,7 +198,7 @@ if {$object_admin || $user_id==$owner_id} {
     	set assign_hidden "<input type=hidden name=asignee_id value=$asignee_id>"
     }
     # owner can also close topic
-    if {$user_id != $asignee_id && ![string equal $topic_status_id [im_topic_status_id_closed]]} {
+    if {$user_id != $asignee_id && $topic_status_id ne [im_topic_status_id_closed] } {
     	append actions "<option value=close>[_ intranet-forum.Close_topic_type]</option>\n"
     }
 }
@@ -206,7 +206,7 @@ if {$object_admin || $user_id==$owner_id} {
 
 
 append table_body "
-	<tr $bgcolor([expr $ctr % 2])>
+	<tr $bgcolor([expr {$ctr % 2}])>
 	  <td>[_ intranet-forum.Actions]</td>
 	  <td>
 	    <select name=actions>

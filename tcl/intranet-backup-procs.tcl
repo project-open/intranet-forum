@@ -35,10 +35,10 @@ ad_proc -public im_import_forum_topics { filename } {
     set csv_version [lindex $csv_version_fields 1]
     set csv_table [lindex $csv_version_fields 2]
     set err_msg [im_backup_accepted_version_nr $csv_version]
-    if {![string equal $csv_system "po"]} {
+    if {$csv_system ne "po" } {
 	append err_msg "'$csv_system' invalid backup dump<br>"
     }
-    if {![string equal $csv_table "im_forum_topics"]} {
+    if {$csv_table ne "im_forum_topics" } {
 	append err_msg "Invalid backup table: '$csv_table'<br>"
     }
     if {"" != $err_msg} {
@@ -72,7 +72,7 @@ ad_proc -public im_import_forum_topics { filename } {
 	    set var_value [string trim [lindex $csv_line_fields $j]]
 
 	    # Skip empty columns caused by double quote separation
-	    if {"" == $var_name || [string equal $var_name ";"]} {
+	    if {"" == $var_name || $var_name eq ";"} {
 		continue
 	    }
 

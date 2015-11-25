@@ -194,7 +194,7 @@ set error_url_parts [split $error_url "/"]
 set error_package [lindex $error_url_parts 1]
 
 # The one and only exception: intranet-core is mounted on /intranet/:
-if {$error_package == "intranet"} { set error_package "intranet-core" }
+if {$error_package eq "intranet"} { set error_package "intranet-core" }
 
 # Check for strange names and set to "core"
 if {![regexp {^[a-z0-9\-]+$} $error_package match]} { set error_package "intranet-core" }

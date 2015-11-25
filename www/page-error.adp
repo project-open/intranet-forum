@@ -1,6 +1,6 @@
 <!-- This page goes into /packages/apm-tcl/lib/page-error.adp -->
 <master>
-<property name="title"><Server Error></property>
+<property name="doc(title)"><Server Error></property>
 
 
 <p>
@@ -19,21 +19,21 @@
 
 
 <form action="@report_url;noquote@" method=POST>
-<input type=hidden name=error_url value=@error_url@>
-<input type=hidden name=error_location value=@error_location@>
-<input type=hidden name=system_url value=@system_url@>
-<input type=hidden name=error_first_names value=@first_names;noquote@>
-<input type=hidden name=error_last_name value=@last_name;noquote@>
-<input type=hidden name=error_user_email value=@email;noquote@>
-<input type=hidden name=package_versions value="@package_versions;noquote@">
-<input type=hidden name=publisher_name value="@publisher_name;noquote@">
+<input type="hidden" name="error_url" value="@error_url@">
+<input type="hidden" name="error_location" value="@error_location@">
+<input type="hidden" name="system_url" value="@system_url@">
+<input type="hidden" name="error_first_names" value="@first_names;noquote@">
+<input type="hidden" name="error_last_name" value="@last_name;noquote@">
+<input type="hidden" name="error_user_email" value="@email;noquote@">
+<input type="hidden" name="package_versions" value="@package_versions;noquote@">
+<input type="hidden" name="publisher_name" value="@publisher_name;noquote@">
 <if @message@ not nil>
-  <input type=hidden name=error_message value="@message;noquote@">
+  <input type="hidden" name="error_message" value="@message;noquote@">
 </if>
 <if @stacktrace@ not nil>
-  <input type=hidden name=error_info value="@stacktrace@">
+  <input type="hidden" name="error_info" value="@stacktrace@">
 </if>
-<input type=submit name=submit value="Report this Error">
+<input type="submit" name="submit" value="Report this Error">
 </form>
 
 <if @message@ not nil>

@@ -41,7 +41,7 @@ ad_page_contract {
 # Security, Parameters & Default
 # ------------------------------------------------------------------
 
-set user_id [ad_maybe_redirect_for_registration]
+set user_id [auth::require_login]
 
 set topic_type [db_string topic_type "select im_category_from_id(:topic_type_id)" -default ""]
 set object_type [db_string acs_object_type "select object_type from acs_objects where object_id = :object_id" -default ""]
@@ -106,9 +106,9 @@ if {!$forum_folder_count} {
 # ---------------------------------------------------------------------
 
 # Forward to create a new reply topic...
-if {[string equal $actions "reply"]} {
+if {$actions eq "reply"} {
     set parent_id $topic_id
-    ad_returnredirect "/intranet-forum/new?[export_vars -url {parent_id return_url}]"
+    ad_returnredirect [export_vars -base /intranet-forum/new {parent_id return_url}]
     return
 }
 
@@ -118,8 +118,8 @@ if {[string equal $actions "reply"]} {
 # ---------------------------------------------------------------------
 
 # Forward to "new"
-if {[string equal $actions "edit"]} {
-    ad_returnredirect "/intranet-forum/new?&[export_vars -url {topic_id return_url}]"
+if {$actions eq "edit"} {
+    ad_returnredirect "/intranet-forum/new?&[export_vars {topic_id return_url}]"
     return
 }
 
@@ -127,7 +127,7 @@ if {[string equal $actions "edit"]} {
 # Save the im_forum_topics record
 # ------------------------------------------------------------------
 
-if {[string equal $actions "save"]} {
+if {$actions eq "save"} {
 
     # expect commands such as: "im_project_permissions" ...
     #
@@ -146,7 +146,7 @@ if {[string equal $actions "save"]} {
 	}
     }
 
-    if { ![info exists subject] || $subject == "" } {
+    if { ![info exists subject] || $subject eq "" } {
 	ad_return_complaint 1 "<li>You must enter a subject line"
 	return
     }
@@ -254,7 +254,7 @@ if {[string equal $actions "save"]} {
 
 # Only if we are creating a new message...
 ns_log Notice "/intranet-forum/new-2: action_type=$action_type"
-if {[string equal $action_type "new_message"]} {
+if {$action_type eq "new_message"} {
 
     # .. and only if the parameter is enabled...
     if {[im_parameter -package_id [im_package_forum_id] SubscribeAllMembersToNewItemsP "" "0"]} {
@@ -344,7 +344,7 @@ if {[string equal $action_type "new_message"]} {
 # Assign the ticket to a new user
 # ---------------------------------------------------------------------
 
-if {[string equal $actions "assign"]} {
+if {$actions eq "assign"} {
 
     set topic_status_id [im_topic_status_id_assigned]
 
@@ -368,7 +368,7 @@ where topic_id=:topic_id"
 # Close the ticket
 # ---------------------------------------------------------------------
 
-if {[string equal $actions "close"]} {
+if {$actions eq "close"} {
     # ToDo: Security Check
     
     # Close the existing ticket.
@@ -389,7 +389,7 @@ where topic_id=:topic_id"
 # "Clarify" the ticket
 # ---------------------------------------------------------------------
 
-if {[string equal $actions "clarify"]} {
+if {$actions eq "clarify"} {
     # ToDo: Security Check
     
     # Close the existing ticket.
@@ -410,7 +410,7 @@ where topic_id=:topic_id"
 # Reject the ticket
 # ---------------------------------------------------------------------
 
-if {[string equal $actions "reject"]} {
+if {$actions eq "reject"} {
     # ToDo: Security Check
     
     # Mark ticket as rejected
@@ -432,7 +432,7 @@ where topic_id=:topic_id"
 # Accept the ticket
 # ---------------------------------------------------------------------
 
-if {[string equal $actions "accept"]} {
+if {$actions eq "accept"} {
     # ToDo: Security Check
     
     # Set the status to "accepted"
