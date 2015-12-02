@@ -1,6 +1,6 @@
 -- /packages/intranet-forum/sql/oracle/intranet-forum-create.sql
 --
--- Copyright (c) 2003-2004 Project/Open
+-- Copyright (c) 2003-2004 ]project-open[
 --
 -- All rights reserved. Please check
 -- http://www.project-open.com/license/ for details.
@@ -251,7 +251,7 @@ create table im_forum_files (
 -- Privileges
 --
 -- Privileges are permission tokens relative to the "subsite"
--- (package) object "Project/Open Core".
+-- (package) object "]project-open[ Core".
 --
 prompt *** Creating Privileges
 begin
@@ -456,7 +456,7 @@ END;
 ---------------------------------------------------------
 -- Register the component in the core TCL pages
 --
--- These DB-entries allow the pages of Project/Open Core
+-- These DB-entries allow the pages of ]project-open[ Core
 -- to render the forum components in the Home, Users, Projects 
 -- and Company pages.
 --
