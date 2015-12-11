@@ -38,6 +38,7 @@ ad_page_contract {
     { os_version ""}
 }
 
+
 # -----------------------------------------------------------------
 # Defaults & Security
 # -----------------------------------------------------------------
@@ -63,7 +64,7 @@ set username ""
 
 set title "New System Incident"
 
-set system_owner_email [im_parameter -package_id [im_package_forum_id] ReportThisErrorEmail]
+set system_owner_email [parameter::get -package_id [im_package_forum_id] -parameter "ReportThisErrorEmail" -default "support@project-open.com"]
 set system_owner_id [db_string user_id "select min(user_id) from users where user_id > 0"]
 
 # -----------------------------------------------------------------
@@ -161,6 +162,7 @@ set error_company_id [db_string error_company "
 if {"" == $error_company_id} { set error_company_id $default_company_id }
 
 
+
 # -----------------------------------------------------------------
 # Find out the title line for the error
 # -----------------------------------------------------------------
@@ -184,7 +186,6 @@ if {"" == $subject && [regexp {([^\n]*)} $error_info match error_descr]} {
 if {"" == $subject} { set subject $error_url }
 
 
-
 # -----------------------------------------------------------------
 # Determine and/or Create a Package ConfItem
 # -----------------------------------------------------------------
@@ -205,6 +206,7 @@ foreach package_str $package_list {
     regexp {([a-z0-9\-]*)\:([0-9\.]*)} $package_str match package version
     set pver_hash($package) $version
 }
+
 
 # Get toplevel ConfItem for ]po[ internal development
 set po_conf_id [db_string cvs "select conf_item_id from im_conf_items where conf_item_nr = 'po'" -default 0]
@@ -278,7 +280,7 @@ if {"" == $system_conf_item_id} {
     if {"" != $err} { ad_return_complaint 1 "<pre>$err</pre>" }
 
     set system_conf_item_id [db_string system "
-	select	conf_item_id
+	select	min(conf_item_id)
 	from	im_conf_items
 	where	conf_item_nr = :system_id
     " -default ""]
