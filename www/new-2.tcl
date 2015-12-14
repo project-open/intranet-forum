@@ -1,4 +1,4 @@
-# /packages/intranet-forum/www/intranet-forum/forum/new-2.tcl
+# /packages/intranet-forum/www/intranet-forum/new-2.tcl
 #
 # Copyright (C) 2003-2009 ]project-open[
 #
@@ -52,8 +52,9 @@ set context_bar [im_context_bar [list /intranet-forum/ "[_ intranet-forum.Forum]
 # 
 # ------------------------------------------------------------------
 
-set include_topic_message_p [im_parameter -package_id [im_package_forum_id] "IncludeTopicMessageInNotificationsP" "" 0]
-set show_employees_as_stakeholders_p [im_parameter -package_id [im_package_forum_id] "ShowEmployeesAsStakeholdersP" "" 0]
+set include_topic_message_p [parameter::get -package_id [apm_package_id_from_key intranet-forum] -parameter "IncludeTopicMessageInNotificationsP" -default 0]
+set show_employees_as_stakeholders_p [parameter::get -package_id [apm_package_id_from_key intranet-forum] -parameter "ShowEmployeesAsStakeholders" -default 0]
+
 set exception_text ""
 set exception_count 0
 
@@ -257,7 +258,8 @@ ns_log Notice "/intranet-forum/new-2: action_type=$action_type"
 if {$action_type eq "new_message"} {
 
     # .. and only if the parameter is enabled...
-    if {[im_parameter -package_id [im_package_forum_id] SubscribeAllMembersToNewItemsP "" "0"]} {
+    if { [parameter::get -package_id [apm_package_id_from_key intranet-forum] -parameter "SubscribeAllMembersToNewItemsP" -default 0] } {
+
 	ns_log Notice "/intranet-forum/new-2: subscribing all project members to the new message"
 
 	# Select the list of all project members allowed to see
@@ -453,7 +455,7 @@ where topic_id=:topic_id"
 # Alert about changes
 # ---------------------------------------------------------------------
 
-set msg_url "[im_parameter -package_id [ad_acs_kernel_id] SystemURL "" ""]intranet-forum/view?topic_id=$topic_id"
+set msg_url "[parameter::get -package_id [apm_package_id_from_key acs-kernel] -parameter "SystemURL" -default ""]intranet-forum/view?topic_id=$topic_id"
 set importance 0
 
 db_1row subject_message "
