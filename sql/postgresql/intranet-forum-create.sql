@@ -106,18 +106,18 @@ create index im_forum_topics_object_idx on im_forum_topics (object_id);
 
 
 create or replace function im_forum_topic__name(integer)
-returns varchar as '
+returns varchar as $$
 DECLARE
-        p_topic_id               alias for $1;
-        v_name                  varchar;
+	p_topic_id		alias for $1;
+	v_name			varchar;
 BEGIN
-        select  substring(topic_name for 30)
-        into    v_name
-        from    im_forum_topics
-        where   topic_id = p_topic_id;
+	select	substring(topic_name for 30)
+	into	v_name
+	from	im_forum_topics
+	where	topic_id = p_topic_id;
 
-        return v_name;
-end;' language 'plpgsql';
+	return v_name;
+end;$$ language 'plpgsql';
 
 
 
@@ -125,12 +125,11 @@ end;' language 'plpgsql';
 -- This is the sortkey code
 --
 create function im_forum_topic_insert_tr ()
-returns opaque as '
+returns opaque as $$
 declare
 	v_max_child_sortkey		im_forum_topics.max_child_sortkey%TYPE;
 	v_parent_sortkey		im_forum_topics.tree_sortkey%TYPE;
 begin
-
 	if new.parent_id is null
 	then
 		new.tree_sortkey := int_to_tree_key(new.topic_id+1000);
@@ -151,7 +150,7 @@ begin
 	new.max_child_sortkey := null;
 
 	return new;
-end;' language 'plpgsql';
+end;$$ language 'plpgsql';
 
 create trigger im_forum_topic_insert_tr
 before insert on im_forum_topics
@@ -160,7 +159,7 @@ execute procedure im_forum_topic_insert_tr();
 
 
 
-create function im_forum_topics_update_tr () returns opaque as '
+create function im_forum_topics_update_tr () returns opaque as $$
 declare
 	v_parent_sk		varbit default null;
 	v_max_child_sortkey	varbit;
@@ -198,7 +197,7 @@ begin
 	WHERE tree_sortkey between new.tree_sortkey and tree_right(new.tree_sortkey);
 
 	return new;
-end;' language 'plpgsql';
+end;$$ language 'plpgsql';
 
 create trigger im_forum_topics_update_tr after update
 on im_forum_topics
@@ -212,7 +211,7 @@ execute procedure im_forum_topics_update_tr ();
 -- account a flexible role-based permission scheme
 --
 create or replace function im_forum_permission (integer,integer,integer,integer,varchar,integer,integer,integer,integer)
-returns integer as '
+returns integer as $$
 DECLARE
 	p_user_id		alias for $1;
 	p_owner_id		alias for $2;
@@ -233,30 +232,30 @@ BEGIN
 	IF p_asignee_id = p_user_id THEN RETURN 1; END IF;
 
 	-- If public then Yes.
-	IF p_scope = ''public'' THEN RETURN 1; END IF;
+	IF p_scope = 'public' THEN RETURN 1; END IF;
 
 	-- All group
-	IF p_scope = ''group'' THEN RETURN p_user_is_object_member; END IF;
+	IF p_scope = 'group' THEN RETURN p_user_is_object_member; END IF;
 
 	-- Only PMs (=object admins)
-	IF p_scope = ''pm'' THEN RETURN p_user_is_object_admin; END IF;
+	IF p_scope = 'pm' THEN RETURN p_user_is_object_admin; END IF;
 
 	-- Customers and the PM only
-	IF p_scope = ''client'' AND p_user_is_customer = 1 THEN
+	IF p_scope = 'client' AND p_user_is_customer = 1 THEN
 		RETURN p_user_is_object_member;
 	END IF;
 
 	-- Staff only members
-	IF p_scope = ''staff'' AND p_user_is_employee = 1 THEN	
+	IF p_scope = 'staff' AND p_user_is_employee = 1 THEN	
 		RETURN p_user_is_object_member;	
 	END IF;
 
 	-- Staff and Provider member - no customers
-	IF p_scope = ''not_client'' AND NOT p_user_is_customer = 1 THEN	
+	IF p_scope = 'not_client' AND NOT p_user_is_customer = 1 THEN	
 		RETURN p_user_is_object_member;	
 	END IF;
 	RETURN 0;
-end;' language 'plpgsql';
+end;$$ language 'plpgsql';
 
 
 -----------------------------------------------------------
@@ -443,7 +442,7 @@ select im_priv_create('add_topic_staff',	'Senior Managers');
 --
 
 create or replace function inline_0 ()
-returns integer as '
+returns integer as $$
 declare
 	-- Menu IDs
 	v_menu			integer;
@@ -458,43 +457,43 @@ declare
 	v_proman		integer;
 	v_admins		integer;
 BEGIN
-	select group_id into v_admins from groups where group_name = ''P/O Admins'';
-	select group_id into v_senman from groups where group_name = ''Senior Managers'';
-	select group_id into v_proman from groups where group_name = ''Project Managers'';
-	select group_id into v_accounting from groups where group_name = ''Accounting'';
-	select group_id into v_employees from groups where group_name = ''Employees'';
-	select group_id into v_companies from groups where group_name = ''Customers'';
-	select group_id into v_freelancers from groups where group_name = ''Freelancers'';
+	select group_id into v_admins from groups where group_name = 'P/O Admins';
+	select group_id into v_senman from groups where group_name = 'Senior Managers';
+	select group_id into v_proman from groups where group_name = 'Project Managers';
+	select group_id into v_accounting from groups where group_name = 'Accounting';
+	select group_id into v_employees from groups where group_name = 'Employees';
+	select group_id into v_companies from groups where group_name = 'Customers';
+	select group_id into v_freelancers from groups where group_name = 'Freelancers';
 
 	select menu_id into v_main_menu from im_menus
-	where label=''main'';
+	where label='main';
 
 	v_menu := im_menu__new (
 		null,			-- p_menu_id
-		''im_menu'',	-- object_type
+		'im_menu',	-- object_type
 		now(),			-- creation_date
 		null,			-- creation_user
 		null,			-- creation_ip
 		null,			-- context_id
-		''intranet-forum'',	-- package_name
-		''forum'',			-- label
-		''Forum'',			-- name
-		''/intranet-forum/'',	-- url
+		'intranet-forum',	-- package_name
+		'forum',			-- label
+		'Forum',			-- name
+		'/intranet-forum/',	-- url
 		20,			-- sort_order
 		v_main_menu,		-- parent_menu_id
 		null			-- p_visible_tcl
 	);
 
-	PERFORM acs_permission__grant_permission(v_menu, v_admins, ''read'');
-	PERFORM acs_permission__grant_permission(v_menu, v_senman, ''read'');
-	PERFORM acs_permission__grant_permission(v_menu, v_proman, ''read'');
-	PERFORM acs_permission__grant_permission(v_menu, v_accounting, ''read'');
-	PERFORM acs_permission__grant_permission(v_menu, v_employees, ''read'');
-	PERFORM acs_permission__grant_permission(v_menu, v_companies, ''read'');
-	PERFORM acs_permission__grant_permission(v_menu, v_freelancers, ''read'');
+	PERFORM acs_permission__grant_permission(v_menu, v_admins, 'read');
+	PERFORM acs_permission__grant_permission(v_menu, v_senman, 'read');
+	PERFORM acs_permission__grant_permission(v_menu, v_proman, 'read');
+	PERFORM acs_permission__grant_permission(v_menu, v_accounting, 'read');
+	PERFORM acs_permission__grant_permission(v_menu, v_employees, 'read');
+	PERFORM acs_permission__grant_permission(v_menu, v_companies, 'read');
+	PERFORM acs_permission__grant_permission(v_menu, v_freelancers, 'read');
 
 	return 0;
-end;' language 'plpgsql';
+end;$$ language 'plpgsql';
 select inline_0 ();
 drop function inline_0 ();
 
@@ -504,7 +503,7 @@ drop function inline_0 ();
 --
 SELECT im_component_plugin__new (
 	null,				-- plugin_id
-	'im_component_plugin',			-- object_type
+	'im_component_plugin',		-- object_type
 	now(),				-- creation_date
 	null,				-- creation_user
 	null,				-- creation_ip
@@ -524,7 +523,7 @@ SELECT im_component_plugin__new (
 --
 SELECT im_component_plugin__new (
 	null,				-- plugin_id
-	'im_component_plugin',			-- object_type
+	'im_component_plugin',		-- object_type
 	now(),				-- creation_date
 	null,				-- creation_user
 	null,				-- creation_ip
@@ -547,7 +546,7 @@ delete from im_component_plugins where plugin_name='Home Forum Component';
 
 SELECT im_component_plugin__new (
 	null,				-- plugin_id
-	'im_component_plugin',			-- object_type
+	'im_component_plugin',		-- object_type
 	now(),				-- creation_date
 	null,				-- creation_user
 	null,				-- creation_ip
