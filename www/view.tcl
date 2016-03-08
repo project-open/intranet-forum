@@ -60,7 +60,6 @@ if {"" == $return_url} {
 
 set action_type "edit_message"
 set topic_sql "
-
 select
 	t.*,
 	m.read_p,
@@ -80,7 +79,7 @@ where
 "
 
 db_0or1row get_topic $topic_sql
-if {![info exists topic_id]} {
+if {![info exists due_date]} {
     ad_return_complaint 1 "
 	[lang::message::lookup "" intranet-forum.Topic_doesnt_exist "
 		<b>This forum topic doesn't exist</b>:<br>
