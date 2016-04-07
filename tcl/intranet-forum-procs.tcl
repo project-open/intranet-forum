@@ -842,6 +842,7 @@ ad_proc -public im_forum_component {
     -export_var_list 
     -forum_type
     {-write_icons 0}
+    {-custom_header ""}
     {-debug 0}
 } {
     Creates a HTML table showing a table of "Discussion Topics" of 
@@ -1003,7 +1004,6 @@ ad_proc -public im_forum_component {
     set pass_through_vars_html [join $params "&"]
 
 
-
     # ---------------------- Format Header ----------------------------------
 
     # Set up colspan to be the number of headers + 1 for the # column
@@ -1013,14 +1013,23 @@ ad_proc -public im_forum_component {
     # sort order of the SQL query.
     #
     
+    # Init header 
+    set table_header_html ""
+
     if { "1" == $write_icons  } {
 	set table_header_html "<tr><td colspan=\"99\" align=\"right\">"
 	append table_header_html [im_forum_create_bar "" $forum_object_id $return_url]
-	append table_header_html "</td></tr><tr>\n"
-    } else {
-	set table_header_html "<tr>\n"
+	append table_header_html "</td></tr>\n"
+    }
+    
+    if { "" ne $custom_header } {
+        set table_header_html "<tr><td colspan=\"99\" align=\"right\">"
+        append table_header_html [eval $custom_header]
+        append table_header_html "</td></tr>\n"
     }
 
+    # Column Headers
+    append table_header_html "<tr>\n"
     foreach col $column_headers {
 
 	set cmd_eval ""
