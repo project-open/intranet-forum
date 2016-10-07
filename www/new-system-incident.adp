@@ -10,11 +10,6 @@
 </p>
 
 
-<table border="0" cellspacing="1" cellpadding="1">
-<tr valign="top">
-  <td valign="top">
-
-
 	<table border="0" cellspacing="2" cellpadding="2" width="100%">
 	<tr class=rowtitle>
 	  <td class=rowtitle align="center" colspan="2">
@@ -44,20 +39,11 @@
 	</table>
 
 
-  </td>
-</tr>
-<tr><td>&nbsp;<br>&nbsp;</td></tr>
-<tr><td>
-
 <h1>Login</h1>
 <p>
 Please login or use the "Forgot your password?" link<br>
 to check the status of your issue requests.
 </p>
-
-</td></tr>
-<tr>
-  <td valign="top">
 
 	<table border="0" cellspacing="2" cellpadding="2" width="100%">
 	<tr class=rowtitle>
@@ -71,16 +57,6 @@ to check the status of your issue requests.
 	  </td>
 	</tr>
 	</table>
-
-  </td>
-</tr>
-</table>
-
-
-<p>
-Please use the navigation tabs above to explore the system.
-</p>
-
 
 
 <if @resolved_p@>
