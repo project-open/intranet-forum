@@ -1,5 +1,7 @@
+<if 1 ne @no_master_p@>
 <master src="../../intranet-core/www/master">
 <property name="doc(title)">@title;literal@</property>
+</if>
 
 <H1>#intranet-forum.Incident_Received#</H1>
 

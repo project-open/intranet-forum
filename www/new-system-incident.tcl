@@ -36,6 +36,7 @@ ad_page_contract {
     { platform "" } 
     { os ""} 
     { os_version ""}
+    { no_master_p 0 }
 }
 
 # Allow for CORS requests to this page
