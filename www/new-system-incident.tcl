@@ -38,6 +38,8 @@ ad_page_contract {
     { os_version ""}
 }
 
+# Allow for CORS requests to this page
+ns_set cput [ns_conn outputheaders] "Access-Control-Allow-Origin" "*"
 
 # -----------------------------------------------------------------
 # Defaults & Security

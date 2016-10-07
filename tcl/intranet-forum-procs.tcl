@@ -13,6 +13,34 @@ ad_library {
 }
 
 
+
+ad_proc -public im_forum_handle_options { uri method args } {
+    Dispatch request to the proper service contract implmentation
+} {
+    ns_log Notice "im_forum_handle_options: uri=$uri, method=$method, args=$args"
+    eval im_forum_handle_options1
+}
+
+
+ad_proc -public im_forum_handle_options1 { } {
+    Handle AJAX CORS "pre-flight" request for headers.
+    This request comes with a HTTP "OPTIONS" verb.
+} {
+    set url [ns_conn url]
+    ns_log Notice "im_forum_handle_options1: url=$url"
+
+    set header_vars [ns_conn headers]
+    set origin [ns_set get $header_vars "Origin"]
+    set request_headers [ns_set get $header_vars "Access-Control-Request-Headers"]
+
+    ns_set put [ns_conn outputheaders] "Access-Control-Allow-Methods" "GET, POST"
+    ns_set put [ns_conn outputheaders] "Access-Control-Allow-Headers" $request_headers
+    ns_set put [ns_conn outputheaders] "Access-Control-Allow-Origin" $origin
+
+    ns_return 200 "text/plain" ""
+}
+
+
 # ----------------------------------------------------------------------
 # Select Boxes
 # ----------------------------------------------------------------------
