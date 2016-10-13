@@ -206,8 +206,9 @@ if {![regexp {^[a-z0-9\-]+$} $error_package match]} { set error_package "intrane
 # Parse the package string and store into hash
 set package_list [split $package_versions " "]
 foreach package_str $package_list {
-    regexp {([a-z0-9\-]*)\:([0-9\.]*)} $package_str match package version
-    set pver_hash($package) $version
+    if {[regexp {([a-z0-9\-]*)\:([0-9\.]*)} $package_str match package version]} {
+	set pver_hash($package) $version
+    }
 }
 
 
