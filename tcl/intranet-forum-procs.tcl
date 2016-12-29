@@ -13,8 +13,11 @@ ad_library {
 }
 
 
-
-ad_proc -public im_forum_handle_options { uri method args } {
+ad_proc -public im_forum_handle_options { 
+    { uri "" }
+    { method "" }
+    { args "" }
+} {
     Dispatch request to the proper service contract implmentation
 } {
     ns_log Notice "im_forum_handle_options: uri=$uri, method=$method, args=$args"
