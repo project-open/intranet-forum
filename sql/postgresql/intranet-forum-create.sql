@@ -356,9 +356,13 @@ select acs_privilege__add_child('admin', 'add_topic_noncli');
 select acs_privilege__create_privilege('add_topic_pm','Message to the project manager only','');
 select acs_privilege__add_child('admin', 'add_topic_pm');
 
-
 select acs_privilege__create_privilege('view_topics_all','View all topics','');
 select acs_privilege__add_child('admin', 'view_topics_all');
+
+-- User that should be added as topic assignees  
+select acs_privilege__create_privilege('add_topic_assignee','Add Topic Assignee','Add Topic Assignee');
+select acs_privilege__add_child('admin', 'add_topic_assignee');
+
 
 
 -- See All Topics
@@ -560,6 +564,16 @@ SELECT im_component_plugin__new (
 	'im_forum_component -user_id $user_id -forum_object_id 0 -current_page_url $current_url -return_url $return_url -export_var_list [list forum_start_idx forum_order_by forum_how_many forum_view_name ] -forum_type home -view_name [im_opt_val forum_view_name] -forum_order_by [im_opt_val forum_order_by] -start_idx [im_opt_val forum_start_idx] -restrict_to_mine_p t -restrict_to_new_topics 1',
 	'im_forum_create_bar "<B>[_ intranet-forum.Forum_Items]<B>" 0 $return_url'
 	);
+
+
+-- Remove the possibility to create new forum topics from the home page
+-- Creating topics from the HomeComponent ist inconsistent currently
+update im_component_plugins
+set title_tcl = '_ intranet-forum.Forum_Items'
+where plugin_name = 'Home Forum Component';
+
+
+
 
 \i ../common/intranet-forum-common.sql
 
