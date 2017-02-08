@@ -14,8 +14,9 @@
         <vendor url="http://www.project-open.com/">]project-open[</vendor>
         <release-date>2016-11-15</release-date>
 
-        <provides url="intranet-forum" version="3.4.0.2.0"/>
-        <requires url="intranet-core" version="3.4.0.0.0"/>
+        <provides url="intranet-forum" version="5.0.0.0.0"/>
+        <requires url="intranet-core" version="5.0.0.0.0"/>
+        <requires url="intranet-search-pg" version="5.0.0.0.0"/>
 
         <callbacks>
         </callbacks>

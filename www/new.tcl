@@ -403,7 +403,7 @@ if {$action_type eq "new_message"} {
 	# A new taks/incident is in status "Assigned"
 	set topic_status_id [im_topic_status_id_assigned]
     } else {
-	# It's a discussion or news item without attached workflow,
+	# It's a discussion or news item without assignments etc.
 	# So the status is "open".
 	set topic_status_id [im_topic_status_id_open]
     }
