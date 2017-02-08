@@ -205,6 +205,49 @@ for each row
 execute procedure im_forum_topics_update_tr ();
 
 
+
+
+
+-----------------------------------------------------------
+-- TSearch2 Full-Text Search Engine
+--
+insert into im_search_object_types values (2,'im_forum_topic',0.5);
+
+
+create or replace function im_forum_topics_tsearch () 
+returns trigger as $$
+declare
+	v_string	varchar;
+begin
+	select	coalesce(topic_name, '') || ' ' ||
+		coalesce(subject, '') || ' ' ||
+		coalesce(message, '')
+	into	v_string
+	from	im_forum_topics
+	where	topic_id = new.topic_id;
+
+	RAISE NOTICE 'TSearch2: Updating forum_topic % of %: %', new.topic_id, new.object_id, v_string;
+
+	perform im_search_update(
+		new.topic_id, 
+		'im_forum_topic', 
+		new.object_id, 
+		v_string
+	);
+	return new;
+end;$$ language 'plpgsql';
+
+CREATE TRIGGER im_forum_topics_tsearch_tr 
+AFTER INSERT or UPDATE
+ON im_forum_topics
+FOR EACH ROW 
+EXECUTE PROCEDURE im_forum_topics_tsearch();
+
+
+
+
+--------------------------------------------------------------
+
 -- A function that decides whether a specific user can see a
 -- forum item or not. Take into account permformance because
 -- it's going to be a huge number of topics and take into
