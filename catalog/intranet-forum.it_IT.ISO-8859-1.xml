@@ -36,7 +36,7 @@
   <msg key="Email">E-mail</msg>
   <msg key="Emergency">Emergenza</msg>
   <msg key="Enter_message_body">Inserisci il corpo del messaggio</msg>
-  <msg key="Enter_subject">Inserisci l'oggetto</msg>
+  <msg key="Enter_subject">Inserisci l&#39;oggetto</msg>
   <msg key="Error_URL">URL errore</msg>
   <msg key="Filter_Topics">Filtra messaggi</msg>
   <msg key="Folder">Cartella</msg>
@@ -50,7 +50,7 @@
   <msg key="In_Project">Nel progetto</msg>
   <msg key="Inbox">In entrata</msg>
   <msg key="Incident">Imprevisto</msg>
-  <msg key="Incident_Information">Informazioni sull'imprevisto</msg>
+  <msg key="Incident_Information">Informazioni sull&#39;imprevisto</msg>
   <msg key="Incident_Received">Imprevisto ricevuto</msg>
   <msg key="Low_Normal">Medio bassa</msg>
   <msg key="lt_A_new_topic_type_has_">È stato creato un nuovo %topic_type%. Fare clic sul link qui sopra per ulteriori dettagli.</msg>
@@ -61,7 +61,7 @@
   <msg key="lt_Create_a_new_Discussi">Nuova discussione</msg>
   <msg key="lt_Do_you_want_to_receiv">Ricevere gli aggiornamenti?</msg>
   <msg key="lt_Error_adding_a_new_to">Errore nella creazione del messaggio</msg>
-  <msg key="lt_Error_closing_subject">Errore nella chiusura di \&quot;%subject%\&quot;</msg>
+  <msg key="lt_Error_closing_subject">Errore nella chiusura di \&#34;%subject%\&#34;</msg>
   <msg key="lt_Error_modifying_a_im_">Errore nella modifica di im_forum_topic_user_map</msg>
   <msg key="lt_Error_modifying_a_top">Errore nella modifica di un messaggio</msg>
   <msg key="lt_Here_the_error_messag">Questo è il messaggio di errore</msg>
@@ -75,16 +75,16 @@
   <msg key="lt_Staff_and_Freelance_g">Personale e free-lance</msg>
   <msg key="lt_Staff_group_members_o">Solo membri del gruppo Dipendenti</msg>
   <msg key="lt_The_asignee_of_the_to">Il responsabile del %topic_type% ha bisogno di chiarimenti. Fare clic sul link qua sopra per ulteriori dettagli.</msg>
-  <msg key="lt_The_database_rejected">Il database ha rifiutato l'aggiunta del messaggio di discussione \&quot;%subject%\&quot;.</msg>
-  <msg key="lt_The_database_rejected_1">Il database ha rifiutato la modifica del messaggio di discussione '%subject%'.</msg>
-  <msg key="lt_The_database_rejected_2">Il database ha rifiutato l'aggiunta del messaggio di discussione \&quot;%subject%\&quot;.</msg>
+  <msg key="lt_The_database_rejected">Il database ha rifiutato l&#39;aggiunta del messaggio di discussione \&#34;%subject%\&#34;.</msg>
+  <msg key="lt_The_database_rejected_1">Il database ha rifiutato la modifica del messaggio di discussione &#39;%subject%&#39;.</msg>
+  <msg key="lt_The_database_rejected_2">Il database ha rifiutato l&#39;aggiunta del messaggio di discussione \&#34;%subject%\&#34;.</msg>
   <msg key="lt_The_topic_type_has_be">Il %topic_type% è stato modificato o ha ricevuto risposta. Fare clic sul link qua sopra per ulteriori dettagli.</msg>
   <msg key="lt_The_topic_type_has_be_1">Il %topic_type% è stato chiuso. Fare clic sul link qua sopra per ulteriori dettagli.</msg>
   <msg key="lt_The_topic_type_has_be_2">Il %topic_type% è stato assegnato a un altro responsabile. Fare clic sul link qua sopra per ulteriori dettagli.</msg>
   <msg key="lt_There_are_no_active_i">Non esistono elementi attivi.</msg>
-  <msg key="lt_This_topic_is_not_a_t">Questo messaggio non è un'attività o un imprevisto. Non è possibile assegnarlo a una persona.</msg>
+  <msg key="lt_This_topic_is_not_a_t">Questo messaggio non è un&#39;attività o un imprevisto. Non è possibile assegnarlo a una persona.</msg>
   <msg key="lt_topic_type_needs_clar">%topic_type% richiede chiarimenti</msg>
-  <msg key="lt_Unable_to_find_view_v">Impossibile trovare visualizzazione '%view_name%'</msg>
+  <msg key="lt_Unable_to_find_view_v">Impossibile trovare visualizzazione &#39;%view_name%&#39;</msg>
   <msg key="lt_Unknown_value_for_act">Valore sconosciuto per azione</msg>
   <msg key="lt_Unknown_value_for_sub">Valore sconosciuto per invia</msg>
   <msg key="lt_You_have_insufficient">Non si dispone dei privilegi sufficienti per modificare questo messaggio.</msg>
@@ -114,7 +114,7 @@
   <msg key="Project_Manager">Project Manager</msg>
   <msg key="Project_Manager_only">Solo Project Manager</msg>
   <msg key="Project_Status">Stato del progetto</msg>
-  <msg key="Publisher_Name">Nome dell'autore</msg>
+  <msg key="Publisher_Name">Nome dell&#39;autore</msg>
   <msg key="Re_assign_topic">Riassegna messaggio</msg>
   <msg key="Re_subject">Re: %subject%</msg>
   <msg key="Read">Letto</msg>
@@ -131,7 +131,7 @@
   <msg key="System_URL">URL sistema</msg>
   <msg key="Task">Attività</msg>
   <msg key="Tasks__Incidents">Attività e Imprevisti</msg>
-  <msg key="Thank_you_for_submitting_your_incident">Grazie di aver segnalato l'imprevisto.</msg>
+  <msg key="Thank_you_for_submitting_your_incident">Grazie di aver segnalato l&#39;imprevisto.</msg>
   <msg key="Topic_read">letto</msg>
   <msg key="Topic_Type">Tipo di messaggio</msg>
   <msg key="topic_type_Subject">Oggetto %topic_type%</msg>

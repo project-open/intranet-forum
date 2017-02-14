@@ -18,8 +18,8 @@
   <msg key="lt_Error_modifying_a_top">話題修正時のエラー</msg>
   <msg key="lt_img_srcintranetimages">&amp;nbsp;</msg>
   <msg key="lt_Provider_project_memb">業者(顧客以外のプロジェクトメンバー)</msg>
-  <msg key="lt_The_database_rejected">データベースは、議論する話題\&quot;%subject%\&quot;の追加を拒否しました。</msg>
-  <msg key="lt_The_database_rejected_1">データベースは'%subject%'議論する話題の１つの修正を拒否しました。</msg>
+  <msg key="lt_The_database_rejected">データベースは、議論する話題\&#34;%subject%\&#34;の追加を拒否しました。</msg>
+  <msg key="lt_The_database_rejected_1">データベースは&#39;%subject%&#39;議論する話題の１つの修正を拒否しました。</msg>
   <msg key="lt_The_database_rejected_2">データベースは\&amp;quot;%subject%\&amp;quot議論の話題1個の修正を拒否しました。</msg>
   <msg key="lt_topic_type_needs_clar">%topic_type% 内容確認</msg>
   <msg key="lt_You_have_insufficient">あなたは話題を修正する権限がありません。</msg>
