@@ -24,7 +24,7 @@ ad_proc -public im_import_forum_topics { filename } {
 	return $err_return
     }
 
-    set csv_content [exec /bin/cat $filename]
+    set csv_content [im_exec cat $filename]
     set csv_lines [split $csv_content "\n"]
     set csv_lines_len [llength $csv_lines]
 
