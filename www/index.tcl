@@ -125,7 +125,7 @@ if {[im_permission $current_user_id "view_topics_all"]} {
     append filter_html "
 	<tr>
 	  <td class=form-label>[lang::message::lookup "" intranet-core.Filter_View "View"]:</td>
-	  <td class=form-widget>[im_select forum_mine_p $view_types $forum_mine_p]</td>
+	  <td class=form-widget>[im_select -translate_p 0 forum_mine_p $view_types $forum_mine_p]</td>
 	</tr>
     "
 } else {
