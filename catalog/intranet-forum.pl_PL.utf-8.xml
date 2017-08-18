@@ -1,19 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<message_catalog package_key="intranet-forum" package_version="3.4.0.7.0" locale="pl_PL" charset="utf-8">
+<message_catalog package_key="intranet-forum" locale="pl_PL" charset="utf-8">
 
   <msg key="Accept_Tasks">Zaakceptuj zadanie</msg>
   <msg key="Apply">Zastosuj</msg>
   <msg key="Close_Tasks">Zamknij zadanie</msg>
-  <msg key="Due">Upływa</msg>
-  <msg key="Forum_Items">Przedmioty forum</msg>
+  <msg key="Deleted">Usunięte</msg>
+  <msg key="Discussion">Dyskusja</msg>
+  <msg key="Due">Due</msg>
+  <msg key="Filter_Topics">Filtr Tematów</msg>
+  <msg key="Folder">Folder</msg>
+  <msg key="Forum">Forum</msg>
+  <msg key="Forum_Items">Elementy Forum</msg>
+  <msg key="Inbox">Skrzynka odbiorcza</msg>
+  <msg key="Incident">Incydent</msg>
   <msg key="lt_There_are_no_active_i">Nie ma żadnych aktywnych elementów.</msg>
   <msg key="Mark_as_read">Oznacz jako przeczytane</msg>
   <msg key="Mark_as_unread">Oznacz jako nieprzeczytane</msg>
   <msg key="Move_to_Active">Przenieś do aktywnych</msg>
   <msg key="Move_to_Deleted">Przenieś do usuniętych</msg>
+  <msg key="News">Nowości</msg>
+  <msg key="Note">Notatka</msg>
   <msg key="Object">Objekt</msg>
+  <msg key="Own">Właściciel</msg>
   <msg key="P">LP</msg>
+  <msg key="Read">Czytaj</msg>
   <msg key="Reject_Tasks">Odrzuć zadanie</msg>
+  <msg key="Reply">Odpowiedź</msg>
+  <msg key="Status">Status</msg>
   <msg key="Subject">Temat</msg>
+  <msg key="Task">Zadanie</msg>
+  <msg key="Topic_Type">Rodzaj Tematu</msg>
   <msg key="Type">Typ</msg>
+  <msg key="Unresolved">Nierozwiązane</msg>
 </message_catalog>
