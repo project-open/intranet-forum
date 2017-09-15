@@ -1358,7 +1358,7 @@ ad_proc -public im_forum_component {
 		set next_start_idx [expr {$end_idx + 1}]
 		set forum_max_entries_per_page $max_entries_per_page
 		set next_page_url  "[export_vars -base $current_page_url {forum_object_id forum_max_entries_per_page forum_order_by}]&forum_start_idx=$next_start_idx&$pass_through_vars_html"
-		set next_page_html "($remaining_items more) <A href=\"$next_page_url\">&gt;&gt;</a>"
+		set next_page_html "($remaining_items [_ intranet-core.more]) <A href=\"$next_page_url\">&gt;&gt;</a>"
         } else {
 		set next_page_html ""
         }
