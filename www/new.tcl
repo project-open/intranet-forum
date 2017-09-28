@@ -159,7 +159,7 @@ if {!$done && $topic_id == 0} {
     
     set parent_id ""
     set read_p "f"
-    set scope "pm"
+    set scope "group"
     set folder_id 0
     set receive_updates "major"
     set topic_status_id [im_topic_status_id_open]
@@ -428,25 +428,21 @@ incr ctr
 # -------------- Scope -----------------------------
 
 # Default is "group", if the user can do it...
-if {[im_permission $user_id add_topic_group]} {set scope "group"}
+if {"" eq $scope && [im_permission $user_id add_topic_group]} {set scope "group"}
 
 if {$topic_type_id != [im_topic_type_id_reply]} {
-
     if {$object_admin || $user_id == $owner_id} {
 	append table_body "
 		<tr $bgcolor([expr {$ctr % 2}])>
 		  <td>[_ intranet-forum.Access_permissions]</td>
-		  <td>
-                    [im_forum_scope_select "scope" $user_id $scope]
-		  </td>
+		  <td>[im_forum_scope_select "scope" $user_id $scope]</td>
 		</tr>"
 	incr ctr
     } else {
 	append table_body "
 		<tr $bgcolor([expr {$ctr % 2}])>
 		  <td>[_ intranet-forum.Access_permissions]</td>
-		  <td>[im_forum_scope_html $scope]
-		  </td>
+		  <td>[im_forum_scope_html $scope]</td>
 		</tr>"
 	incr ctr
 
