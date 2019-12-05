@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<message_catalog package_key="intranet-forum" locale="zh_TW" charset="utf-8">
+
+  <msg key="Accept_Tasks">接受任務</msg>
+  <msg key="Apply">應用</msg>
+  <msg key="Close_Tasks">關閉任務</msg>
+  <msg key="Due">到期</msg>
+  <msg key="Forum_Items">論壇主題</msg>
+  <msg key="lt_There_are_no_active_i">沒有啟用的項目</msg>
+  <msg key="Mark_as_read">標識為只讀</msg>
+  <msg key="Mark_as_unread">標識為未讀</msg>
+  <msg key="Move_to_Active">移至正常活動</msg>
+  <msg key="Move_to_Deleted">移至刪除</msg>
+  <msg key="Object">對象</msg>
+  <msg key="Own">擁有</msg>
+  <msg key="Reject_Tasks">拒絕任務</msg>
+  <msg key="Status">狀態</msg>
+  <msg key="Subject">主題</msg>
+  <msg key="Type">類型</msg>
+</message_catalog>
