@@ -1076,8 +1076,9 @@ ad_proc -public im_forum_component {
 	if { $forum_order_by eq $cmd_eval  } {
 	    append table_header_html "  <td class=rowtitle>$col_tr</td>\n"
 	} else {
+	    if {[string first "?" $current_page_url] < 0} { set join_char "?" } else { set join_char "&" }
 	    append table_header_html "  <td class=rowtitle>
-            <a href=$current_page_url?$pass_through_vars_html&forum_order_by=[ns_urlencode $cmd_eval]&forum_folder=$restrict_to_folder>$col_tr</a>
+            <a href=${current_page_url}${join_char}${pass_through_vars_html}&forum_order_by=[ns_urlencode $cmd_eval]&forum_folder=$restrict_to_folder>$col_tr</a>
             </td>\n"
 	}
     }
