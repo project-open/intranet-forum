@@ -176,8 +176,8 @@ set forum_content [im_forum_component \
 	-return_url		$return_url \
 	-start_idx		$forum_start_idx \
 	-export_var_list	$export_var_list \
-	-view_name 		[im_opt_val forum_view_name] \
-	-forum_order_by		[im_opt_val forum_order_by] \
+	-view_name 		[im_opt_val -limit_to alnum forum_view_name] \
+	-forum_order_by		[im_opt_val -limit_to alnum forum_order_by] \
 	-restrict_to_mine_p	$forum_mine_p \
 	-restrict_to_folder	$forum_folder \
 	-restrict_to_new_topics 0 \

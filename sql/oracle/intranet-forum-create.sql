@@ -560,8 +560,8 @@ begin
 				forum_view_name \
 			] \
 			-forum_type project \
-			-view_name [im_opt_val forum_view_name] \
-			-forum_order_by [im_opt_val forum_order_by] \
+			-view_name [im_opt_val -limit_to nohtml forum_view_name] \
+			-forum_order_by [im_opt_val -limit_to nohtml forum_order_by] \
 			-restrict_to_mine_p "f" \
 			-restrict_to_new_topics 1 
 		]'
@@ -604,8 +604,8 @@ begin
 				forum_view_name \
 			] \
 			-forum_type company \
-			-view_name [im_opt_val forum_view_name] \
-			-forum_order_by [im_opt_val forum_order_by] \
+			-view_name [im_opt_val -limit_to nohtml forum_view_name] \
+			-forum_order_by [im_opt_val -limit_to nohtml forum_order_by] \
 			-restrict_to_mine_p "f" \
 			-restrict_to_new_topics 1 \
 			-restrict_to_employees 1 \
@@ -646,8 +646,8 @@ begin
 				forum_view_name \
 			] \
 			-forum_type home \
-			-view_name [im_opt_val forum_view_name] \
-			-forum_order_by [im_opt_val forum_order_by] \
+			-view_name [im_opt_val -limit_to nohtml forum_view_name] \
+			-forum_order_by [im_opt_val -limit_to nohtml forum_order_by] \
 			-restrict_to_mine_p t \
 			-restrict_to_new_topics 1
 		]'
