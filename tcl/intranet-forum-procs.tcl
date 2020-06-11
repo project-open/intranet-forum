@@ -1010,8 +1010,7 @@ ad_proc -public im_forum_component {
             ns_set put $bind_vars $var $value
             if {$debug} { ns_log Notice "im_forum_component: $var <- $value" }
         } else {
-        
-            set value [ns_set get $form_vars $var]
+            set value [im_opt_val -limit_to nohtml $var]
             if {$value ne ""} {
  	        ns_set put $bind_vars $var $value
  	        if {$debug} { ns_log Notice "im_forum_component: $var <- $value" }
