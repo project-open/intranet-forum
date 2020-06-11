@@ -94,8 +94,11 @@
   <msg key="Modified">Gewijzigd</msg>
   <msg key="Move_to_Active">Verplaatsen naar Actief</msg>
   <msg key="Move_to_Deleted">Verplaatsen naar Verwijderd</msg>
+  <msg key="Name">Naam</msg>
   <msg key="needs_clarification">moet verduidelijkt worden</msg>
+  <msg key="Needs_Clarify">Behoeft toelichting</msg>
   <msg key="Needs_to_be_done">Moet worden afgehandeld</msg>
+  <msg key="New_topic_in_object">Nieuw onderwerp</msg>
   <msg key="New_topic_type">Nieuw %topic_type%</msg>
   <msg key="News">Nieuws</msg>
   <msg key="Normal">Normaal</msg>
@@ -125,7 +128,11 @@
   <msg key="Rejected">Afgewezen</msg>
   <msg key="Related_Files">Gerelateerde bestanden</msg>
   <msg key="Reply">Antwoord</msg>
+  <msg key="Reply_to_topic">Reageer op onderwerp</msg>
   <msg key="Save_Changes">Bewaar wijzigingen</msg>
+  <msg key="Select_users_to_notify">Selecteer gebruikers om in te lichten</msg>
+  <msg key="Send_Email">Verzend e-mail</msg>
+  <msg key="Send_Forum_Notifications">Verzend melding naar forum</msg>
   <msg key="Staff_employees_only">Staf (alleen medewerkers)</msg>
   <msg key="Status">Status</msg>
   <msg key="Subject">Onderwerp</msg>
@@ -141,6 +148,7 @@
   <msg key="undefined">Niet gedefinieerd</msg>
   <msg key="Unresolved">Niet opgelost</msg>
   <msg key="Urgent">Urgent</msg>
+  <msg key="Very_Urgent">Erg dringend</msg>
   <msg key="View_Topic">Toon topic</msg>
   <msg key="Visible_for">Zichtbaar voor</msg>
   <msg key="We_will_notify_you_as_soon_as_possible">We zullen u zo snel mogelijk inlichten.</msg>
