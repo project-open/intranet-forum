@@ -5,6 +5,13 @@
 <property name="main_navbar_label">forum</property>
 
 
+<script type="text/javascript" <if @::__csp_nonce@ not nil>nonce="@::__csp_nonce;literal@"</if>>
+window.addEventListener('load', function() { 
+     document.getElementById('list_check_all').addEventListener('click', function() { acs_ListCheckAll('alerts', this.checked) });
+});
+</script>
+
+
 <h1><%= [lang::message::lookup "" intranet-forum.Send_Forum_Notifications "Send Forum Notifications"] %></h1>
 <form name=alerts method=post action=new-3>
 <%= [export_vars -form {object_id topic_id object_type subject msg_url message return_url}] %>
@@ -14,7 +21,7 @@
     <th class="list-narrow"><%= [lang::message::lookup "" intranet-forum.Email "Email"] %></th>
     <th class="list-narrow"><%= [lang::message::lookup "" intranet-forum.Name "Name"] %></th>
     <th class="list-narrow">
-	<input type="checkbox" name="_dummy" onclick="acs_ListCheckAll('alerts', this.checked)" title="<%= [lang::message::lookup "" intranet-forum.Check_Uncheck_all_rows "Check/Uncheck all rows"] %>">
+	<input id=list_check_all type="checkbox" name="_dummy" title="<%= [lang::message::lookup "" intranet-forum.Check_Uncheck_all_rows "Check/Uncheck all rows"] %>">
     </th>
 
 <!-- 
